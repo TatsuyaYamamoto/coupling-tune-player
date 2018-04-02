@@ -1,0 +1,9 @@
+{
+  "extends": [
+    "tslint:recommended",
+    "tslint-react"
+  ],
+  "rules": {
+    "ordered-imports": false
+  }
+}
