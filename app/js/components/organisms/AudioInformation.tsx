@@ -1,20 +1,34 @@
 import * as React from "react";
 import {Fragment} from "react";
 
-import CdCoverPicture from "../molecules/CdCoverImage";
+import AutoBind from "autobind-decorator";
 
-class PlayerController extends React.Component {
+import CdCoverPicture from "../molecules/CdCoverImage";
+import FileAttacheButton from "../molecules/FileAttacheButton";
+
+@AutoBind
+class AudioInformation extends React.Component {
   public render() {
     return (
       <Fragment>
         <CdCoverPicture/>
+        <FileAttacheButton onSelected={this.onLeftAudioFileSelected}/>
         <div>
           titles!
         </div>
         <CdCoverPicture/>
+        <FileAttacheButton onSelected={this.onRightAudioFileSelected}/>
       </Fragment>
     );
   }
+
+  private onLeftAudioFileSelected(file: File) {
+    console.log("Selected left file.", file);
+  }
+
+  private onRightAudioFileSelected(file: File) {
+    console.log("Selected right file", file);
+  }
 }
 
-export default PlayerController;
+export default AudioInformation;
