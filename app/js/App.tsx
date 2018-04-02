@@ -1,13 +1,9 @@
 import * as React from "react";
-import Button from "material-ui/Button";
+
+import Index from "./components/pages/Index";
 
 const App = () => (
-  <Button
-    variant="raised"
-    color="primary"
-  >
-    Hello World
-  </Button>
+  <Index/>
 );
 
 export default App;
