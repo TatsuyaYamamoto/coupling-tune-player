@@ -64,8 +64,14 @@ class SyncPlayer {
     this._leftAudioSource.buffer = this._leftAudioBuffer;
     this._rightAudioSource.buffer = this._rightAudioBuffer;
 
-    this._leftAudioSource.connect(this._context.destination);
-    this._rightAudioSource.connect(this._context.destination);
+    // TODO: Check to arrange gain is required?
+    const gainNode = this._context.createGain();
+    gainNode.gain.value = 0.8;
+
+    this._leftAudioSource.connect(gainNode);
+    this._rightAudioSource.connect(gainNode);
+
+    gainNode.connect(this._context.destination);
 
     let leftAudioOffset = this._audioPositionTimeMillis;
     let rightAudioOffset = this._audioPositionTimeMillis;
