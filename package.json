@@ -12,14 +12,20 @@
   "license": "MIT",
   "dependencies": {
     "autobind-decorator": "^2.1.0",
+    "eventemitter3": "^3.0.1",
+    "jsmediatags": "^3.8.1",
     "material-ui": "^1.0.0-beta.40",
     "material-ui-icons": "^1.0.0-beta.36",
     "react": "^16.3.0",
-    "react-dom": "^16.3.0"
+    "react-dom": "^16.3.0",
+    "react-redux": "^5.0.7",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
     "@types/react": "^16.1.0",
     "@types/react-dom": "^16.0.4",
+    "@types/react-redux": "^5.0.15",
     "html-webpack-plugin": "^3.1.0",
     "source-map-loader": "^0.2.3",
     "styled-components": "^3.2.5",

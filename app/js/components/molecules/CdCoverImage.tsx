@@ -3,7 +3,7 @@ import * as React from "react";
 import styled from "styled-components";
 
 export interface Props {
-  src?: string;
+  src?: string | null;
 }
 
 const Image = styled.img`
