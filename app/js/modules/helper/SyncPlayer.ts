@@ -18,21 +18,17 @@ class SyncPlayer {
   private _leftAudio: Audio;
   private _rightAudio: Audio;
 
-  private _playing: boolean;
-  private _playStartAudioContextTimeMillis: number;
-  private _audioPositionTimeMillis: number;
-  private _startPositionDiffTimeMillis: number;
+  private _leftAudioBuffer: AudioBuffer | null = null;
+  private _rightAudioBuffer: AudioBuffer | null = null;
+
+  private _playing: boolean = false;
+  private _playStartAudioContextTimeMillis: number = 0;
+  private _audioPositionTimeMillis: number = 0;
+  private _startPositionDiffTimeMillis: number = 0;
 
   public constructor(props: SyncPlayerConstructor) {
     this._leftAudio = props.left;
     this._rightAudio = props.right;
-    this._leftAudioSource = this._context.createBufferSource();
-    this._rightAudioSource = this._context.createBufferSource();
-
-    this._playing = false;
-    this._playStartAudioContextTimeMillis = 0;
-    this._audioPositionTimeMillis = 0;
-    this._startPositionDiffTimeMillis = 0;
   }
 
   public async load(): Promise<any> {
@@ -45,15 +41,8 @@ class SyncPlayer {
         arrayBufferList.map((buffer) => this._context.decodeAudioData(buffer)),
       ));
 
-    if (!this._leftAudioSource || !this._rightAudioSource) {
-      throw new Error("No audio source.");
-    }
-
-    this._leftAudioSource.buffer = leftAudioBuffer;
-    this._rightAudioSource.buffer = rightAudioBuffer;
-
-    this._leftAudioSource.connect(this._context.destination);
-    this._rightAudioSource.connect(this._context.destination);
+    this._leftAudioBuffer = leftAudioBuffer;
+    this._rightAudioBuffer = rightAudioBuffer;
 
     const [{startPosition: leftStart}, {startPosition: rightStart}] = await Promise
       .all([
@@ -69,11 +58,14 @@ class SyncPlayer {
   }
 
   public play(): void {
-    this._playStartAudioContextTimeMillis = this._context.currentTime;
+    this._leftAudioSource = this._context.createBufferSource();
+    this._rightAudioSource = this._context.createBufferSource();
 
-    if (!this._leftAudioSource || !this._rightAudioSource) {
-      throw new Error("No audio source.");
-    }
+    this._leftAudioSource.buffer = this._leftAudioBuffer;
+    this._rightAudioSource.buffer = this._rightAudioBuffer;
+
+    this._leftAudioSource.connect(this._context.destination);
+    this._rightAudioSource.connect(this._context.destination);
 
     let leftAudioOffset = this._audioPositionTimeMillis;
     let rightAudioOffset = this._audioPositionTimeMillis;
@@ -84,6 +76,9 @@ class SyncPlayer {
     } else {
       rightAudioOffset += +Math.abs(this._startPositionDiffTimeMillis);
     }
+
+    this._playStartAudioContextTimeMillis = this._context.currentTime;
+
     this._leftAudioSource.start(0, leftAudioOffset);
     this._rightAudioSource.start(0, rightAudioOffset);
 
@@ -91,8 +86,6 @@ class SyncPlayer {
   }
 
   public pause(): void {
-    const now = this._context.currentTime;
-
     if (this._leftAudioSource !== null) {
       this._leftAudioSource.stop(0);
     }
@@ -101,6 +94,7 @@ class SyncPlayer {
       this._rightAudioSource.stop(0);
     }
 
+    this._audioPositionTimeMillis += this._context.currentTime - this._playStartAudioContextTimeMillis;
     this._playing = false;
   }
 }

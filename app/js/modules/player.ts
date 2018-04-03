@@ -14,7 +14,7 @@ export enum PlayerActionTypes {
 let syncPlayer: SyncPlayer | null = null;
 
 export function load(file: File, type: "left" | "right") {
-  return (dispatch: Dispatch<States>) => {
+  return (dispatch: Dispatch<States>, getState: () => States) => {
     // TODO: Check audio file.
 
     const audio = Audio.load(file);
@@ -29,6 +29,23 @@ export function load(file: File, type: "left" | "right") {
             audio,
           },
         });
+        const {leftAudio, rightAudio} = getState().player;
+        if (type === "left" && rightAudio) {
+          syncPlayer = new SyncPlayer({
+            left: audio,
+            right: rightAudio,
+          });
+
+          syncPlayer.load();
+        }
+        if (type === "right" && leftAudio) {
+          syncPlayer = new SyncPlayer({
+            left: leftAudio,
+            right: audio,
+          });
+
+          syncPlayer.load();
+        }
       });
   };
 }
@@ -42,12 +59,10 @@ export function play() {
       return;
     }
 
-    syncPlayer = new SyncPlayer({
-      left: leftAudio,
-      right: rightAudio,
-    });
-
-    await syncPlayer.load();
+    if (syncPlayer === null) {
+      console.error("SyncPlayer is not ready.");
+      return;
+    }
 
     syncPlayer.play();
 
