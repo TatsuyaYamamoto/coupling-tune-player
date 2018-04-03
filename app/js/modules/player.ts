@@ -1,6 +1,7 @@
 import {AnyAction, Dispatch} from "redux";
 import {States} from "./redux";
 import Audio from "./Audio";
+import {analyzeBpm} from "./helper/BpmAnalyzer";
 
 export enum PlayerActionTypes {
   LOAD_LEFT_AUDIO = "c_tune/player/load_left_audio",
@@ -21,6 +22,7 @@ export function load(file: File, type: "left" | "right") {
 
     const audio = Audio.load(file);
     audio.loadTags()
+      .catch((error: any) => console.error(error))
       .then(() => {
         dispatch({
           type: type === "left" ?
@@ -30,9 +32,6 @@ export function load(file: File, type: "left" | "right") {
             audio,
           },
         });
-      })
-      .catch((error: any) => {
-        console.error(error);
       });
   };
 }
@@ -46,6 +45,9 @@ export function play() {
       return;
     }
 
+    leftAudioSource = audioContext.createBufferSource();
+    rightAudioSource = audioContext.createBufferSource();
+
     Promise
       .all([
         readAsArrayBuffer(leftAudio.file),
@@ -54,17 +56,39 @@ export function play() {
       .then((arrayBufferList) => Promise.all(
         arrayBufferList.map((buffer) => audioContext.decodeAudioData(buffer)),
       ))
-      .then(([leftAudioBuffer, rightAudioBuffer]) => {
-        leftAudioSource = audioContext.createBufferSource();
-        rightAudioSource = audioContext.createBufferSource();
+      .then(async ([leftAudioBuffer, rightAudioBuffer]) => {
+        if (!leftAudioSource || !rightAudioSource) {
+          throw new Error("No audio source.");
+        }
 
         leftAudioSource.buffer = leftAudioBuffer;
         rightAudioSource.buffer = rightAudioBuffer;
 
         leftAudioSource.connect(audioContext.destination);
         rightAudioSource.connect(audioContext.destination);
-        leftAudioSource.start(lastAudioPosition);
-        rightAudioSource.start(lastAudioPosition);
+
+        return Promise
+          .all([
+            analyzeBpm(leftAudioBuffer),
+            analyzeBpm(rightAudioBuffer),
+          ]);
+      })
+      .then(([{startPosition: leftStart}, {startPosition: rightStart}]) => {
+        if (!leftAudioSource || !rightAudioSource) {
+          throw new Error("No audio source.");
+        }
+        const diff = leftStart - rightStart;
+        console.log(diff);
+        if (0 < diff) {
+          leftAudioSource.start(0, lastAudioPosition + diff);
+          rightAudioSource.start(0, lastAudioPosition);
+
+        } else {
+
+          leftAudioSource.start(0, lastAudioPosition);
+          rightAudioSource.start(0, lastAudioPosition + Math.abs(diff));
+
+        }
 
         dispatch({
           type: PlayerActionTypes.PLAY,
