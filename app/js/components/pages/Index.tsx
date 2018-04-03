@@ -6,7 +6,7 @@ import AppBar from "../organisms/AppBar";
 import AudioInformation from "../organisms/AudioInformation";
 import PlayerController from "../organisms/PlayerController";
 
-import Audio from "../../modules/Audio";
+import Audio from "../../modules/helper/Audio";
 
 @AutoBind
 class Index extends React.Component {

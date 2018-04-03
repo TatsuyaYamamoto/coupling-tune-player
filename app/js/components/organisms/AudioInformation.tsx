@@ -10,7 +10,7 @@ import CdCoverPicture from "../molecules/CdCoverImage";
 import FileAttacheButton from "../atoms/FileAttacheButton";
 import {load as loadAudio} from "../../modules/player";
 import {Dispatch} from "redux";
-import Audio from "../../modules/Audio";
+import Audio from "../../modules/helper/Audio";
 
 export interface ComponentProps {
 }
