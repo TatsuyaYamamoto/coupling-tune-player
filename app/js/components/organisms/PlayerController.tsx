@@ -1,6 +1,9 @@
+import "rc-slider/assets/index.css";
+import Timer = NodeJS.Timer;
+
 import * as React from "react";
 import {connect} from "react-redux";
-
+import {Dispatch} from "redux";
 import AutoBind from "autobind-decorator";
 
 import Card, {CardContent} from "material-ui/Card";
@@ -9,7 +12,9 @@ import SkipPreviousIcon from "material-ui-icons/SkipPrevious";
 import PlayArrowIcon from "material-ui-icons/PlayArrow";
 import PauseIcon from "material-ui-icons/Pause";
 import SkipNextIcon from "material-ui-icons/SkipNext";
-import {Dispatch} from "redux";
+
+import Slider from "rc-slider";
+
 import {play as playAudio, pause as pauseAudio} from "../../modules/player";
 import {States} from "../../modules/redux";
 
@@ -19,22 +24,21 @@ export interface ComponentProps {
 export interface ComponentState {
 }
 
+type Props = ComponentProps & DispatchProps & StateProps;
+
 @AutoBind
-class PlayerController extends React.Component<ComponentProps & DispatchProps & StateProps, ComponentState> {
+class PlayerController extends React.Component<Props, ComponentState> {
   public render() {
     const {playing} = this.props;
     return (
       <Card>
+        <Slider style={{padding: 0}}/>
         <CardContent>
           <IconButton aria-label="Previous">
             <SkipPreviousIcon/>
           </IconButton>
           <IconButton aria-label="Play/pause">
-            {
-              playing ?
-                <PauseIcon onClick={this.onPause}/> :
-                <PlayArrowIcon onClick={this.onPlay}/>
-            }
+            {playing ? <PauseIcon onClick={this.onPause}/> : <PlayArrowIcon onClick={this.onPlay}/>}
           </IconButton>
           <IconButton aria-label="Next">
             <SkipNextIcon/>
