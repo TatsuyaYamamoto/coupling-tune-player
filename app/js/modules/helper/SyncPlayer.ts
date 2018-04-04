@@ -64,7 +64,7 @@ class SyncPlayer {
     this._leftAudioSource.buffer = this._leftAudioBuffer;
     this._rightAudioSource.buffer = this._rightAudioBuffer;
 
-    // TODO: Check to arrange gain is required?
+    // TODO: Check to arrange gain is requiredz?
     const gainNode = this._context.createGain();
     gainNode.gain.value = 0.8;
 

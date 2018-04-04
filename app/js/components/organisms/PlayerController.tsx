@@ -1,5 +1,4 @@
 import "rc-slider/assets/index.css";
-import Timer = NodeJS.Timer;
 
 import * as React from "react";
 import {connect} from "react-redux";
@@ -13,26 +12,37 @@ import PlayArrowIcon from "material-ui-icons/PlayArrow";
 import PauseIcon from "material-ui-icons/Pause";
 import SkipNextIcon from "material-ui-icons/SkipNext";
 
-import Slider from "rc-slider";
-
 import {play as playAudio, pause as pauseAudio} from "../../modules/player";
 import {States} from "../../modules/redux";
+
+import PlayTimeSlider from "../molecules/PlayTimeSlider";
 
 export interface ComponentProps {
 }
 
 export interface ComponentState {
+  current: number;
 }
 
 type Props = ComponentProps & DispatchProps & StateProps;
 
 @AutoBind
 class PlayerController extends React.Component<Props, ComponentState> {
+  public state = {
+    current: 0,
+  };
+
   public render() {
     const {playing} = this.props;
     return (
       <Card>
-        <Slider style={{padding: 0}}/>
+        <PlayTimeSlider
+          min={0}
+          max={1000}
+          current={this.state.current}
+          onChange={this.onSliderChange}
+          onFixed={this.onSliderFixed}
+        />
         <CardContent>
           <IconButton aria-label="Previous">
             <SkipPreviousIcon/>
@@ -54,6 +64,13 @@ class PlayerController extends React.Component<Props, ComponentState> {
 
   private onPause() {
     this.props.pauseAudio();
+  }
+
+  private onSliderChange(newValue: number) {
+    this.setState({current: newValue});
+  }
+
+  private onSliderFixed(newValue: number) {
   }
 }
 
