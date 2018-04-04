@@ -6,7 +6,7 @@ import MuiAppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 
 import TitleTypography from "../atoms/TitleTypography";
-import InfoButton from "../atoms/InfoIconButton";
+import InfoButton from "../atoms/button/InfoIconButton";
 import InfoDialog from "./InfoDialog";
 
 const Root = styled.div`

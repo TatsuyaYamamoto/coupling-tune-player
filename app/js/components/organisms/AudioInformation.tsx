@@ -7,7 +7,7 @@ import AutoBind from "autobind-decorator";
 import {States} from "../../modules/redux";
 
 import CdCoverPicture from "../molecules/CdCoverImage";
-import FileAttacheButton from "../atoms/FileAttacheButton";
+import FileAttacheButton from "../atoms/button/FileAttacheButton";
 import {load as loadAudio} from "../../modules/player";
 import {Dispatch} from "redux";
 import Audio from "../../modules/helper/Audio";

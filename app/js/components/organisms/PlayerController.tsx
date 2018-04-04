@@ -4,13 +4,14 @@ import * as React from "react";
 import {connect} from "react-redux";
 import {Dispatch} from "redux";
 import AutoBind from "autobind-decorator";
+import styled from "styled-components";
 
 import Card, {CardContent} from "material-ui/Card";
-import IconButton from "material-ui/IconButton";
-import SkipPreviousIcon from "material-ui-icons/SkipPrevious";
-import PlayArrowIcon from "material-ui-icons/PlayArrow";
-import PauseIcon from "material-ui-icons/Pause";
-import SkipNextIcon from "material-ui-icons/SkipNext";
+
+import SkipNextButton from "../atoms/button/SkipNextButton";
+import SkipPreviousButton from "../atoms/button/SkipPreviousButton";
+import PlayButton from "../atoms/button/PlayButton";
+import PauseButton from "../atoms/button/PauseButton";
 
 import {play as playAudio, pause as pauseAudio} from "../../modules/player";
 import {States} from "../../modules/redux";
@@ -25,6 +26,30 @@ export interface ComponentState {
 }
 
 type Props = ComponentProps & DispatchProps & StateProps;
+
+const Buttons = styled(CardContent)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Previous = styled(SkipPreviousButton)`
+`;
+
+const Play = styled(PlayButton)`
+&& {
+  margin: 10px;
+}
+`;
+
+const Pause = styled(PauseButton)`
+&& {
+  margin: 10px;
+}
+`;
+
+const Next = styled(SkipNextButton)`
+`;
 
 @AutoBind
 class PlayerController extends React.Component<Props, ComponentState> {
@@ -43,17 +68,11 @@ class PlayerController extends React.Component<Props, ComponentState> {
           onChange={this.onSliderChange}
           onFixed={this.onSliderFixed}
         />
-        <CardContent>
-          <IconButton aria-label="Previous">
-            <SkipPreviousIcon/>
-          </IconButton>
-          <IconButton aria-label="Play/pause">
-            {playing ? <PauseIcon onClick={this.onPause}/> : <PlayArrowIcon onClick={this.onPlay}/>}
-          </IconButton>
-          <IconButton aria-label="Next">
-            <SkipNextIcon/>
-          </IconButton>
-        </CardContent>
+        <Buttons>
+          <Previous/>
+          {playing ? <Pause onClick={this.onPause}/> : <Play onClick={this.onPlay}/>}
+          <Next/>
+        </Buttons>
       </Card>
     );
   }
