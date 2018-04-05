@@ -8,9 +8,13 @@ import AudioInformation from "../organisms/AudioInformation";
 import PlayerController from "../organisms/PlayerController";
 
 const Controller = styled(PlayerController)`
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
+`;
+
+const Info = styled(AudioInformation)`
+  margin-bottom: 130px;
 `;
 
 @AutoBind
@@ -19,7 +23,7 @@ class Index extends React.Component {
     return (
       <Fragment>
         <AppBar/>
-        <AudioInformation/>
+        <Info/>
         <Controller/>
       </Fragment>
     );

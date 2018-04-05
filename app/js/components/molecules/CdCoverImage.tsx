@@ -7,13 +7,15 @@ export interface Props {
 }
 
 const Image = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 200px;
+  height: 200px;
+  @media (max-width: 400px) {
+    width: 150px;
+    height: 150px;
+  }
 `;
 
-const NoImage = styled.img`
-  width: 100px;
-  height: 100px;
+const NoImage = Image.extend`
   background-color: gray;
 `;
 

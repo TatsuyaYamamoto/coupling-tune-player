@@ -1,45 +1,54 @@
 import * as React from "react";
-import {Fragment} from "react";
 import {connect} from "react-redux";
-
+import styled from "styled-components";
 import AutoBind from "autobind-decorator";
 
 import {States} from "../../modules/redux";
 
-import CdCoverPicture from "../molecules/CdCoverImage";
-import FileAttacheButton from "../atoms/button/FileAttacheButton";
+import AudioDetail from "../molecules/AudioDetail";
+
 import {load as loadAudio} from "../../modules/player";
 import {Dispatch} from "redux";
 import Audio from "../../modules/helper/Audio";
 
 export interface ComponentProps {
+  className?: string;
 }
 
 export interface ComponentState {
 }
 
+const Root = styled.div`
+  display: flex;
+  flex-direction : column;
+  justify-content: center;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px 10px;
+`;
+
 @AutoBind
 class AudioInformation extends React.Component<ComponentProps & DispatchProps & StateProps, ComponentState> {
   public render() {
-    const {leftAudio, rightAudio} = this.props;
+    const {
+      className,
+      leftAudio,
+      rightAudio,
+    } = this.props;
 
     return (
-      <Fragment>
-        <CdCoverPicture src={leftAudio && leftAudio.pictureBase64}/>
-        <FileAttacheButton onSelected={this.onLeftAudioFileSelected}/>
-        <div>
-          Left
-          {leftAudio && leftAudio.title}
-          {leftAudio && leftAudio.artist}
-        </div>
-        <div>
-          Right
-          {rightAudio && rightAudio.title}
-          {rightAudio && rightAudio.artist}
-        </div>
-        <CdCoverPicture src={rightAudio && rightAudio.pictureBase64}/>
-        <FileAttacheButton onSelected={this.onRightAudioFileSelected}/>
-      </Fragment>
+      <Root className={className}>
+        <AudioDetail
+          audio={leftAudio}
+          onAudioSelected={this.onLeftAudioFileSelected}
+        />
+        <AudioDetail
+          reverse={true}
+          audio={rightAudio}
+          onAudioSelected={this.onRightAudioFileSelected}
+        />
+      </Root>
     );
   }
 
