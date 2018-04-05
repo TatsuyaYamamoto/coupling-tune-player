@@ -19,6 +19,7 @@ import {States} from "../../modules/redux";
 import PlayTimeSlider from "../molecules/PlayTimeSlider";
 
 export interface ComponentProps {
+  className?: string;
 }
 
 export interface ComponentState {
@@ -58,9 +59,13 @@ class PlayerController extends React.Component<Props, ComponentState> {
   };
 
   public render() {
-    const {playing} = this.props;
+    const {
+      playing,
+      className,
+    } = this.props;
+
     return (
-      <Card>
+      <Card className={className}>
         <PlayTimeSlider
           min={0}
           max={1000}
