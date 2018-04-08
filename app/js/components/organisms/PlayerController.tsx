@@ -61,6 +61,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
   public render() {
     const {
       playing,
+      ready,
       className,
     } = this.props;
 
@@ -74,9 +75,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
           onFixed={this.onSliderFixed}
         />
         <Buttons>
-          <Previous/>
-          {playing ? <Pause onClick={this.onPause}/> : <Play onClick={this.onPlay}/>}
-          <Next/>
+          {playing ? <Pause onClick={this.onPause}/> : <Play disabled={!ready} onClick={this.onPlay}/>}
         </Buttons>
       </Card>
     );
@@ -100,12 +99,19 @@ class PlayerController extends React.Component<Props, ComponentState> {
 
 interface StateProps {
   playing: boolean;
+  ready: boolean;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const {playing} = state.player;
+  const {
+    playing,
+    left,
+    right,
+  } = state.player;
+
   return {
     playing,
+    ready: !!(left.buffer && right.buffer),
   };
 }
 

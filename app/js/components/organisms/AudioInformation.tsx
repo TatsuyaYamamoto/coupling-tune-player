@@ -9,7 +9,6 @@ import AudioDetail from "../molecules/AudioDetail";
 
 import {load as loadAudio} from "../../modules/player";
 import {Dispatch} from "redux";
-import Audio from "../../modules/helper/Audio";
 
 export interface ComponentProps {
   className?: string;
@@ -33,19 +32,23 @@ class AudioInformation extends React.Component<ComponentProps & DispatchProps & 
   public render() {
     const {
       className,
-      leftAudio,
-      rightAudio,
+      left,
+      right,
     } = this.props;
 
     return (
       <Root className={className}>
         <AudioDetail
-          audio={leftAudio}
+          title={left.title}
+          artist={left.artist}
+          imageSrc={left.imageSrc}
           onAudioSelected={this.onLeftAudioFileSelected}
         />
         <AudioDetail
           reverse={true}
-          audio={rightAudio}
+          title={right.title}
+          artist={right.artist}
+          imageSrc={right.imageSrc}
           onAudioSelected={this.onRightAudioFileSelected}
         />
       </Root>
@@ -62,16 +65,32 @@ class AudioInformation extends React.Component<ComponentProps & DispatchProps & 
 }
 
 interface StateProps {
-  leftAudio: Audio | null;
-  rightAudio: Audio | null;
+  left: {
+    title: string | null,
+    artist: string | null,
+    imageSrc: string | null,
+  };
+  right: {
+    title: string | null,
+    artist: string | null,
+    imageSrc: string | null,
+  };
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const {leftAudio, rightAudio} = state.player;
+  const {left, right} = state.player;
 
   return {
-    leftAudio,
-    rightAudio,
+    left: {
+      title: left.tag.title,
+      artist: left.tag.artist,
+      imageSrc: left.tag.pictureBase64,
+    },
+    right: {
+      title: right.tag.title,
+      artist: right.tag.artist,
+      imageSrc: right.tag.pictureBase64,
+    },
   };
 }
 

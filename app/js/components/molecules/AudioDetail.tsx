@@ -6,10 +6,10 @@ import Title from "../atoms/AudioTitle";
 import Artist from "../atoms/AudioArtist";
 import CdCoverPicture from "./CdCoverImage";
 
-import Audio from "../../modules/helper/Audio";
-
 interface Props {
-  audio: Audio | null;
+  title: string | null;
+  artist: string | null;
+  imageSrc: string | null;
   onAudioSelected?: (path: File) => void;
   reverse?: boolean;
 }
@@ -40,20 +40,22 @@ const Detail = styled.div`
 
 const AudioDetail = (props: Props) => {
   const {
-    audio,
+    title,
+    artist,
+    imageSrc,
     onAudioSelected,
     reverse,
   } = props;
 
   const detail = (
     <Detail reverse={reverse}>
-      <Title>{audio ? audio.title : "DummyTitle"}</Title>
-      <Artist>{audio ? audio.artist : "DummyArtist"}</Artist>
+      <Title>{title ? title : "DummyTitle"}</Title>
+      <Artist>{artist ? artist : "DummyArtist"}</Artist>
       <FileAttacheButton onSelected={onAudioSelected}/>
     </Detail>
   );
 
-  const picture = (<CdCoverPicture src={audio && audio.pictureBase64}/>);
+  const picture = (<CdCoverPicture src={imageSrc}/>);
 
   return (
     <Root reverse={reverse}>
