@@ -16,6 +16,7 @@ export enum PlayerActionTypes {
 const context = new AudioContext();
 let leftAudioSource: AudioBufferSourceNode | null = null;
 let rightAudioSource: AudioBufferSourceNode | null = null;
+let playStartContextTimeMillis: number = 0;
 
 /**
  * 音声ファイルをロードする
@@ -96,9 +97,14 @@ function analyzeAudioBpm(audio: AudioBuffer, type: "right" | "left") {
     const result = await analyzeBpm(audio)
       .catch((e) => console.error(e));
 
+    const payload = {} as any;
+    payload.type = type;
+    payload.bpm = result && result.bpm;
+    payload.startPositionMillis = result && result.startPosition * 1000;
+
     dispatch({
       type: PlayerActionTypes.ANALYZE_BPM_SUCCESS,
-      payload: {type, result},
+      payload,
     });
   };
 }
@@ -121,7 +127,7 @@ export function play() {
       return;
     }
 
-    if (!left.startPosition || !right.startPosition) {
+    if (!left.startPositionMillis || !right.startPositionMillis) {
       console.error("No audio start position of right or left.");
       return;
     }
@@ -140,11 +146,10 @@ export function play() {
     rightAudioSource.connect(gainNode);
 
     gainNode.connect(context.destination);
-
-    const diffMillis = left.startPosition - right.startPosition;
-
+    console.log("currentMillis", currentMillis);
     let leftAudioOffset = currentMillis;
     let rightAudioOffset = currentMillis;
+    const diffMillis = left.startPositionMillis - right.startPositionMillis;
 
     if (0 < diffMillis) {
       leftAudioOffset += diffMillis;
@@ -153,16 +158,12 @@ export function play() {
       rightAudioOffset += -1 * diffMillis;
     }
 
-    const now = context.currentTime;
-    leftAudioSource.start(0, leftAudioOffset);
-    rightAudioSource.start(0, rightAudioOffset);
+    playStartContextTimeMillis = context.currentTime * 1000;
+    leftAudioSource.start(0, leftAudioOffset / 1000);
+    rightAudioSource.start(0, rightAudioOffset / 1000);
 
     dispatch({
       type: PlayerActionTypes.PLAY,
-      payload: {
-        playing: true,
-        playStartContextTimeMillis: now,
-      },
     });
   };
 }
@@ -176,6 +177,7 @@ export function pause() {
   return (dispatch: Dispatch<States>, getState: () => States) => {
     const {
       playing,
+      currentMillis,
     } = getState().player;
 
     if (!playing) {
@@ -190,11 +192,13 @@ export function pause() {
     if (rightAudioSource !== null) {
       rightAudioSource.stop(0);
     }
+    const add = context.currentTime * 1000 - playStartContextTimeMillis;
+    playStartContextTimeMillis = 0;
 
     dispatch({
       type: PlayerActionTypes.PAUSE,
       payload: {
-        playing: false,
+        currentMillis: currentMillis + add,
       },
     });
   };
@@ -204,25 +208,21 @@ interface AudioState {
   buffer: AudioBuffer | null;
   tag: Tag;
   bpm: number;
-  startPosition: number | null;
+  startPositionMillis: number | null;
 }
 
 export interface PlayerState {
   playing: boolean;
-  playStartContextTimeMillis: number;
   durationMillis: number;
   currentMillis: number;
-  diffMillis: number;
   left: AudioState;
   right: AudioState;
 }
 
 const initialState: PlayerState = {
   playing: false,
-  playStartContextTimeMillis: context.currentTime,
   durationMillis: 0,
   currentMillis: 0,
-  diffMillis: 0,
   left: {
     buffer: null,
     tag: {
@@ -231,7 +231,7 @@ const initialState: PlayerState = {
       pictureBase64: null,
     },
     bpm: 0,
-    startPosition: null,
+    startPositionMillis: null,
   },
   right: {
     buffer: null,
@@ -241,7 +241,7 @@ const initialState: PlayerState = {
       pictureBase64: null,
     },
     bpm: 0,
-    startPosition: null,
+    startPositionMillis: null,
   },
 };
 
@@ -260,8 +260,8 @@ export default function reducer(state: PlayerState = initialState, action: AnyAc
     case PlayerActionTypes.ANALYZE_BPM_SUCCESS:
       return Object.assign({}, state, {
         [payload.type]: Object.assign({}, payload.type === "right" ? state.right : state.left, {
-          bpm: payload.result.bpm,
-          startPosition: payload.result.startPosition,
+          bpm: payload.bpm,
+          startPositionMillis: payload.startPositionMillis,
         }),
       });
 
@@ -274,12 +274,13 @@ export default function reducer(state: PlayerState = initialState, action: AnyAc
 
     case PlayerActionTypes.PLAY:
       return Object.assign({}, state, {
-        playing: payload.playing,
+        playing: true,
       });
 
     case PlayerActionTypes.PAUSE:
       return Object.assign({}, state, {
-        playing: payload.playing,
+        playing: false,
+        currentMillis: payload.currentMillis,
       });
 
     default:
