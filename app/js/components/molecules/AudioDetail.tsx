@@ -12,6 +12,7 @@ interface Props {
   imageSrc: string | null;
   onAudioSelected?: (path: File) => void;
   reverse?: boolean;
+  className?: string;
 }
 
 interface RootProps {
@@ -25,6 +26,15 @@ const Root = styled.div`
   width:100%;
   @media (max-width: 400px) {
     flex-wrap: wrap;
+  }
+`;
+
+const CdCover = styled(CdCoverPicture)`
+  width: 200px;
+  height: 200px;
+  @media (max-width: 400px) {
+    width: 150px;
+    height: 150px;
   }
 `;
 
@@ -45,6 +55,7 @@ const AudioDetail = (props: Props) => {
     imageSrc,
     onAudioSelected,
     reverse,
+    className,
   } = props;
 
   const detail = (
@@ -55,10 +66,10 @@ const AudioDetail = (props: Props) => {
     </Detail>
   );
 
-  const picture = (<CdCoverPicture src={imageSrc}/>);
+  const picture = (<CdCover src={imageSrc}/>);
 
   return (
-    <Root reverse={reverse}>
+    <Root className={className} reverse={reverse}>
       {picture}
       {detail}
     </Root>

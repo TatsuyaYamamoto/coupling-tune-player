@@ -2,31 +2,32 @@ import * as React from "react";
 
 import styled from "styled-components";
 
+import CdSvg from "../atoms/CdSvg";
+
 export interface Props {
   src?: string | null;
+  className?: string;
 }
 
 const Image = styled.img`
-  width: 200px;
-  height: 200px;
-  @media (max-width: 400px) {
-    width: 150px;
-    height: 150px;
-  }
 `;
 
-const NoImage = Image.extend`
-  background-color: gray;
+const NoImage = styled(CdSvg)`
+  fill: gray;
+  background-color: lightgray;
 `;
 
 const CdCoverPicture = (props: Props) => {
-  const {src} = props;
+  const {
+    src,
+    className,
+  } = props;
 
   if (!src) {
-    return <NoImage/>;
+    return <NoImage className={className}/>;
   }
 
-  return <Image src={src}/>;
+  return <Image src={src} className={className}/>;
 };
 
 export default CdCoverPicture;

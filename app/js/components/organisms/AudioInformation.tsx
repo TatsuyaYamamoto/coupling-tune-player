@@ -27,6 +27,15 @@ const Root = styled.div`
   padding: 30px 10px;
 `;
 
+interface DetailProps {
+  reverse?: boolean;
+}
+
+const Detail = styled(AudioDetail)`
+  margin-top: ${(props: DetailProps) => props.reverse ? "10px" : 0};
+  margin-bottom: ${(props: DetailProps) => props.reverse ? 0 : "10px"};
+`;
+
 @AutoBind
 class AudioInformation extends React.Component<ComponentProps & DispatchProps & StateProps, ComponentState> {
   public render() {
@@ -38,13 +47,13 @@ class AudioInformation extends React.Component<ComponentProps & DispatchProps & 
 
     return (
       <Root className={className}>
-        <AudioDetail
+        <Detail
           title={left.title}
           artist={left.artist}
           imageSrc={left.imageSrc}
           onAudioSelected={this.onLeftAudioFileSelected}
         />
-        <AudioDetail
+        <Detail
           reverse={true}
           title={right.title}
           artist={right.artist}
