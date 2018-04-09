@@ -13,7 +13,7 @@ import SkipPreviousButton from "../atoms/button/SkipPreviousButton";
 import PlayButton from "../atoms/button/PlayButton";
 import PauseButton from "../atoms/button/PauseButton";
 
-import {play as playAudio, pause as pauseAudio} from "../../modules/player";
+import {play as playAudio, pause as pauseAudio, updateCurrentTime} from "../../modules/player";
 import {States} from "../../modules/redux";
 
 import PlayTimeSlider from "../molecules/PlayTimeSlider";
@@ -23,6 +23,7 @@ export interface ComponentProps {
 }
 
 export interface ComponentState {
+  manualCurrentTime: number | null;
 }
 
 type Props = ComponentProps & DispatchProps & StateProps;
@@ -54,7 +55,7 @@ const Next = styled(SkipNextButton)`
 @AutoBind
 class PlayerController extends React.Component<Props, ComponentState> {
   public state = {
-    current: 0,
+    manualCurrentTime: null,
   };
 
   public render() {
@@ -65,13 +66,15 @@ class PlayerController extends React.Component<Props, ComponentState> {
       duration,
       current,
     } = this.props;
+    const {manualCurrentTime} = this.state;
 
     return (
       <Card className={className}>
         <PlayTimeSlider
           min={0}
           max={duration}
-          current={current}
+          current={manualCurrentTime ? manualCurrentTime : current}
+          onStartChange={this.onSliderStart}
           onChange={this.onSliderChange}
           onFixed={this.onSliderFixed}
         />
@@ -90,11 +93,28 @@ class PlayerController extends React.Component<Props, ComponentState> {
     this.props.pauseAudio();
   }
 
-  private onSliderChange(newValue: number) {
-    // this.setState({current: newValue});
+  private onSliderStart() {
+    const {current} = this.props;
+    this.setState({manualCurrentTime: current});
   }
 
-  private onSliderFixed(newValue: number) {
+  private onSliderChange(newValue: number) {
+    this.setState({manualCurrentTime: newValue});
+  }
+
+  private async onSliderFixed(newValue: number) {
+    this.setState({manualCurrentTime: null});
+    const stopOnce = this.props.playing;
+
+    if (stopOnce) {
+      await this.props.pauseAudio();
+    }
+
+    await this.props.updateCurrentTime(newValue);
+
+    if (stopOnce) {
+      await this.props.playAudio();
+    }
   }
 }
 
@@ -122,18 +142,16 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
 }
 
 interface DispatchProps {
-  playAudio: () => void;
-  pauseAudio: () => void;
+  playAudio: (offset?: number) => Promise<void>;
+  pauseAudio: () => Promise<void>;
+  updateCurrentTime: (time?: number) => Promise<void>;
 }
 
 function mapDispatchToProps(dispatch: Dispatch<States>, ownProps: ComponentProps): DispatchProps {
   return {
-    playAudio: () => {
-      dispatch(playAudio());
-    },
-    pauseAudio: () => {
-      dispatch(pauseAudio());
-    },
+    playAudio: () => dispatch(playAudio()),
+    pauseAudio: () => dispatch(pauseAudio()),
+    updateCurrentTime: (time?: number) => dispatch(updateCurrentTime(time)),
   };
 }
 

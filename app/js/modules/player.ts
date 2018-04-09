@@ -180,7 +180,7 @@ export function play() {
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => undefined}
  */
 export function pause() {
-  return (dispatch: Dispatch<States>, getState: () => States) => {
+  return async (dispatch: Dispatch<States>, getState: () => States) => {
     const {playing} = getState().player;
 
     if (!playing) {
@@ -213,15 +213,17 @@ export function pause() {
  *
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => undefined}
  */
-export function updateCurrentTime() {
-  return (dispatch: Dispatch<States>, getState: () => States) => {
+export function updateCurrentTime(time?: number) {
+  return async (dispatch: Dispatch<States>, getState: () => States) => {
     const {
-      playing,
       currentMillis,
     } = getState().player;
 
-    if (!playing) {
-      console.error("Player is not running.");
+    if (time) {
+      dispatch({
+        type: PlayerActionTypes.UPDATE_CURRENT,
+        payload: {currentMillis: time},
+      });
       return;
     }
 

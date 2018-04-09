@@ -6,6 +6,7 @@ interface Props {
   min: number;
   max: number;
   current: number;
+  onStartChange: () => void;
   onChange: (newValue: number) => void;
   onFixed: (newValue: number) => void;
 }
@@ -15,6 +16,7 @@ const PlayTimeSlider = (props: Props) => {
     min,
     max,
     current,
+    onStartChange,
     onChange,
     onFixed,
   } = props;
@@ -25,6 +27,7 @@ const PlayTimeSlider = (props: Props) => {
       min={min}
       max={max}
       value={current}
+      onBeforeChange={onStartChange}
       onChange={onChange}
       onAfterChange={onFixed}
     />
