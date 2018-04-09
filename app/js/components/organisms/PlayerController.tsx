@@ -65,7 +65,6 @@ class PlayerController extends React.Component<Props, ComponentState> {
       duration,
       current,
     } = this.props;
-    console.log(`${current}/${duration}`);
 
     return (
       <Card className={className}>

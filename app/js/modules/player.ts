@@ -3,6 +3,7 @@ import {States} from "./redux";
 
 import {loadTags, Tag} from "./helper/TagLoader";
 import {analyzeBpm} from "./helper/BpmAnalyzer";
+import Timer = NodeJS.Timer;
 
 export enum PlayerActionTypes {
   LOAD_BUFFER_SUCCESS = "c_tune/player/load_buffer_success",
@@ -18,6 +19,7 @@ const context = new AudioContext();
 let leftAudioSource: AudioBufferSourceNode | null = null;
 let rightAudioSource: AudioBufferSourceNode | null = null;
 let lastCheckTime: number | null = null;
+let intervalId: Timer | number | null = null;
 
 /**
  * 音声ファイルをロードする
@@ -166,7 +168,7 @@ export function play() {
       type: PlayerActionTypes.PLAY,
     });
 
-    setInterval(() => {
+    intervalId = setInterval(() => {
       dispatch(updateCurrentTime());
     }, 500);
   };
@@ -195,6 +197,10 @@ export function pause() {
     }
 
     lastCheckTime = null;
+    if (intervalId !== null) {
+      clearInterval(intervalId as number);
+    }
+    intervalId = null;
 
     dispatch({
       type: PlayerActionTypes.PAUSE,
