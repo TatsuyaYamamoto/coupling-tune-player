@@ -10,13 +10,14 @@ export enum PlayerActionTypes {
   ANALYZE_BPM_SUCCESS = "c_tune/player/analyze_bpm_success",
   PLAY = "c_tune/player/play",
   PAUSE = "c_tune/player/pause",
+  UPDATE_CURRENT = "c_tune/player/update_current",
 }
 
 // TODO Check supporting WebAudioAPI
 const context = new AudioContext();
 let leftAudioSource: AudioBufferSourceNode | null = null;
 let rightAudioSource: AudioBufferSourceNode | null = null;
-let playStartContextTimeMillis: number = 0;
+let lastCheckTime: number | null = null;
 
 /**
  * 音声ファイルをロードする
@@ -158,13 +159,16 @@ export function play() {
       rightAudioOffset += -1 * diffMillis;
     }
 
-    playStartContextTimeMillis = context.currentTime * 1000;
     leftAudioSource.start(0, leftAudioOffset / 1000);
     rightAudioSource.start(0, rightAudioOffset / 1000);
 
     dispatch({
       type: PlayerActionTypes.PLAY,
     });
+
+    setInterval(() => {
+      dispatch(updateCurrentTime());
+    }, 500);
   };
 }
 
@@ -175,10 +179,7 @@ export function play() {
  */
 export function pause() {
   return (dispatch: Dispatch<States>, getState: () => States) => {
-    const {
-      playing,
-      currentMillis,
-    } = getState().player;
+    const {playing} = getState().player;
 
     if (!playing) {
       console.error("Player is not running.");
@@ -192,11 +193,43 @@ export function pause() {
     if (rightAudioSource !== null) {
       rightAudioSource.stop(0);
     }
-    const add = context.currentTime * 1000 - playStartContextTimeMillis;
-    playStartContextTimeMillis = 0;
+
+    lastCheckTime = null;
 
     dispatch({
       type: PlayerActionTypes.PAUSE,
+    });
+  };
+}
+
+/**
+ * 現在の再生時間を更新する
+ *
+ * @returns {(dispatch: Dispatch<States>, getState: () => States) => undefined}
+ */
+export function updateCurrentTime() {
+  return (dispatch: Dispatch<States>, getState: () => States) => {
+    const {
+      playing,
+      currentMillis,
+    } = getState().player;
+
+    if (!playing) {
+      console.error("Player is not running.");
+      return;
+    }
+
+    const now = context.currentTime * 1000;
+    if (lastCheckTime == null) {
+      lastCheckTime = now;
+      return;
+    }
+
+    const add = now - lastCheckTime;
+    lastCheckTime = now;
+
+    dispatch({
+      type: PlayerActionTypes.UPDATE_CURRENT,
       payload: {
         currentMillis: currentMillis + add,
       },
@@ -280,6 +313,10 @@ export default function reducer(state: PlayerState = initialState, action: AnyAc
     case PlayerActionTypes.PAUSE:
       return Object.assign({}, state, {
         playing: false,
+      });
+
+    case PlayerActionTypes.UPDATE_CURRENT:
+      return Object.assign({}, state, {
         currentMillis: payload.currentMillis,
       });
 

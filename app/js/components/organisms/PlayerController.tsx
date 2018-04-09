@@ -23,7 +23,6 @@ export interface ComponentProps {
 }
 
 export interface ComponentState {
-  current: number;
 }
 
 type Props = ComponentProps & DispatchProps & StateProps;
@@ -63,14 +62,17 @@ class PlayerController extends React.Component<Props, ComponentState> {
       playing,
       ready,
       className,
+      duration,
+      current,
     } = this.props;
+    console.log(`${current}/${duration}`);
 
     return (
       <Card className={className}>
         <PlayTimeSlider
           min={0}
-          max={1000}
-          current={this.state.current}
+          max={duration}
+          current={current}
           onChange={this.onSliderChange}
           onFixed={this.onSliderFixed}
         />
@@ -90,7 +92,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
   }
 
   private onSliderChange(newValue: number) {
-    this.setState({current: newValue});
+    // this.setState({current: newValue});
   }
 
   private onSliderFixed(newValue: number) {
@@ -100,6 +102,8 @@ class PlayerController extends React.Component<Props, ComponentState> {
 interface StateProps {
   playing: boolean;
   ready: boolean;
+  duration: number;
+  current: number;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
@@ -107,11 +111,14 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
     playing,
     left,
     right,
+    currentMillis,
   } = state.player;
 
   return {
     playing,
     ready: !!(left.buffer && right.buffer),
+    duration: !!left.buffer ? left.buffer.duration * 1000 : 0,
+    current: currentMillis || 0,
   };
 }
 
