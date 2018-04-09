@@ -1,11 +1,13 @@
 import {AnyAction, Dispatch} from "redux";
 import {States} from "./redux";
 
-import {loadTags, Tag} from "./helper/TagLoader";
+import {loadTags} from "./helper/TagLoader";
 import {analyzeBpm} from "./helper/BpmAnalyzer";
 import Timer = NodeJS.Timer;
 
 export enum PlayerActionTypes {
+  LOAD_REQUEST = "c_tune/player/load_request",
+  LOAD_SUCCESS = "c_tune/player/load_success",
   LOAD_BUFFER_SUCCESS = "c_tune/player/load_buffer_success",
   LOAD_TAG_SUCCESS = "c_tune/player/load_tag_success",
   ANALYZE_BPM_SUCCESS = "c_tune/player/analyze_bpm_success",
@@ -31,12 +33,16 @@ let intervalId: Timer | number | null = null;
 export function load(file: File, type: "left" | "right") {
   return async (dispatch: Dispatch<States>) => {
     // TODO: Check audio file.
+    dispatch({type: PlayerActionTypes.LOAD_REQUEST});
 
-    dispatch(loadAudioTag(file, type));
     const audioBuffer = await dispatch(loadAsAudioBuffer(file, type));
     if (audioBuffer) {
-      dispatch(analyzeAudioBpm(audioBuffer, type));
+      await dispatch(analyzeAudioBpm(audioBuffer, type));
     }
+
+    await dispatch(loadAudioTag(file, type));
+
+    dispatch({type: PlayerActionTypes.LOAD_SUCCESS});
   };
 }
 
@@ -52,9 +58,18 @@ function loadAudioTag(file: File, type: "right" | "left") {
     const tag = await loadTags(file)
       .catch((e) => console.error(e));
 
+    const title = !!(tag && tag.title) ? tag.title : file.name;
+    const artist = !!(tag && tag.artist) ? tag.artist : null;
+    const pictureBase64 = !!(tag && tag.pictureBase64) ? tag.pictureBase64 : null;
+
     dispatch({
       type: PlayerActionTypes.LOAD_TAG_SUCCESS,
-      payload: {type, tag},
+      payload: {
+        type,
+        title,
+        artist,
+        pictureBase64,
+      },
     });
   };
 }
@@ -97,12 +112,13 @@ function loadAsAudioBuffer(file: File, type: "right" | "left") {
 function analyzeAudioBpm(audio: AudioBuffer, type: "right" | "left") {
   return async (dispatch: Dispatch<States>): Promise<void> => {
 
-    const result = await analyzeBpm(audio)
-      .catch((e) => console.error(e));
+    const result = await analyzeBpm(audio);
 
+
+    console.log("resutl?", result);
     const payload = {} as any;
     payload.type = type;
-    payload.bpm = result && result.bpm;
+    payload.bpm = result.bpm;
     payload.startPositionMillis = result && result.startPosition * 1000;
 
     dispatch({
@@ -125,7 +141,7 @@ export function play() {
       currentMillis,
     } = getState().player;
 
-    if (!left.buffer || !right.buffer) {
+    if (!left || !right) {
       console.error("No audio buffer of right or left.");
       return;
     }
@@ -245,51 +261,47 @@ export function updateCurrentTime(time?: number) {
   };
 }
 
-interface AudioState {
-  buffer: AudioBuffer | null;
-  tag: Tag;
+export interface AudioState {
+  buffer: AudioBuffer;
+  title: string;
+  artist: string | null;
+  pictureBase64: string | null;
   bpm: number;
-  startPositionMillis: number | null;
+  startPositionMillis: number;
 }
 
 export interface PlayerState {
+  loading: boolean;
   playing: boolean;
   durationMillis: number;
   currentMillis: number;
-  left: AudioState;
-  right: AudioState;
+  left: AudioState | null;
+  right: AudioState | null;
 }
 
 const initialState: PlayerState = {
+  loading: false,
   playing: false,
   durationMillis: 0,
   currentMillis: 0,
-  left: {
-    buffer: null,
-    tag: {
-      title: null,
-      artist: null,
-      pictureBase64: null,
-    },
-    bpm: 0,
-    startPositionMillis: null,
-  },
-  right: {
-    buffer: null,
-    tag: {
-      title: null,
-      artist: null,
-      pictureBase64: null,
-    },
-    bpm: 0,
-    startPositionMillis: null,
-  },
+  left: null,
+  right: null,
 };
 
 export default function reducer(state: PlayerState = initialState, action: AnyAction): PlayerState {
   const {type, payload} = action;
 
   switch (type) {
+
+    case PlayerActionTypes.LOAD_REQUEST:
+      return Object.assign({}, state, {
+        loading: true,
+      });
+
+    case PlayerActionTypes.LOAD_SUCCESS:
+      return Object.assign({}, state, {
+        loading: false,
+      });
 
     case PlayerActionTypes.LOAD_BUFFER_SUCCESS:
       return Object.assign({}, state, {
@@ -309,7 +321,9 @@ export default function reducer(state: PlayerState = initialState, action: AnyAc
     case PlayerActionTypes.LOAD_TAG_SUCCESS:
       return Object.assign({}, state, {
         [payload.type]: Object.assign({}, payload.type === "right" ? state.right : state.left, {
-          tag: payload.tag,
+          title: payload.title,
+          artist: payload.artist,
+          pictureBase64: payload.pictureBase64,
         }),
       });
 

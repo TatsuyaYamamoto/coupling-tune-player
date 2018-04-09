@@ -7,8 +7,9 @@ import {States} from "../../modules/redux";
 
 import AudioDetail from "../molecules/AudioDetail";
 
-import {load as loadAudio} from "../../modules/player";
+import {AudioState, load as loadAudio} from "../../modules/player";
 import {Dispatch} from "redux";
+import LoadingDialog from "./LoadingDialog";
 
 export interface ComponentProps {
   className?: string;
@@ -43,23 +44,43 @@ class AudioInformation extends React.Component<ComponentProps & DispatchProps & 
       className,
       left,
       right,
+      loading,
     } = this.props;
+    let leftTitle = null;
+    let leftArtist = null;
+    let leftImageSrc = null;
+    if (left) {
+      leftTitle = left.title;
+      leftArtist = left.artist;
+      leftImageSrc = left.pictureBase64;
+    }
+
+    let rightTitle = null;
+    let rightArtist = null;
+    let rightImageSrc = null;
+    if (right) {
+      rightTitle = right.title;
+      rightArtist = right.artist;
+      rightImageSrc = right.pictureBase64;
+    }
 
     return (
       <Root className={className}>
         <Detail
-          title={left.title}
-          artist={left.artist}
-          imageSrc={left.imageSrc}
+          title={leftTitle}
+          artist={leftArtist}
+          imageSrc={leftImageSrc}
           onAudioSelected={this.onLeftAudioFileSelected}
         />
         <Detail
           reverse={true}
-          title={right.title}
-          artist={right.artist}
-          imageSrc={right.imageSrc}
+          title={rightTitle}
+          artist={rightArtist}
+          imageSrc={rightImageSrc}
           onAudioSelected={this.onRightAudioFileSelected}
         />
+
+        <LoadingDialog open={loading}/>
       </Root>
     );
   }
@@ -74,32 +95,18 @@ class AudioInformation extends React.Component<ComponentProps & DispatchProps & 
 }
 
 interface StateProps {
-  left: {
-    title: string | null,
-    artist: string | null,
-    imageSrc: string | null,
-  };
-  right: {
-    title: string | null,
-    artist: string | null,
-    imageSrc: string | null,
-  };
+  left: AudioState | null;
+  right: AudioState | null;
+  loading: boolean,
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const {left, right} = state.player;
+  const {left, right, loading} = state.player;
 
   return {
-    left: {
-      title: left.tag.title,
-      artist: left.tag.artist,
-      imageSrc: left.tag.pictureBase64,
-    },
-    right: {
-      title: right.tag.title,
-      artist: right.tag.artist,
-      imageSrc: right.tag.pictureBase64,
-    },
+    left,
+    right,
+    loading,
   };
 }
 

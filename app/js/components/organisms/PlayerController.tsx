@@ -135,8 +135,8 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
 
   return {
     playing,
-    ready: !!(left.buffer && right.buffer),
-    duration: !!left.buffer ? left.buffer.duration * 1000 : 0,
+    ready: !!(left && right),
+    duration: !!left ? left.buffer.duration * 1000 : 0,
     current: currentMillis || 0,
   };
 }
