@@ -3,8 +3,12 @@ import Typography from "material-ui/Typography";
 
 const TitleTypography = () => {
   return (
-    <Typography variant="title" color="inherit">
-      Coupling Tune Player
+    <Typography
+      variant="title"
+      color="inherit"
+      style={{fontFamily: "Nico Moji"}}
+    >
+      かぷちゅうプレイヤー/Coupling Tune Player
     </Typography>
   );
 };
