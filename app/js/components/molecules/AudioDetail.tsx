@@ -29,12 +29,22 @@ const Root = styled.div`
   }
 `;
 
+const WrapTitle = styled(Title)`
+  margin-top: 5px;
+  margin-bottom: 5px;
+`;
+
+const WrapArtist = styled(Artist)`
+  margin-top: 5px;
+  margin-bottom: 5px;
+`;
+
 const CdCover = styled(CdCoverPicture)`
   width: 200px;
   height: 200px;
   @media (max-width: 400px) {
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
   }
 `;
 
@@ -60,8 +70,8 @@ const AudioDetail = (props: Props) => {
 
   const detail = (
     <Detail reverse={reverse}>
-      <Title>{title ? title : "DummyTitle"}</Title>
-      <Artist>{artist ? artist : "DummyArtist"}</Artist>
+      <WrapTitle>{title}</WrapTitle>
+      <WrapArtist>{artist}</WrapArtist>
       <FileAttacheButton onSelected={onAudioSelected}/>
     </Detail>
   );
