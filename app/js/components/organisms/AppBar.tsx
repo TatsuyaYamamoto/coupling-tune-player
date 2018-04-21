@@ -7,7 +7,11 @@ import Toolbar from "material-ui/Toolbar";
 
 import TitleTypography from "../atoms/TitleTypography";
 import InfoButton from "../atoms/button/InfoIconButton";
+import TweetButton from "../atoms/button/TweetButton";
 import InfoDialog from "./InfoDialog";
+
+import {goTo} from "../../utils";
+import {URL} from "../../constants";
 
 const Root = styled.div`
 display: flex;
@@ -42,7 +46,7 @@ class AppBar extends React.Component<ComponentProps, ComponentState> {
             <TitleTypography/>
 
             <CenterSpace/>
-
+            <TweetButton onClick={this.onShowTweet}/>
             <InfoButton onClick={this.onOpenInfoDialog}/>
           </Toolbar>
         </MuiAppBar>
@@ -61,6 +65,11 @@ class AppBar extends React.Component<ComponentProps, ComponentState> {
 
   private onCloseInfoDialog() {
     this.setState({isInfoDialogOpen: false});
+  }
+
+  private onShowTweet() {
+    goTo(`${URL.TWITTER_TWEET_PAGE}?hashtags=おいものみきり+%23そこんところ工房&url=${URL.COUPLING_TUNE_PLAYER}`);
+
   }
 }
 
