@@ -10,6 +10,8 @@ export interface Props {
 }
 
 const Image = styled.img`
+  width: 100%;
+	height: 100%;
 `;
 
 const NoImage = styled(CdSvg)`
@@ -24,10 +26,10 @@ const CdCoverPicture = (props: Props) => {
   } = props;
 
   if (!src) {
-    return <NoImage className={className}/>;
+    return <div className={className}><NoImage/></div>;
   }
 
-  return <Image src={src} className={className}/>;
+  return <div className={className}><Image src={src}/></div>;
 };
 
 export default CdCoverPicture;
