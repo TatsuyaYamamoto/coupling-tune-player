@@ -40,7 +40,7 @@ class AppBar extends React.Component<ComponentProps, ComponentState> {
 
     return (
       <Root>
-        <MuiAppBar position="static" color="default">
+        <MuiAppBar position="static">
           <Toolbar>
 
             <TitleTypography/>

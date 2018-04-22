@@ -67,6 +67,10 @@ const Detail = styled.div`
   margin-right: ${(props: DetailProps) => props.reverse ? "30px" : "0px"};
 `;
 
+const FileButton = styled(FileAttacheButton)`
+  margin: 10px !important;
+`;
+
 const AudioDetail = (props: Props) => {
   const {
     title,
@@ -81,7 +85,7 @@ const AudioDetail = (props: Props) => {
     <Detail reverse={reverse}>
       <WrapTitle>{title}</WrapTitle>
       <WrapArtist>{artist}</WrapArtist>
-      <FileAttacheButton onSelected={onAudioSelected}/>
+      <FileButton onSelected={onAudioSelected}/>
     </Detail>
   );
 

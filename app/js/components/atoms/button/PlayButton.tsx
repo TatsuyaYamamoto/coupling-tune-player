@@ -16,6 +16,7 @@ const PlayButton = (props: Props) => {
   return (
     <Button
       variant="fab"
+      color="primary"
       onClick={onClick}
       {...other}
     >

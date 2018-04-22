@@ -7,6 +7,7 @@ import Button from "material-ui/Button";
 import Icon from "material-ui-icons/AttachFile";
 
 export interface ComponentProps {
+  className?: string;
   onSelected?: (path: File) => void;
 }
 
@@ -19,14 +20,16 @@ class FileAttacheButton extends React.Component<ComponentProps, {}> {
   private inputRef: HTMLInputElement | null = null;
 
   public render() {
+    const {className} = this.props;
     return (
       <Fragment>
 
         <Button
           variant="fab"
-          color="secondary"
-          aria-label="edit"
+          mini={true}
+          color="primary"
           onClick={this.onClick}
+          className={className}
         >
           <Icon/>
         </Button>
