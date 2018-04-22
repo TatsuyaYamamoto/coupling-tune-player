@@ -1,25 +1,45 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
-  "main": "main.js",
+  "name": "coupling-tune-player",
+  "version": "0.0.1",
+  "description": "Provide the justice audio! Play 2 audio files and analyze BPM and beat to sync.",
+  "main": "index.js",
   "scripts": {
-    "start": "electron app/main/index.js"
+    "start": "webpack-dev-server -w",
+    "build": "webpack --colors --progress",
+    "build:pro": "NODE_ENV=production npm run build",
+    "lint": "tslint --project ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
-  "devDependencies": {
-    "electron": "^1.8.4"
-  },
+  "author": "TatsuyaYamamoto",
+  "license": "MIT",
   "dependencies": {
-    "howler": "^2.0.9"
+    "autobind-decorator": "^2.1.0",
+    "eventemitter3": "^3.0.1",
+    "jsmediatags": "^3.8.1",
+    "material-ui": "^1.0.0-beta.40",
+    "material-ui-icons": "^1.0.0-beta.36",
+    "rc-slider": "^8.6.1",
+    "react": "^16.3.0",
+    "react-dom": "^16.3.0",
+    "react-redux": "^5.0.7",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/rc-slider": "^8.2.3",
+    "@types/react": "^16.1.0",
+    "@types/react-dom": "^16.0.4",
+    "@types/react-redux": "^5.0.15",
+    "css-loader": "^0.28.11",
+    "html-webpack-plugin": "^3.2.0",
+    "source-map-loader": "^0.2.3",
+    "style-loader": "^0.20.3",
+    "styled-components": "^3.2.5",
+    "ts-loader": "^4.1.0",
+    "tslint": "^5.9.1",
+    "tslint-react": "^3.5.1",
+    "typescript": "^2.8.1",
+    "webpack": "^4.4.1",
+    "webpack-cli": "^2.0.13",
+    "webpack-dev-server": "^3.1.1"
   }
 }

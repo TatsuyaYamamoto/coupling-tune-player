@@ -1,3 +1,6 @@
+dist/
+app/build/
+
 # Created by https://www.gitignore.io/api/node,macos,intellij+all
 
 ### Intellij+all ###
@@ -146,7 +149,6 @@ typings/
 
 # dotenv environment variables file
 .env
-
 
 
 # End of https://www.gitignore.io/api/node,macos,intellij+all
