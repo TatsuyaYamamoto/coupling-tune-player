@@ -5,11 +5,12 @@ import styled from "styled-components";
 const Root = styled.div`
 `;
 
-const NoData = styled.div`
+const NoData = styled.span`
+  display: inline-block;
   background-color: lightgray;
   width: 200px;
-  height: 35px;
-  border-radius: 15px;
+  height: 20px;
+  border-radius: 10px;
 `;
 
 interface Props {

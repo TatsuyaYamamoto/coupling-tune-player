@@ -23,10 +23,6 @@ const Root = styled.div`
   display: flex;
   flex-direction: ${(props: RootProps) => props.reverse ? "row-reverse" : "row"};
   align-items: center;
-  width:100%;
-  @media (max-width: 400px) {
-    flex-wrap: wrap;
-  }
 `;
 
 const WrapTitle = styled(Title)`
@@ -64,6 +60,8 @@ interface DetailProps {
 }
 
 const Detail = styled.div`
+  flex: 1;
+  overflow: hidden;
   text-align: ${(props: DetailProps) => props.reverse ? "right" : "left"};
   margin-left: ${(props: DetailProps) => props.reverse ? "0px" : "30px"};
   margin-right: ${(props: DetailProps) => props.reverse ? "30px" : "0px"};

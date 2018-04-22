@@ -21,8 +21,6 @@ export interface ComponentState {
 const Root = styled.div`
   display: flex;
   flex-direction : column;
-  justify-content: center;
-  align-items: center;
   max-width: 900px;
   margin: 0 auto;
   padding: 30px 10px;

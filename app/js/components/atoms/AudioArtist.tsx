@@ -5,7 +5,8 @@ import styled from "styled-components";
 const Root = styled.div`
 `;
 
-const NoData = styled.div`
+const NoData = styled.span`
+  display: inline-block;
   background-color: lightgray;
   width: 150px;
   height: 15px;
