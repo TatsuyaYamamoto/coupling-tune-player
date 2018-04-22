@@ -32,17 +32,28 @@ const Root = styled.div`
 const WrapTitle = styled(Title)`
   margin-top: 5px;
   margin-bottom: 5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 35px;
+  @media (max-width: 480px) {
+    font-size: 20px;
+  }
 `;
 
 const WrapArtist = styled(Artist)`
   margin-top: 5px;
   margin-bottom: 5px;
+  font-size: 15px;
+  @media (max-width: 480px) {
+    font-size: 10px;
+  }
 `;
 
 const CdCover = styled(CdCoverPicture)`
   width: 200px;
   height: 200px;
-  @media (max-width: 400px) {
+  @media (max-width: 480px) {
     width: 100px;
     height: 100px;
   }
