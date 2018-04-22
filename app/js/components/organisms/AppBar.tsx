@@ -8,7 +8,7 @@ import Toolbar from "material-ui/Toolbar";
 import TitleTypography from "../atoms/TitleTypography";
 import InfoButton from "../atoms/button/InfoIconButton";
 import TweetButton from "../atoms/button/TweetButton";
-import InfoDialog from "./InfoDialog";
+import InfoDialog from "./dialog/InfoDialog";
 
 import {goTo} from "../../utils";
 import {URL} from "../../constants";

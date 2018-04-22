@@ -1,5 +1,10 @@
 import * as React from "react";
 
+const style = {
+  fill: "gray",
+  backgroundColor: "lightgray",
+};
+
 /**
  * @see http://icooon-mono.com/11185-cd-icon-2cd-2/?lang=en
  */
@@ -12,6 +17,7 @@ const CdSvgIcon = (props: { className?: string }) => (
     y="0px"
     viewBox="0 0 512 512"
     xmlSpace="preserve"
+    style={style}
     className={props.className}
   >
     <g>

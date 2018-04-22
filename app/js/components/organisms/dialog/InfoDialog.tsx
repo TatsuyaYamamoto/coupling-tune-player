@@ -10,7 +10,7 @@ import Dialog, {
   DialogTitle,
 } from "material-ui/Dialog";
 
-const {version} = require("../../../../package.json");
+const {version} = require("../../../../../package.json");
 
 export interface Props {
   open: boolean;

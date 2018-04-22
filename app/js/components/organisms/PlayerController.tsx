@@ -8,8 +8,6 @@ import styled from "styled-components";
 
 import Card, {CardContent} from "material-ui/Card";
 
-import SkipNextButton from "../atoms/button/SkipNextButton";
-import SkipPreviousButton from "../atoms/button/SkipPreviousButton";
 import PlayButton from "../atoms/button/PlayButton";
 import PauseButton from "../atoms/button/PauseButton";
 
@@ -34,9 +32,6 @@ const Buttons = styled(CardContent)`
   align-items: center;
 `;
 
-const Previous = styled(SkipPreviousButton)`
-`;
-
 const Play = styled(PlayButton)`
 && {
   margin: 10px;
@@ -47,9 +42,6 @@ const Pause = styled(PauseButton)`
 && {
   margin: 10px;
 }
-`;
-
-const Next = styled(SkipNextButton)`
 `;
 
 @AutoBind

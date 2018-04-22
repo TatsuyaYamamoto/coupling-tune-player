@@ -4,7 +4,7 @@ import styled from "styled-components";
 import FileAttacheButton from "../atoms/button/FileAttacheButton";
 import Title from "../atoms/AudioTitle";
 import Artist from "../atoms/AudioArtist";
-import CdCoverPicture from "./CdCoverImage";
+import CdSvg from "../atoms/CdSvg";
 
 interface Props {
   title: string | null;
@@ -46,7 +46,7 @@ const WrapArtist = styled(Artist)`
   }
 `;
 
-const CdCover = styled(CdCoverPicture)`
+const CdCover = styled.div`
   width: 200px;
   height: 200px;
   @media (max-width: 480px) {
@@ -71,6 +71,16 @@ const FileButton = styled(FileAttacheButton)`
   margin: 10px !important;
 `;
 
+const Image = styled.img`
+  width: 100%;
+	height: 100%;
+`;
+
+const NoImage = styled(CdSvg)`
+  width: 100%;
+	height: 100%;
+`;
+
 const AudioDetail = (props: Props) => {
   const {
     title,
@@ -89,7 +99,11 @@ const AudioDetail = (props: Props) => {
     </Detail>
   );
 
-  const picture = (<CdCover src={imageSrc}/>);
+  const picture = (
+    <CdCover>
+      {imageSrc ? <Image src={imageSrc}/> : <NoImage/>}
+    </CdCover>
+  );
 
   return (
     <Root className={className} reverse={reverse}>

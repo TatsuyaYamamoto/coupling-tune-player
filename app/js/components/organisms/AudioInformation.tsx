@@ -9,7 +9,7 @@ import AudioDetail from "../molecules/AudioDetail";
 
 import {AudioState, load as loadAudio} from "../../modules/player";
 import {Dispatch} from "redux";
-import LoadingDialog from "./LoadingDialog";
+import LoadingDialog from "./dialog/LoadingDialog";
 
 export interface ComponentProps {
   className?: string;
