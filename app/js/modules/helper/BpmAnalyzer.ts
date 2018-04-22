@@ -84,8 +84,13 @@ export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
 
     // 位相差
     let theta = atan2(b[bpm - MIN_BPM], a[bpm - MIN_BPM]);
+    // TODO: Check logic is currect?
+    // see http://hp.vector.co.jp/authors/VA046927/tempo/tempo.html
     if (theta < 0) {
-      theta += 2.0 * PI;
+      console.log("Convert theta.", `${theta} -> ${-1 * theta}`, b[bpm - MIN_BPM], a[bpm - MIN_BPM]);
+      theta = -1 * theta;
+    } else {
+      console.log("theta", theta, b[bpm - MIN_BPM], a[bpm - MIN_BPM]);
     }
 
     const startPosition = theta / (2 * PI * bpm / 60);
