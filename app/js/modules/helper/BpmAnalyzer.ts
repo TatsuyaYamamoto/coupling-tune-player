@@ -65,8 +65,10 @@ export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
       const beatsPerFrame = beatsPerSec / framesPerSec;
 
       volumeDiffs.forEach((diff, j) => {
-        aSum += diff * cos(2 * PI * beatsPerFrame * j);
-        bSum += diff * sin(2 * PI * beatsPerFrame * j);
+        const win = hannWindow(j / N);
+
+        aSum += diff * cos(2 * PI * beatsPerFrame * j) * win;
+        bSum += diff * sin(2 * PI * beatsPerFrame * j) * win;
       });
 
       const aBpm = aSum / N;
@@ -109,4 +111,15 @@ function effectiveValueOf(numbers: Float32Array) {
   return numbers.reduce((previous, current) => {
     return previous + (current * current);
   }, 0);
+}
+
+/**
+ * Calculate hann window.
+ *
+ * @param {number} x
+ * @returns {number}
+ * @see https://ja.wikipedia.org/wiki/%E7%AA%93%E9%96%A2%E6%95%B0
+ */
+function hannWindow(x: number) {
+  return 0.5 * (1 - cos(2.0 * PI * x));
 }
