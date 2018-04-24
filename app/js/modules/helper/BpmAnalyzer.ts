@@ -18,6 +18,13 @@ export interface AnalyzeResult {
   startPosition: number;
 }
 
+/**
+ * 入力された{@code AudioBuffer}のBPMを解析し、最初の拍の位置を含む計算結果{@code AnalyzeResult}を返却する。
+ * 計算結果の位相の都合上、startPositionは負の値を取ることもあるので、注意
+ *
+ * @param {AudioBuffer} audio
+ * @returns {Promise<AnalyzeResult>}
+ */
 export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
   const {
     duration,
@@ -58,8 +65,10 @@ export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
       const beatsPerFrame = beatsPerSec / framesPerSec;
 
       volumeDiffs.forEach((diff, j) => {
-        aSum += diff * cos(2 * PI * beatsPerFrame * j);
-        bSum += diff * sin(2 * PI * beatsPerFrame * j);
+        const win = hannWindow(j / N);
+
+        aSum += diff * cos(2 * PI * beatsPerFrame * j) * win;
+        bSum += diff * sin(2 * PI * beatsPerFrame * j) * win;
       });
 
       const aBpm = aSum / N;
@@ -83,11 +92,7 @@ export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
     bpm += MIN_BPM;
 
     // 位相差
-    let theta = atan2(b[bpm - MIN_BPM], a[bpm - MIN_BPM]);
-    if (theta < 0) {
-      theta += 2.0 * PI;
-    }
-
+    const theta = atan2(b[bpm - MIN_BPM], a[bpm - MIN_BPM]);
     const startPosition = theta / (2 * PI * bpm / 60);
 
     return {
@@ -106,4 +111,15 @@ function effectiveValueOf(numbers: Float32Array) {
   return numbers.reduce((previous, current) => {
     return previous + (current * current);
   }, 0);
+}
+
+/**
+ * Calculate hann window.
+ *
+ * @param {number} x
+ * @returns {number}
+ * @see https://ja.wikipedia.org/wiki/%E7%AA%93%E9%96%A2%E6%95%B0
+ */
+function hannWindow(x: number) {
+  return 0.5 * (1 - cos(2.0 * PI * x));
 }

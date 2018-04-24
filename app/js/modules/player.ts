@@ -58,6 +58,8 @@ function loadAudioTag(file: File, type: "right" | "left") {
     const tag = await loadTags(file)
       .catch((e) => console.error(e));
 
+    console.log("Loaded tags", tag);
+
     const title = !!(tag && tag.title) ? tag.title : file.name;
     const artist = !!(tag && tag.artist) ? tag.artist : null;
     const pictureBase64 = !!(tag && tag.pictureBase64) ? tag.pictureBase64 : null;
@@ -114,8 +116,8 @@ function analyzeAudioBpm(audio: AudioBuffer, type: "right" | "left") {
 
     const result = await analyzeBpm(audio);
 
+    console.log("analyzed BPM", result);
 
-    console.log("resutl?", result);
     const payload = {} as any;
     payload.type = type;
     payload.bpm = result.bpm;
@@ -165,7 +167,6 @@ export function play() {
     rightAudioSource.connect(gainNode);
 
     gainNode.connect(context.destination);
-    console.log("currentMillis", currentMillis);
     let leftAudioOffset = currentMillis;
     let rightAudioOffset = currentMillis;
     const diffMillis = left.startPositionMillis - right.startPositionMillis;
