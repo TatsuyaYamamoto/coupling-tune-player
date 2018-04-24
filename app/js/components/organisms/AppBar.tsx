@@ -10,7 +10,7 @@ import InfoButton from "../atoms/button/InfoIconButton";
 import TweetButton from "../atoms/button/TweetButton";
 import InfoDialog from "./dialog/InfoDialog";
 
-import { tweetByWebIntent} from "../../utils";
+import {sendEvent, tweetByWebIntent} from "../../utils";
 import {URL} from "../../constants";
 
 const Root = styled.div`
@@ -61,6 +61,10 @@ class AppBar extends React.Component<ComponentProps, ComponentState> {
 
   private onOpenInfoDialog() {
     this.setState({isInfoDialogOpen: true});
+    sendEvent("click", {
+      category: "info",
+      value: "show_about_app",
+    });
   }
 
   private onCloseInfoDialog() {
@@ -72,6 +76,11 @@ class AppBar extends React.Component<ComponentProps, ComponentState> {
       url: URL.COUPLING_TUNE_PLAYER,
       text: "かぷちゅうプレイヤー/Coupling Tune Player",
       hashtags: ["おいものみきり", "そこんところ工房"],
+    });
+
+    sendEvent("click", {
+      category: "info",
+      value: "go_twitter_intent",
     });
   }
 }

@@ -6,6 +6,7 @@ import Dialog, {
   DialogActions,
   DialogContent,
 } from "material-ui/Dialog";
+import {sendEvent} from "../../../utils";
 
 const {version} = require("../../../../../package.json");
 
@@ -44,32 +45,74 @@ const OkButton = ({onClick}: any) => (
   </Button>
 );
 
+const sendLinkEvent = (name: string) => sendEvent("click", {
+  category: "link",
+  value: name,
+});
+
+const Link = (params: { children: string, href: string, name: string }) => {
+  const onclick = () => {
+    sendEvent("click", {
+      category: "link",
+      value: params.name,
+    });
+  };
+
+  return (<a onClick={onclick} href={params.href}>{params.children}</a>);
+};
+
 const SoloLiveWithLink = (
-  <a href="http://www.lovelive-anime.jp/otonokizaka/release.html#cd82">ソロライブ</a>
+  <Link
+    name="sololive"
+    href="http://www.lovelive-anime.jp/otonokizaka/release.html#cd82"
+  >
+    ソロライブ
+  </Link>
 );
 
 const KotohonoWithLink = (
-  <a href="http://dic.nicovideo.jp/a/%E3%81%93%E3%81%A8%E3%81%BB%E3%81%AE">ことほの</a>
+  <Link
+    name="about_kotohono"
+    href="http://dic.nicovideo.jp/a/%E3%81%93%E3%81%A8%E3%81%BB%E3%81%AE"
+  >
+    ことほの
+  </Link>
 );
 
 const T28WithLink = (
-  <a href="https://twitter.com/t28_tatsuya">T28_tatsuya</a>
+  <Link
+    name="t28_page"
+    href="https://twitter.com/t28_tatsuya"
+  >
+    @T28_tatsuya
+  </Link>
 );
 
 const DeveloperWithLink = (
-  <a href="https://www.sokontokoro-factory.net">Tatsuya Yamamoto</a>
+  <Link
+    name="homepage"
+    href="https://www.sokontokoro-factory.net"
+  >
+    Tatsuya Yamamoto
+  </Link>
 );
 
 const LicenseWithLink = (
-  <a href="https://github.com/sokontokoro-factory/coupling-tune-player/blob/master/LICENSE">
+  <Link
+    name="license"
+    href="https://github.com/sokontokoro-factory/coupling-tune-player/blob/master/LICENSE"
+  >
     MIT
-  </a>
+  </Link>
 );
 
 const OssWithLink = (
-  <a href="https://github.com/sokontokoro-factory/coupling-tune-player/blob/master/package.json">
+  <Link
+    name="oss"
+    href="https://github.com/sokontokoro-factory/coupling-tune-player/blob/master/package.json"
+  >
     Notices for files
-  </a>
+  </Link>
 );
 
 const InfoDialog = (props: Props) => {

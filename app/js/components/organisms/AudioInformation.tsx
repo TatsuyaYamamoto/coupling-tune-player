@@ -10,6 +10,7 @@ import AudioDetail from "../molecules/AudioDetail";
 import {AudioState, load as loadAudio} from "../../modules/player";
 import {Dispatch} from "redux";
 import LoadingDialog from "./dialog/LoadingDialog";
+import {sendEvent} from "../../utils";
 
 export interface ComponentProps {
   className?: string;
@@ -85,17 +86,29 @@ class AudioInformation extends React.Component<ComponentProps & DispatchProps & 
 
   private onLeftAudioFileSelected(file: File) {
     this.props.loadAudio(file, "left");
+
+    sendEvent("click", {
+      category: "player",
+      label: "select_audio",
+      value: "left",
+    });
   }
 
   private onRightAudioFileSelected(file: File) {
     this.props.loadAudio(file, "right");
+
+    sendEvent("click", {
+      category: "player",
+      label: "select_audio",
+      value: "right",
+    });
   }
 }
 
 interface StateProps {
   left: AudioState | null;
   right: AudioState | null;
-  loading: boolean,
+  loading: boolean;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {

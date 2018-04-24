@@ -43,3 +43,20 @@ export function tweetByWebIntent(params: WebIntentParams) {
     WindowObjectReference.focus();
   }
 }
+
+type EventAction = "click";
+
+interface EventParams {
+  category: "player" | "info" | "link";
+  label?: string | number;
+  value?: string | number;
+}
+
+export function sendEvent(name: EventAction, params: EventParams, nonInteraction: boolean = false) {
+  (window as any).gtag("event", name, {
+    event_category: params.category,
+    label: params.label,
+    value: params.value,
+    non_interaction: nonInteraction,
+  });
+}

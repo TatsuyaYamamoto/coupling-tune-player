@@ -15,6 +15,7 @@ import {play as playAudio, pause as pauseAudio, updateCurrentTime} from "../../m
 import {States} from "../../modules/redux";
 
 import PlayTimeSlider from "../molecules/PlayTimeSlider";
+import {sendEvent} from "../../utils";
 
 export interface ComponentProps {
   className?: string;
@@ -79,10 +80,19 @@ class PlayerController extends React.Component<Props, ComponentState> {
 
   private onPlay() {
     this.props.playAudio();
+
+    sendEvent("click", {
+      category: "player",
+      label: "play",
+    });
   }
 
   private onPause() {
     this.props.pauseAudio();
+    sendEvent("click", {
+      category: "player",
+      label: "pause",
+    });
   }
 
   private onSliderStart() {
@@ -107,6 +117,11 @@ class PlayerController extends React.Component<Props, ComponentState> {
     if (stopOnce) {
       await this.props.playAudio();
     }
+
+    sendEvent("click", {
+      category: "player",
+      label: "slider",
+    });
   }
 }
 
