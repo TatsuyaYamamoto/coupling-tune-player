@@ -17,7 +17,8 @@ export enum PlayerActionTypes {
 }
 
 // TODO Check supporting WebAudioAPI
-const context = new AudioContext();
+const AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
+const context: AudioContext = new AudioContext();
 let leftAudioSource: AudioBufferSourceNode | null = null;
 let rightAudioSource: AudioBufferSourceNode | null = null;
 let lastCheckTime: number | null = null;
