@@ -75,7 +75,7 @@ class AppBar extends React.Component<ComponentProps, ComponentState> {
     tweetByWebIntent({
       url: URL.COUPLING_TUNE_PLAYER,
       text: "かぷちゅうプレイヤー/Coupling Tune Player",
-      hashtags: ["おいものみきり", "そこんところ工房"],
+      hashtags: ["かぷちゅうプレイヤー", "そこんところ工房"],
     });
 
     sendEvent("click", {
