@@ -28,6 +28,13 @@
       gtag('config', '<%= trackingCode %>');
     </script>
 
+    <script>
+      window.addEventListener("error", function (e) {
+        console.error(e);
+        gtag("event", "exception", {description: e.message, fatal: true});
+      });
+    </script>
+
     <!-- Application -->
     <link href="https://fonts.googleapis.com/earlyaccess/nicomoji.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet"/>
