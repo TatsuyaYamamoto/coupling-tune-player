@@ -18,6 +18,13 @@ export interface AnalyzeResult {
   startPosition: number;
 }
 
+/**
+ * 入力された{@code AudioBuffer}のBPMを解析し、最初の拍の位置を含む計算結果{@code AnalyzeResult}を返却する。
+ * 計算結果の位相の都合上、startPositionは負の値を取ることもあるので、注意
+ *
+ * @param {AudioBuffer} audio
+ * @returns {Promise<AnalyzeResult>}
+ */
 export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
   const {
     duration,
@@ -83,16 +90,7 @@ export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
     bpm += MIN_BPM;
 
     // 位相差
-    let theta = atan2(b[bpm - MIN_BPM], a[bpm - MIN_BPM]);
-    // TODO: Check logic is currect?
-    // see http://hp.vector.co.jp/authors/VA046927/tempo/tempo.html
-    if (theta < 0) {
-      console.log("Convert theta.", `${theta} -> ${-1 * theta}`, b[bpm - MIN_BPM], a[bpm - MIN_BPM]);
-      theta = -1 * theta;
-    } else {
-      console.log("theta", theta, b[bpm - MIN_BPM], a[bpm - MIN_BPM]);
-    }
-
+    const theta = atan2(b[bpm - MIN_BPM], a[bpm - MIN_BPM]);
     const startPosition = theta / (2 * PI * bpm / 60);
 
     return {
