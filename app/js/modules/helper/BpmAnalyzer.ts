@@ -1,5 +1,3 @@
-const AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
-const audioContext = new AudioContext();
 const {
   sin,
   cos,
