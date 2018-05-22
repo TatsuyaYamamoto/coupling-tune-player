@@ -1,11 +1,4 @@
-const {
-  sin,
-  cos,
-  atan2,
-  floor,
-  sqrt,
-  PI,
-} = Math;
+const { sin, cos, atan2, floor, sqrt, PI } = Math;
 
 const SAMPLES_PER_FRAME = 512;
 const MIN_BPM = 60;
@@ -28,7 +21,7 @@ export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
     duration,
     length,
     numberOfChannels,
-    sampleRate: samplingRate,
+    sampleRate: samplingRate
   } = audio;
 
   const channels = [];
@@ -42,7 +35,9 @@ export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
     const effectiveVolumes = new Array(N).fill(0).map((v, i) => {
       const startIndex = i * SAMPLES_PER_FRAME;
 
-      return effectiveValueOf(channel.slice(startIndex, startIndex + SAMPLES_PER_FRAME));
+      return effectiveValueOf(
+        channel.slice(startIndex, startIndex + SAMPLES_PER_FRAME)
+      );
     });
 
     const volumeDiffs = effectiveVolumes.map((value, index) => {
@@ -95,19 +90,19 @@ export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
 
     return {
       bpm,
-      startPosition,
+      startPosition
     };
   });
 
   return {
     bpm: results[0].bpm,
-    startPosition: results[0].startPosition,
+    startPosition: results[0].startPosition
   };
 }
 
 function effectiveValueOf(numbers: Float32Array) {
   return numbers.reduce((previous, current) => {
-    return previous + (current * current);
+    return previous + current * current;
   }, 0);
 }
 

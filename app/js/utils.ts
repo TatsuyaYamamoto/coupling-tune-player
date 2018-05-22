@@ -19,7 +19,6 @@ interface WebIntentParams {
  * @see https://dev.twitter.com/web/tweet-button/web-intent
  */
 export function tweetByWebIntent(params: WebIntentParams) {
-
   const queries: string[] = [];
 
   if (params.hashtags) {
@@ -52,11 +51,15 @@ interface EventParams {
   value?: string | number;
 }
 
-export function sendEvent(name: EventAction, params: EventParams, nonInteraction: boolean = false) {
+export function sendEvent(
+  name: EventAction,
+  params: EventParams,
+  nonInteraction: boolean = false
+) {
   (window as any).gtag("event", name, {
     event_category: params.category,
     label: params.label,
     value: params.value,
-    non_interaction: nonInteraction,
+    non_interaction: nonInteraction
   });
 }

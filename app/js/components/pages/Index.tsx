@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Fragment} from "react";
+import { Fragment } from "react";
 import AutoBind from "autobind-decorator";
 import styled from "styled-components";
 
@@ -22,9 +22,9 @@ class Index extends React.Component {
   public render() {
     return (
       <Fragment>
-        <AppBar/>
-        <Info/>
-        <Controller/>
+        <AppBar />
+        <Info />
+        <Controller />
       </Fragment>
     );
   }

@@ -2,7 +2,7 @@ import * as React from "react";
 
 const style = {
   fill: "gray",
-  backgroundColor: "lightgray",
+  backgroundColor: "lightgray"
 };
 
 /**

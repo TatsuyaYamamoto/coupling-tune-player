@@ -2,13 +2,10 @@ import * as React from "react";
 import styled from "styled-components";
 
 import Button from "material-ui/Button";
-import Dialog, {
-  DialogActions,
-  DialogContent,
-} from "material-ui/Dialog";
-import {sendEvent} from "../../../utils";
+import Dialog, { DialogActions, DialogContent } from "material-ui/Dialog";
+import { sendEvent } from "../../../utils";
 
-const {version} = require("../../../../../package.json");
+const { version } = require("../../../../../package.json");
 
 export interface Props {
   open: boolean;
@@ -39,26 +36,31 @@ const Content = styled.div`
   margin-top: 5px;
 `;
 
-const OkButton = ({onClick}: any) => (
+const OkButton = ({ onClick }: any) => (
   <Button onClick={onClick} color="primary">
     OK
   </Button>
 );
 
-const sendLinkEvent = (name: string) => sendEvent("click", {
-  category: "link",
-  value: name,
-});
+const sendLinkEvent = (name: string) =>
+  sendEvent("click", {
+    category: "link",
+    value: name
+  });
 
-const Link = (params: { children: string, href: string, name: string }) => {
+const Link = (params: { children: string; href: string; name: string }) => {
   const onclick = () => {
     sendEvent("click", {
       category: "link",
-      value: params.name,
+      value: params.name
     });
   };
 
-  return (<a onClick={onclick} href={params.href}>{params.children}</a>);
+  return (
+    <a onClick={onclick} href={params.href}>
+      {params.children}
+    </a>
+  );
 };
 
 const SoloLiveWithLink = (
@@ -80,19 +82,13 @@ const KotohonoWithLink = (
 );
 
 const T28WithLink = (
-  <Link
-    name="t28_page"
-    href="https://twitter.com/t28_tatsuya"
-  >
+  <Link name="t28_page" href="https://twitter.com/t28_tatsuya">
     @T28_tatsuya
   </Link>
 );
 
 const DeveloperWithLink = (
-  <Link
-    name="homepage"
-    href="https://www.sokontokoro-factory.net"
-  >
+  <Link name="homepage" href="https://www.sokontokoro-factory.net">
     Tatsuya Yamamoto
   </Link>
 );
@@ -116,16 +112,10 @@ const OssWithLink = (
 );
 
 const InfoDialog = (props: Props) => {
-  const {
-    open,
-    handleClose,
-  } = props;
+  const { open, handleClose } = props;
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-    >
+    <Dialog open={open} onClose={handleClose}>
       <DialogContent>
         <AppTitle>Coupling Tune Player</AppTitle>
         <Version>v {version}</Version>
@@ -133,10 +123,10 @@ const InfoDialog = (props: Props) => {
         <AppDescription>
           このアプリは2つの音声ファイルのBPMを解析して同時に再生するだけの、音楽プレイヤーです。
           音声ファイルをサーバーに送信、保存はしておらず、ブラウザのみで動作しています。
-          PCでの使用を前提としていますが、ファイル選択ができればスマートフォンでも動く、、、はず。<br/>
-          <br/>
-          作成者が{SoloLiveWithLink}で{KotohonoWithLink}するために作成したものですが、組み合わせはあなた次第！<br/>
-          <br/>
+          PCでの使用を前提としていますが、ファイル選択ができればスマートフォンでも動く、、、はず。<br />
+          <br />
+          作成者が{SoloLiveWithLink}で{KotohonoWithLink}するために作成したものですが、組み合わせはあなた次第！<br />
+          <br />
           ご意見・ご要望・ご感想は{T28WithLink}まで！
         </AppDescription>
 
@@ -154,10 +144,9 @@ const InfoDialog = (props: Props) => {
           <Label>Open source license</Label>
           <Content>{OssWithLink}</Content>
         </div>
-
       </DialogContent>
       <DialogActions>
-        <OkButton onClick={handleClose}/>
+        <OkButton onClick={handleClose} />
       </DialogActions>
     </Dialog>
   );

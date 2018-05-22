@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Fragment} from "react";
+import { Fragment } from "react";
 import AutoBind from "autobind-decorator";
 import styled from "styled-components";
 
@@ -20,10 +20,9 @@ class FileAttacheButton extends React.Component<ComponentProps, {}> {
   private inputRef: HTMLInputElement | null = null;
 
   public render() {
-    const {className} = this.props;
+    const { className } = this.props;
     return (
       <Fragment>
-
         <Button
           variant="fab"
           mini={true}
@@ -31,7 +30,7 @@ class FileAttacheButton extends React.Component<ComponentProps, {}> {
           onClick={this.onClick}
           className={className}
         >
-          <Icon/>
+          <Icon />
         </Button>
 
         <Input
@@ -40,7 +39,6 @@ class FileAttacheButton extends React.Component<ComponentProps, {}> {
           innerRef={this.setInnerRef}
           onChange={this.onInputChanged}
         />
-
       </Fragment>
     );
   }

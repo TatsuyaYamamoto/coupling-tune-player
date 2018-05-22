@@ -1,7 +1,7 @@
 import * as React from "react";
 import SvgIcon from "material-ui/SvgIcon";
 import IconButton from "material-ui/IconButton";
-import {MouseEvent} from "react";
+import { MouseEvent } from "react";
 
 /**
  * Twitter SVG Logo
@@ -15,15 +15,15 @@ const svgIcon = (
     x="0px"
     y="0px"
     viewBox="0 0 400 400"
-    style={{enableBackground: "new 0 0 400 400"}}
+    style={{ enableBackground: "new 0 0 400 400" }}
     xmlSpace="preserve"
   >
     <g id="Dark_Blue">
-      <circle style={{fill: "#1DA1F2"}} cx="200" cy="200" r="200"/>
+      <circle style={{ fill: "#1DA1F2" }} cx="200" cy="200" r="200" />
     </g>
     <g id="Logo__x2014__FIXED">
       <path
-        style={{fill: "#FFFFFF"}}
+        style={{ fill: "#FFFFFF" }}
         d="M163.4,305.5c88.7,0,137.2-73.5,137.2-137.2c0-2.1,0-4.2-0.1-6.2c9.4-6.8,17.6-15.3,24.1-25c-8.6,
         3.8-17.9,6.4-27.7,7.6c10-6,17.6-15.4,21.2-26.7c-9.3,5.5-19.6,9.5-30.6,11.7c-8.8-9.4-21.3-15.2-35.2-15.2c-26.6,
         0-48.2,21.6-48.2,48.2c0,3.8,0.4,7.5,1.3,11c-40.1-2-75.6-21.2-99.4-50.4c-4.1,7.1-6.5,15.4-6.5,24.2c0,
@@ -40,13 +40,9 @@ export interface Props {
 }
 
 const TweetButton = (props: Props) => {
-  const {onClick} = props;
+  const { onClick } = props;
 
-  return (
-    <IconButton onClick={onClick}>
-      {svgIcon}
-    </IconButton>
-  );
+  return <IconButton onClick={onClick}>{svgIcon}</IconButton>;
 };
 
 export default TweetButton;

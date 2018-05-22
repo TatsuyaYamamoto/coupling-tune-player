@@ -10,20 +10,18 @@ import InfoButton from "../atoms/button/InfoIconButton";
 import TweetButton from "../atoms/button/TweetButton";
 import InfoDialog from "./dialog/InfoDialog";
 
-import {sendEvent, tweetByWebIntent} from "../../utils";
-import {URL} from "../../constants";
+import { sendEvent, tweetByWebIntent } from "../../utils";
+import { URL } from "../../constants";
 
 const Root = styled.div`
-display: flex;
+  display: flex;
 `;
 
 const CenterSpace = styled.div`
-flex: 1 1 auto;
+  flex: 1 1 auto;
 `;
 
-interface ComponentProps {
-
-}
+interface ComponentProps {}
 
 interface ComponentState {
   isInfoDialogOpen: boolean;
@@ -32,22 +30,21 @@ interface ComponentState {
 @AutoBind
 class AppBar extends React.Component<ComponentProps, ComponentState> {
   public state = {
-    isInfoDialogOpen: false,
+    isInfoDialogOpen: false
   };
 
   public render() {
-    const {isInfoDialogOpen} = this.state;
+    const { isInfoDialogOpen } = this.state;
 
     return (
       <Root>
         <MuiAppBar position="static">
           <Toolbar>
+            <TitleTypography />
 
-            <TitleTypography/>
-
-            <CenterSpace/>
-            <TweetButton onClick={this.onShowTweet}/>
-            <InfoButton onClick={this.onOpenInfoDialog}/>
+            <CenterSpace />
+            <TweetButton onClick={this.onShowTweet} />
+            <InfoButton onClick={this.onOpenInfoDialog} />
           </Toolbar>
         </MuiAppBar>
 
@@ -60,27 +57,27 @@ class AppBar extends React.Component<ComponentProps, ComponentState> {
   }
 
   private onOpenInfoDialog() {
-    this.setState({isInfoDialogOpen: true});
+    this.setState({ isInfoDialogOpen: true });
     sendEvent("click", {
       category: "info",
-      value: "show_about_app",
+      value: "show_about_app"
     });
   }
 
   private onCloseInfoDialog() {
-    this.setState({isInfoDialogOpen: false});
+    this.setState({ isInfoDialogOpen: false });
   }
 
   private onShowTweet() {
     tweetByWebIntent({
       url: URL.COUPLING_TUNE_PLAYER,
       text: "かぷちゅうプレイヤー/Coupling Tune Player",
-      hashtags: ["かぷちゅうプレイヤー", "そこんところ工房"],
+      hashtags: ["かぷちゅうプレイヤー", "そこんところ工房"]
     });
 
     sendEvent("click", {
       category: "info",
-      value: "go_twitter_intent",
+      value: "go_twitter_intent"
     });
   }
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import Button, {ButtonProps} from "material-ui/Button";
+import Button, { ButtonProps } from "material-ui/Button";
 import Icon from "material-ui-icons/PlayArrow";
 
 interface Props extends ButtonProps {
@@ -8,19 +8,11 @@ interface Props extends ButtonProps {
 }
 
 const PlayButton = (props: Props) => {
-  const {
-    onClick,
-    ...other,
-  } = props;
+  const { onClick, ...other } = props;
 
   return (
-    <Button
-      variant="fab"
-      color="primary"
-      onClick={onClick}
-      {...other}
-    >
-      <Icon/>
+    <Button variant="fab" color="primary" onClick={onClick} {...other}>
+      <Icon />
     </Button>
   );
 };

@@ -1,21 +1,25 @@
 import "rc-slider/assets/index.css";
 
 import * as React from "react";
-import {connect} from "react-redux";
-import {Dispatch} from "redux";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import AutoBind from "autobind-decorator";
 import styled from "styled-components";
 
-import Card, {CardContent} from "material-ui/Card";
+import Card, { CardContent } from "material-ui/Card";
 
 import PlayButton from "../atoms/button/PlayButton";
 import PauseButton from "../atoms/button/PauseButton";
 
-import {play as playAudio, pause as pauseAudio, updateCurrentTime} from "../../modules/player";
-import {States} from "../../modules/redux";
+import {
+  play as playAudio,
+  pause as pauseAudio,
+  updateCurrentTime
+} from "../../modules/player";
+import { States } from "../../modules/redux";
 
 import PlayTimeSlider from "../molecules/PlayTimeSlider";
-import {sendEvent} from "../../utils";
+import { sendEvent } from "../../utils";
 
 export interface ComponentProps {
   className?: string;
@@ -34,32 +38,26 @@ const Buttons = styled(CardContent)`
 `;
 
 const Play = styled(PlayButton)`
-&& {
-  margin: 10px;
-}
+  && {
+    margin: 10px;
+  }
 `;
 
 const Pause = styled(PauseButton)`
-&& {
-  margin: 10px;
-}
+  && {
+    margin: 10px;
+  }
 `;
 
 @AutoBind
 class PlayerController extends React.Component<Props, ComponentState> {
   public state = {
-    manualCurrentTime: null,
+    manualCurrentTime: null
   };
 
   public render() {
-    const {
-      playing,
-      ready,
-      className,
-      duration,
-      current,
-    } = this.props;
-    const {manualCurrentTime} = this.state;
+    const { playing, ready, className, duration, current } = this.props;
+    const { manualCurrentTime } = this.state;
 
     return (
       <Card className={className}>
@@ -72,7 +70,11 @@ class PlayerController extends React.Component<Props, ComponentState> {
           onFixed={this.onSliderFixed}
         />
         <Buttons>
-          {playing ? <Pause onClick={this.onPause}/> : <Play disabled={!ready} onClick={this.onPlay}/>}
+          {playing ? (
+            <Pause onClick={this.onPause} />
+          ) : (
+            <Play disabled={!ready} onClick={this.onPlay} />
+          )}
         </Buttons>
       </Card>
     );
@@ -83,7 +85,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
 
     sendEvent("click", {
       category: "player",
-      label: "play",
+      label: "play"
     });
   }
 
@@ -91,21 +93,21 @@ class PlayerController extends React.Component<Props, ComponentState> {
     this.props.pauseAudio();
     sendEvent("click", {
       category: "player",
-      label: "pause",
+      label: "pause"
     });
   }
 
   private onSliderStart() {
-    const {current} = this.props;
-    this.setState({manualCurrentTime: current});
+    const { current } = this.props;
+    this.setState({ manualCurrentTime: current });
   }
 
   private onSliderChange(newValue: number) {
-    this.setState({manualCurrentTime: newValue});
+    this.setState({ manualCurrentTime: newValue });
   }
 
   private async onSliderFixed(newValue: number) {
-    this.setState({manualCurrentTime: null});
+    this.setState({ manualCurrentTime: null });
     const stopOnce = this.props.playing;
 
     if (stopOnce) {
@@ -120,7 +122,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
 
     sendEvent("click", {
       category: "player",
-      label: "slider",
+      label: "slider"
     });
   }
 }
@@ -133,18 +135,13 @@ interface StateProps {
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const {
-    playing,
-    left,
-    right,
-    currentMillis,
-  } = state.player;
+  const { playing, left, right, currentMillis } = state.player;
 
   return {
     playing,
     ready: !!(left && right),
     duration: !!left ? left.buffer.duration * 1000 : 0,
-    current: currentMillis || 0,
+    current: currentMillis || 0
   };
 }
 
@@ -154,15 +151,17 @@ interface DispatchProps {
   updateCurrentTime: (time?: number) => Promise<void>;
 }
 
-function mapDispatchToProps(dispatch: Dispatch<States>, ownProps: ComponentProps): DispatchProps {
+function mapDispatchToProps(
+  dispatch: Dispatch<States>,
+  ownProps: ComponentProps
+): DispatchProps {
   return {
     playAudio: () => dispatch(playAudio()),
     pauseAudio: () => dispatch(pauseAudio()),
-    updateCurrentTime: (time?: number) => dispatch(updateCurrentTime(time)),
+    updateCurrentTime: (time?: number) => dispatch(updateCurrentTime(time))
   };
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(PlayerController) as React.ComponentClass<ComponentProps>;
+export default connect(mapStateToProps, mapDispatchToProps)(
+  PlayerController
+) as React.ComponentClass<ComponentProps>;

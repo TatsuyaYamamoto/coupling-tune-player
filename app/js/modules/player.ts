@@ -1,8 +1,8 @@
-import {AnyAction, Dispatch} from "redux";
-import {States} from "./redux";
+import { AnyAction, Dispatch } from "redux";
+import { States } from "./redux";
 
-import {loadTags} from "./helper/TagLoader";
-import {analyzeBpm} from "./helper/BpmAnalyzer";
+import { loadTags } from "./helper/TagLoader";
+import { analyzeBpm } from "./helper/BpmAnalyzer";
 import Timer = NodeJS.Timer;
 
 export enum PlayerActionTypes {
@@ -13,11 +13,12 @@ export enum PlayerActionTypes {
   ANALYZE_BPM_SUCCESS = "c_tune/player/analyze_bpm_success",
   PLAY = "c_tune/player/play",
   PAUSE = "c_tune/player/pause",
-  UPDATE_CURRENT = "c_tune/player/update_current",
+  UPDATE_CURRENT = "c_tune/player/update_current"
 }
 
 // TODO Check supporting WebAudioAPI
-const AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
+const AudioContext =
+  (window as any).AudioContext || (window as any).webkitAudioContext;
 const context: AudioContext = new AudioContext();
 let leftAudioSource: AudioBufferSourceNode | null = null;
 let rightAudioSource: AudioBufferSourceNode | null = null;
@@ -34,7 +35,7 @@ let intervalId: Timer | number | null = null;
 export function load(file: File, type: "left" | "right") {
   return async (dispatch: Dispatch<States>) => {
     // TODO: Check audio file.
-    dispatch({type: PlayerActionTypes.LOAD_REQUEST});
+    dispatch({ type: PlayerActionTypes.LOAD_REQUEST });
 
     const audioBuffer = await dispatch(loadAsAudioBuffer(file, type));
     if (audioBuffer) {
@@ -43,7 +44,7 @@ export function load(file: File, type: "left" | "right") {
 
     await dispatch(loadAudioTag(file, type));
 
-    dispatch({type: PlayerActionTypes.LOAD_SUCCESS});
+    dispatch({ type: PlayerActionTypes.LOAD_SUCCESS });
   };
 }
 
@@ -56,14 +57,15 @@ export function load(file: File, type: "left" | "right") {
  */
 function loadAudioTag(file: File, type: "right" | "left") {
   return async (dispatch: Dispatch<States>) => {
-    const tag = await loadTags(file)
-      .catch((e) => console.error(e));
+    const tag = await loadTags(file).catch(e => console.error(e));
 
     console.log("Loaded tags", tag);
 
     const title = !!(tag && tag.title) ? tag.title : file.name;
     const artist = !!(tag && tag.artist) ? tag.artist : null;
-    const pictureBase64 = !!(tag && tag.pictureBase64) ? tag.pictureBase64 : null;
+    const pictureBase64 = !!(tag && tag.pictureBase64)
+      ? tag.pictureBase64
+      : null;
 
     dispatch({
       type: PlayerActionTypes.LOAD_TAG_SUCCESS,
@@ -71,8 +73,8 @@ function loadAudioTag(file: File, type: "right" | "left") {
         type,
         title,
         artist,
-        pictureBase64,
-      },
+        pictureBase64
+      }
     });
   };
 }
@@ -86,19 +88,21 @@ function loadAudioTag(file: File, type: "right" | "left") {
  */
 function loadAsAudioBuffer(file: File, type: "right" | "left") {
   return async (dispatch: Dispatch<States>): Promise<AudioBuffer | void> => {
-
     const audioBuffer = await Promise.resolve()
-      .then(() => new Promise<ArrayBuffer>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.readAsArrayBuffer(file);
-      }))
+      .then(
+        () =>
+          new Promise<ArrayBuffer>(resolve => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.readAsArrayBuffer(file);
+          })
+      )
       .then((arrayBuffer: ArrayBuffer) => context.decodeAudioData(arrayBuffer))
-      .catch((e) => console.error(e));
+      .catch(e => console.error(e));
 
     dispatch({
       type: PlayerActionTypes.LOAD_BUFFER_SUCCESS,
-      payload: {type, audioBuffer},
+      payload: { type, audioBuffer }
     });
 
     return audioBuffer;
@@ -114,7 +118,6 @@ function loadAsAudioBuffer(file: File, type: "right" | "left") {
  */
 function analyzeAudioBpm(audio: AudioBuffer, type: "right" | "left") {
   return async (dispatch: Dispatch<States>): Promise<void> => {
-
     const result = await analyzeBpm(audio);
 
     console.log("analyzed BPM", result);
@@ -126,7 +129,7 @@ function analyzeAudioBpm(audio: AudioBuffer, type: "right" | "left") {
 
     dispatch({
       type: PlayerActionTypes.ANALYZE_BPM_SUCCESS,
-      payload,
+      payload
     });
   };
 }
@@ -138,11 +141,7 @@ function analyzeAudioBpm(audio: AudioBuffer, type: "right" | "left") {
  */
 export function play() {
   return async (dispatch: Dispatch<States>, getState: () => States) => {
-    const {
-      left,
-      right,
-      currentMillis,
-    } = getState().player;
+    const { left, right, currentMillis } = getState().player;
 
     if (!left || !right) {
       console.error("No audio buffer of right or left.");
@@ -174,7 +173,6 @@ export function play() {
 
     if (0 < diffMillis) {
       leftAudioOffset += diffMillis;
-
     } else {
       rightAudioOffset += -1 * diffMillis;
     }
@@ -183,7 +181,7 @@ export function play() {
     rightAudioSource.start(0, rightAudioOffset / 1000);
 
     dispatch({
-      type: PlayerActionTypes.PLAY,
+      type: PlayerActionTypes.PLAY
     });
 
     intervalId = setInterval(() => {
@@ -199,7 +197,7 @@ export function play() {
  */
 export function pause() {
   return async (dispatch: Dispatch<States>, getState: () => States) => {
-    const {playing} = getState().player;
+    const { playing } = getState().player;
 
     if (!playing) {
       console.error("Player is not running.");
@@ -221,7 +219,7 @@ export function pause() {
     intervalId = null;
 
     dispatch({
-      type: PlayerActionTypes.PAUSE,
+      type: PlayerActionTypes.PAUSE
     });
   };
 }
@@ -233,14 +231,12 @@ export function pause() {
  */
 export function updateCurrentTime(time?: number) {
   return async (dispatch: Dispatch<States>, getState: () => States) => {
-    const {
-      currentMillis,
-    } = getState().player;
+    const { currentMillis } = getState().player;
 
     if (time) {
       dispatch({
         type: PlayerActionTypes.UPDATE_CURRENT,
-        payload: {currentMillis: time},
+        payload: { currentMillis: time }
       });
       return;
     }
@@ -257,8 +253,8 @@ export function updateCurrentTime(time?: number) {
     dispatch({
       type: PlayerActionTypes.UPDATE_CURRENT,
       payload: {
-        currentMillis: currentMillis + add,
-      },
+        currentMillis: currentMillis + add
+      }
     });
   };
 }
@@ -287,61 +283,75 @@ const initialState: PlayerState = {
   durationMillis: 0,
   currentMillis: 0,
   left: null,
-  right: null,
+  right: null
 };
 
-export default function reducer(state: PlayerState = initialState, action: AnyAction): PlayerState {
-  const {type, payload} = action;
+export default function reducer(
+  state: PlayerState = initialState,
+  action: AnyAction
+): PlayerState {
+  const { type, payload } = action;
 
   switch (type) {
-
     case PlayerActionTypes.LOAD_REQUEST:
       return Object.assign({}, state, {
-        loading: true,
+        loading: true
       });
 
     case PlayerActionTypes.LOAD_SUCCESS:
       return Object.assign({}, state, {
-        loading: false,
+        loading: false
       });
 
     case PlayerActionTypes.LOAD_BUFFER_SUCCESS:
       return Object.assign({}, state, {
-        [payload.type]: Object.assign({}, payload.type === "right" ? state.right : state.left, {
-          buffer: payload.audioBuffer,
-        }),
+        [payload.type]: Object.assign(
+          {},
+          payload.type === "right" ? state.right : state.left,
+          {
+            buffer: payload.audioBuffer
+          }
+        )
       });
 
     case PlayerActionTypes.ANALYZE_BPM_SUCCESS:
       return Object.assign({}, state, {
-        [payload.type]: Object.assign({}, payload.type === "right" ? state.right : state.left, {
-          bpm: payload.bpm,
-          startPositionMillis: payload.startPositionMillis,
-        }),
+        [payload.type]: Object.assign(
+          {},
+          payload.type === "right" ? state.right : state.left,
+          {
+            bpm: payload.bpm,
+            startPositionMillis: payload.startPositionMillis
+          }
+        )
       });
 
     case PlayerActionTypes.LOAD_TAG_SUCCESS:
       return Object.assign({}, state, {
-        [payload.type]: Object.assign({}, payload.type === "right" ? state.right : state.left, {
-          title: payload.title,
-          artist: payload.artist,
-          pictureBase64: payload.pictureBase64,
-        }),
+        [payload.type]: Object.assign(
+          {},
+          payload.type === "right" ? state.right : state.left,
+          {
+            title: payload.title,
+            artist: payload.artist,
+            pictureBase64: payload.pictureBase64
+          }
+        )
       });
 
     case PlayerActionTypes.PLAY:
       return Object.assign({}, state, {
-        playing: true,
+        playing: true
       });
 
     case PlayerActionTypes.PAUSE:
       return Object.assign({}, state, {
-        playing: false,
+        playing: false
       });
 
     case PlayerActionTypes.UPDATE_CURRENT:
       return Object.assign({}, state, {
-        currentMillis: payload.currentMillis,
+        currentMillis: payload.currentMillis
       });
 
     default:

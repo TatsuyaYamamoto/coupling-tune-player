@@ -8,19 +8,11 @@ interface Props {
 }
 
 const PauseButton = (props: Props) => {
-  const {
-    onClick,
-    ...other,
-  } = props;
+  const { onClick, ...other } = props;
 
   return (
-    <Button
-      variant="fab"
-      color="primary"
-      onClick={onClick}
-      {...other}
-    >
-      <Icon/>
+    <Button variant="fab" color="primary" onClick={onClick} {...other}>
+      <Icon />
     </Button>
   );
 };

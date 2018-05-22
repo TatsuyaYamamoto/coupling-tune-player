@@ -21,7 +21,8 @@ interface RootProps {
 
 const Root = styled.div`
   display: flex;
-  flex-direction: ${(props: RootProps) => props.reverse ? "row-reverse" : "row"};
+  flex-direction: ${(props: RootProps) =>
+    props.reverse ? "row-reverse" : "row"};
   align-items: center;
 `;
 
@@ -62,9 +63,9 @@ interface DetailProps {
 const Detail = styled.div`
   flex: 1;
   overflow: hidden;
-  text-align: ${(props: DetailProps) => props.reverse ? "right" : "left"};
-  margin-left: ${(props: DetailProps) => props.reverse ? "0px" : "30px"};
-  margin-right: ${(props: DetailProps) => props.reverse ? "30px" : "0px"};
+  text-align: ${(props: DetailProps) => (props.reverse ? "right" : "left")};
+  margin-left: ${(props: DetailProps) => (props.reverse ? "0px" : "30px")};
+  margin-right: ${(props: DetailProps) => (props.reverse ? "30px" : "0px")};
 `;
 
 const FileButton = styled(FileAttacheButton)`
@@ -73,12 +74,12 @@ const FileButton = styled(FileAttacheButton)`
 
 const Image = styled.img`
   width: 100%;
-	height: 100%;
+  height: 100%;
 `;
 
 const NoImage = styled(CdSvg)`
   width: 100%;
-	height: 100%;
+  height: 100%;
 `;
 
 const AudioDetail = (props: Props) => {
@@ -88,21 +89,19 @@ const AudioDetail = (props: Props) => {
     imageSrc,
     onAudioSelected,
     reverse,
-    className,
+    className
   } = props;
 
   const detail = (
     <Detail reverse={reverse}>
       <WrapTitle>{title}</WrapTitle>
       <WrapArtist>{artist}</WrapArtist>
-      <FileButton onSelected={onAudioSelected}/>
+      <FileButton onSelected={onAudioSelected} />
     </Detail>
   );
 
   const picture = (
-    <CdCover>
-      {imageSrc ? <Image src={imageSrc}/> : <NoImage/>}
-    </CdCover>
+    <CdCover>{imageSrc ? <Image src={imageSrc} /> : <NoImage />}</CdCover>
   );
 
   return (

@@ -1,9 +1,8 @@
 import * as React from "react";
-import {ReactNode} from "react";
+import { ReactNode } from "react";
 import styled from "styled-components";
 
-const Root = styled.div`
-`;
+const Root = styled.div``;
 
 const NoData = styled.span`
   display: inline-block;
@@ -19,9 +18,7 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const {children, className} = props;
+  const { children, className } = props;
 
-  return (
-    <Root className={className}>{children || <NoData/>}</Root>
-  );
+  return <Root className={className}>{children || <NoData />}</Root>;
 };

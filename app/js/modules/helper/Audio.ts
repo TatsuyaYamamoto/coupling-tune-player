@@ -1,7 +1,7 @@
-import {EventEmitter, ListenerFn} from "eventemitter3";
+import { EventEmitter, ListenerFn } from "eventemitter3";
 import AutoBind from "autobind-decorator";
 
-const {read: readTags} = require("jsmediatags/dist/jsmediatags.min.js");
+const { read: readTags } = require("jsmediatags/dist/jsmediatags.min.js");
 
 export interface AudioConstructor {
   file: File;
@@ -18,12 +18,12 @@ class Audio {
   private _pictureBase64: string | null = null;
 
   public constructor(props: AudioConstructor) {
-    const {file} = props;
+    const { file } = props;
     this._file = file;
   }
 
   public static load(file: File): Audio {
-    return new Audio({file});
+    return new Audio({ file });
   }
 
   public get file(): File {
@@ -55,34 +55,32 @@ class Audio {
   }
 
   public loadTags(): Promise<void> {
-    return new Promise(((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       readTags(this._file, {
-        onSuccess: ({tags}: any) => { // TODO define type
+        onSuccess: ({ tags }: any) => {
+          // TODO define type
           this.onLoadTagsSucceed(tags);
           resolve();
         },
-        onError: reject,
+        onError: reject
       });
-    }));
+    });
   }
 
   private onLoadTagsSucceed(tags: any) {
-    const {
-      title,
-      artist,
-      picture,
-    } = tags;
+    const { title, artist, picture } = tags;
 
     this._title = title;
     this._artist = artist;
 
     if (picture && picture.data && picture.format) {
-      const base64String = Array
-        .from<number>(picture.data)
-        .map((code) => String.fromCharCode(code))
+      const base64String = Array.from<number>(picture.data)
+        .map(code => String.fromCharCode(code))
         .join("");
 
-      this._pictureBase64 = `data:${picture.format};base64,${window.btoa(base64String)}`;
+      this._pictureBase64 = `data:${picture.format};base64,${window.btoa(
+        base64String
+      )}`;
     }
 
     this._eventEmitter.emit("tagloaded");

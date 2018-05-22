@@ -6,7 +6,7 @@ const TitleTypography = () => {
     <Typography
       variant="title"
       color="inherit"
-      style={{fontFamily: "Nico Moji"}}
+      style={{ fontFamily: "Nico Moji" }}
     >
       かぷちゅうプレイヤー/Coupling Tune Player
     </Typography>

@@ -1,27 +1,26 @@
 import * as React from "react";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import styled from "styled-components";
 import AutoBind from "autobind-decorator";
 
-import {States} from "../../modules/redux";
+import { States } from "../../modules/redux";
 
 import AudioDetail from "../molecules/AudioDetail";
 
-import {AudioState, load as loadAudio} from "../../modules/player";
-import {Dispatch} from "redux";
+import { AudioState, load as loadAudio } from "../../modules/player";
+import { Dispatch } from "redux";
 import LoadingDialog from "./dialog/LoadingDialog";
-import {sendEvent} from "../../utils";
+import { sendEvent } from "../../utils";
 
 export interface ComponentProps {
   className?: string;
 }
 
-export interface ComponentState {
-}
+export interface ComponentState {}
 
 const Root = styled.div`
   display: flex;
-  flex-direction : column;
+  flex-direction: column;
   max-width: 900px;
   margin: 0 auto;
   padding: 30px 10px;
@@ -32,19 +31,17 @@ interface DetailProps {
 }
 
 const Detail = styled(AudioDetail)`
-  margin-top: ${(props: DetailProps) => props.reverse ? "10px" : 0};
-  margin-bottom: ${(props: DetailProps) => props.reverse ? 0 : "10px"};
+  margin-top: ${(props: DetailProps) => (props.reverse ? "10px" : 0)};
+  margin-bottom: ${(props: DetailProps) => (props.reverse ? 0 : "10px")};
 `;
 
 @AutoBind
-class AudioInformation extends React.Component<ComponentProps & DispatchProps & StateProps, ComponentState> {
+class AudioInformation extends React.Component<
+  ComponentProps & DispatchProps & StateProps,
+  ComponentState
+> {
   public render() {
-    const {
-      className,
-      left,
-      right,
-      loading,
-    } = this.props;
+    const { className, left, right, loading } = this.props;
     let leftTitle = null;
     let leftArtist = null;
     let leftImageSrc = null;
@@ -79,7 +76,7 @@ class AudioInformation extends React.Component<ComponentProps & DispatchProps & 
           onAudioSelected={this.onRightAudioFileSelected}
         />
 
-        <LoadingDialog open={loading}/>
+        <LoadingDialog open={loading} />
       </Root>
     );
   }
@@ -90,7 +87,7 @@ class AudioInformation extends React.Component<ComponentProps & DispatchProps & 
     sendEvent("click", {
       category: "player",
       label: "select_audio",
-      value: "left",
+      value: "left"
     });
   }
 
@@ -100,7 +97,7 @@ class AudioInformation extends React.Component<ComponentProps & DispatchProps & 
     sendEvent("click", {
       category: "player",
       label: "select_audio",
-      value: "right",
+      value: "right"
     });
   }
 }
@@ -112,12 +109,12 @@ interface StateProps {
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const {left, right, loading} = state.player;
+  const { left, right, loading } = state.player;
 
   return {
     left,
     right,
-    loading,
+    loading
   };
 }
 
@@ -125,15 +122,17 @@ interface DispatchProps {
   loadAudio: (file: File, type: "left" | "right") => void;
 }
 
-function mapDispatchToProps(dispatch: Dispatch<States>, ownProps: ComponentProps): DispatchProps {
+function mapDispatchToProps(
+  dispatch: Dispatch<States>,
+  ownProps: ComponentProps
+): DispatchProps {
   return {
     loadAudio: (file: File, type: "left" | "right") => {
       dispatch(loadAudio(file, type));
-    },
+    }
   };
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AudioInformation) as React.ComponentClass<ComponentProps>;
+export default connect(mapStateToProps, mapDispatchToProps)(
+  AudioInformation
+) as React.ComponentClass<ComponentProps>;
