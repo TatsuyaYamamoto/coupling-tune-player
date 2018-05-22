@@ -1,13 +1,16 @@
 {
   "name": "coupling-tune-player",
   "version": "1.0.3",
-  "description": "Provide the justice audio! Play 2 audio files and analyze BPM and beat to sync.",
+  "description":
+    "Provide the justice audio! Play 2 audio files and analyze BPM and beat to sync.",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server -w",
     "build": "webpack --colors --progress",
     "build:pro": "NODE_ENV=production npm run build",
-    "lint": "tslint --project ."
+    "lint": "tslint --project .",
+    "format": "prettier --write 'app/**/*.{ts,tsx}'",
+    "precommit": "pretty-quick --staged"
   },
   "author": "TatsuyaYamamoto",
   "license": "MIT",
