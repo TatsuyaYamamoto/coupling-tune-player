@@ -1,6 +1,5 @@
 import * as React from "react";
-import { ReactNode } from "react";
-import styled from "styled-components";
+import { default as styled } from "styled-components";
 
 const Root = styled.div``;
 
@@ -14,7 +13,7 @@ const NoData = styled.span`
 
 interface Props {
   className?: string;
-  children?: ReactNode | null;
+  children?: React.ReactNode | null;
 }
 
 export default (props: Props) => {

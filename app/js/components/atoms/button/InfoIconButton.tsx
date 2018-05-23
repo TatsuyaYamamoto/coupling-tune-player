@@ -1,11 +1,10 @@
 import * as React from "react";
 
-import Icon from "material-ui-icons/InfoOutline";
-import IconButton from "material-ui/IconButton";
-import { MouseEvent } from "react";
+import { IconButton } from "material-ui";
+import { InfoOutline as Icon } from "material-ui-icons";
 
 export interface Props {
-  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const InfoIconButton = (props: Props) => {

@@ -24,15 +24,14 @@ export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
     sampleRate: samplingRate
   } = audio;
 
-  const channels = [];
-  for (let i = 0; i < numberOfChannels; i++) {
-    channels[i] = audio.getChannelData(i);
-  }
+  const channels = [...Array(numberOfChannels)].map((_, i) =>
+    audio.getChannelData(i)
+  );
 
   const results: AnalyzeResult[] = channels.map((channel: Float32Array) => {
     const N = floor(channel.length / SAMPLES_PER_FRAME);
 
-    const effectiveVolumes = new Array(N).fill(0).map((v, i) => {
+    const effectiveVolumes = [...Array(N)].fill(0).map((v, i) => {
       const startIndex = i * SAMPLES_PER_FRAME;
 
       return effectiveValueOf(
@@ -51,6 +50,7 @@ export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
     const r = [];
     const framesPerSec = samplingRate / SAMPLES_PER_FRAME;
 
+    // tslint:disable-next-line:no-increment-decrement
     for (let i /*BPM*/ = MIN_BPM; i <= MAX_BPM; i++) {
       let aSum = 0;
       let bSum = 0;

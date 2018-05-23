@@ -1,12 +1,11 @@
 import * as React from "react";
-import styled from "styled-components";
-import AutoBind from "autobind-decorator";
+import { default as styled } from "styled-components";
+import { default as AutoBind } from "autobind-decorator";
 
-import MuiAppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
+import { AppBar as MuiAppBar, Toolbar } from "material-ui";
 
 import TitleTypography from "../atoms/TitleTypography";
-import InfoButton from "../atoms/button/InfoIconButton";
+import InfoIconButton from "../atoms/button/InfoIconButton";
 import TweetButton from "../atoms/button/TweetButton";
 import InfoDialog from "./dialog/InfoDialog";
 
@@ -44,7 +43,7 @@ class AppBar extends React.Component<ComponentProps, ComponentState> {
 
             <CenterSpace />
             <TweetButton onClick={this.onShowTweet} />
-            <InfoButton onClick={this.onOpenInfoDialog} />
+            <InfoIconButton onClick={this.onOpenInfoDialog} />
           </Toolbar>
         </MuiAppBar>
 

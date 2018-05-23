@@ -128,8 +128,8 @@ function analyzeAudioBpm(audio: AudioBuffer, type: "right" | "left") {
     payload.startPositionMillis = result && result.startPosition * 1000;
 
     dispatch({
-      type: PlayerActionTypes.ANALYZE_BPM_SUCCESS,
-      payload
+      payload,
+      type: PlayerActionTypes.ANALYZE_BPM_SUCCESS
     });
   };
 }

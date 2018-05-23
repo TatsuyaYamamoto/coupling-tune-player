@@ -1,5 +1,5 @@
 import { EventEmitter, ListenerFn } from "eventemitter3";
-import AutoBind from "autobind-decorator";
+import { default as AutoBind } from "autobind-decorator";
 
 const { read: readTags } = require("jsmediatags/dist/jsmediatags.min.js");
 

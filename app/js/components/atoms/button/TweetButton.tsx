@@ -1,7 +1,6 @@
 import * as React from "react";
 import SvgIcon from "material-ui/SvgIcon";
 import IconButton from "material-ui/IconButton";
-import { MouseEvent } from "react";
 
 /**
  * Twitter SVG Logo
@@ -36,7 +35,7 @@ const svgIcon = (
 );
 
 export interface Props {
-  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const TweetButton = (props: Props) => {

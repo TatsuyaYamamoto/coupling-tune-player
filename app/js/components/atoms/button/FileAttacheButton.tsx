@@ -1,10 +1,9 @@
 import * as React from "react";
-import { Fragment } from "react";
-import AutoBind from "autobind-decorator";
-import styled from "styled-components";
+import { default as AutoBind } from "autobind-decorator";
+import { default as styled } from "styled-components";
 
-import Button from "material-ui/Button";
-import Icon from "material-ui-icons/AttachFile";
+import { Button } from "material-ui";
+import { AttachFile as Icon } from "material-ui-icons";
 
 export interface ComponentProps {
   className?: string;
@@ -22,7 +21,7 @@ class FileAttacheButton extends React.Component<ComponentProps, {}> {
   public render() {
     const { className } = this.props;
     return (
-      <Fragment>
+      <React.Fragment>
         <Button
           variant="fab"
           mini={true}
@@ -39,7 +38,7 @@ class FileAttacheButton extends React.Component<ComponentProps, {}> {
           innerRef={this.setInnerRef}
           onChange={this.onInputChanged}
         />
-      </Fragment>
+      </React.Fragment>
     );
   }
 

@@ -1,9 +1,9 @@
 import * as React from "react";
-import styled from "styled-components";
+import { default as styled } from "styled-components";
 
 import FileAttacheButton from "../atoms/button/FileAttacheButton";
-import Title from "../atoms/AudioTitle";
-import Artist from "../atoms/AudioArtist";
+import { default as Title } from "../atoms/AudioTitle";
+import { default as Artist } from "../atoms/AudioArtist";
 import CdSvg from "../atoms/CdSvg";
 
 interface Props {

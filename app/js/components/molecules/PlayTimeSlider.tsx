@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import Slider from "rc-slider";
+import { default as Slider } from "rc-slider";
 
 interface Props {
   min: number;

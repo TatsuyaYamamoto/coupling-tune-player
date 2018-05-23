@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Fragment } from "react";
 import { Provider } from "react-redux";
 
 import { MuiThemeProvider, createMuiTheme } from "material-ui/styles";
@@ -28,14 +27,14 @@ const muiTheme = createMuiTheme({
 });
 
 const App = () => (
-  <Fragment>
+  <React.Fragment>
     <CssBaseline />
     <Provider store={store}>
       <MuiThemeProvider theme={muiTheme}>
         <Index />
       </MuiThemeProvider>
     </Provider>
-  </Fragment>
+  </React.Fragment>
 );
 
 export default App;

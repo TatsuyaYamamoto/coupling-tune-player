@@ -1,5 +1,5 @@
 import * as React from "react";
-import styled from "styled-components";
+import { default as styled } from "styled-components";
 
 import Dialog, { DialogContent } from "material-ui/Dialog";
 import { CircularProgress } from "material-ui/Progress";

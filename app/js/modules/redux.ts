@@ -1,5 +1,5 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
-import thunk from "redux-thunk";
+import reduxThunk from "redux-thunk";
 
 import player, { PlayerState } from "./player";
 
@@ -10,7 +10,7 @@ export const store = createStore(
   combineReducers<States>({
     player
   }),
-  composeEnhancers(applyMiddleware(thunk))
+  composeEnhancers(applyMiddleware(reduxThunk))
 );
 
 export interface States {

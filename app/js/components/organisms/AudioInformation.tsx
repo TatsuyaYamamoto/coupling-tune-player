@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import styled from "styled-components";
-import AutoBind from "autobind-decorator";
+import { default as styled } from "styled-components";
+import { default as AutoBind } from "autobind-decorator";
 
 import { States } from "../../modules/redux";
 

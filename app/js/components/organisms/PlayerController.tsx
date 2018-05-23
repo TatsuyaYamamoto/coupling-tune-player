@@ -3,8 +3,8 @@ import "rc-slider/assets/index.css";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-import AutoBind from "autobind-decorator";
-import styled from "styled-components";
+import { default as AutoBind } from "autobind-decorator";
+import { default as styled } from "styled-components";
 
 import Card, { CardContent } from "material-ui/Card";
 

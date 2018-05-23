@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Fragment } from "react";
-import AutoBind from "autobind-decorator";
-import styled from "styled-components";
+import { default as AutoBind } from "autobind-decorator";
+import { default as styled } from "styled-components";
 
 import AppBar from "../organisms/AppBar";
 import AudioInformation from "../organisms/AudioInformation";
@@ -21,11 +20,11 @@ const Info = styled(AudioInformation)`
 class Index extends React.Component {
   public render() {
     return (
-      <Fragment>
+      <React.Fragment>
         <AppBar />
         <Info />
         <Controller />
-      </Fragment>
+      </React.Fragment>
     );
   }
 }
