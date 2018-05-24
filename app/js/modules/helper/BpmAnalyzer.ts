@@ -24,9 +24,9 @@ export async function analyzeBpm(audio: AudioBuffer): Promise<AnalyzeResult> {
     sampleRate: samplingRate
   } = audio;
 
-  const channels = [...Array(numberOfChannels)].map((_, i) =>
-    audio.getChannelData(i)
-  );
+  const channels = [...Array(numberOfChannels)]
+    .fill(0)
+    .map((_, i) => audio.getChannelData(i));
 
   const results: AnalyzeResult[] = channels.map((channel: Float32Array) => {
     const N = floor(channel.length / SAMPLES_PER_FRAME);
