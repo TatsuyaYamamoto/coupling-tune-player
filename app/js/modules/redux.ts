@@ -1,16 +1,30 @@
-import { createStore, combineReducers, applyMiddleware, compose } from "redux";
+import {
+  createStore,
+  combineReducers,
+  applyMiddleware,
+  compose,
+  Middleware
+} from "redux";
 import reduxThunk from "redux-thunk";
+import { createLogger } from "redux-logger";
 
 import player, { PlayerState } from "./player";
 
-const composeEnhancers =
-  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const logger = createLogger({
+  collapsed: true
+});
+
+const middlewares: Middleware[] = [reduxThunk];
+
+if (process.env.NODE_ENV !== "production") {
+  middlewares.push(logger);
+}
 
 export const store = createStore(
   combineReducers<States>({
     player
   }),
-  composeEnhancers(applyMiddleware(reduxThunk))
+  applyMiddleware(...middlewares)
 );
 
 export interface States {
