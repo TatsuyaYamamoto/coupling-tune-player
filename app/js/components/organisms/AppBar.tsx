@@ -37,7 +37,7 @@ class AppBar extends React.Component<ComponentProps, ComponentState> {
 
     return (
       <Root>
-        <MuiAppBar position="static">
+        <MuiAppBar position="fixed">
           <Toolbar>
             <TitleTypography />
 

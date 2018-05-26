@@ -5,6 +5,7 @@ import { default as styled } from "styled-components";
 import AppBar from "../organisms/AppBar";
 import AudioInformation from "../organisms/AudioInformation";
 import PlayerController from "../organisms/PlayerController";
+import AudioList from "../organisms/AudioList";
 
 const Controller = styled(PlayerController)`
   position: fixed;
@@ -12,8 +13,8 @@ const Controller = styled(PlayerController)`
   width: 100%;
 `;
 
-const Info = styled(AudioInformation)`
-  margin-bottom: 130px;
+const MainPanel = styled.div`
+  margin: 50px 30px 200px;
 `;
 
 @AutoBind
@@ -22,7 +23,10 @@ class Index extends React.Component {
     return (
       <React.Fragment>
         <AppBar />
-        <Info />
+        <MainPanel>
+          <AudioInformation />
+          <AudioList />
+        </MainPanel>
         <Controller />
       </React.Fragment>
     );
