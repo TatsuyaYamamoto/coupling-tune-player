@@ -9,6 +9,7 @@ import reduxThunk from "redux-thunk";
 import { createLogger } from "redux-logger";
 
 import player, { PlayerState } from "./player";
+import audiolist, { AudioListState } from "./audiolist";
 
 const logger = createLogger({
   collapsed: true
@@ -22,11 +23,13 @@ if (process.env.NODE_ENV !== "production") {
 
 export const store = createStore(
   combineReducers<States>({
-    player
+    player,
+    audiolist
   }),
   applyMiddleware(...middlewares)
 );
 
 export interface States {
   player: PlayerState;
+  audiolist: AudioListState;
 }

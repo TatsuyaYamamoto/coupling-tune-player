@@ -10,7 +10,7 @@ interface Props {
   title: string | null;
   artist: string | null;
   imageSrc: string | null;
-  onAudioSelected?: (path: File) => void;
+  onAudioSelected?: (fileList: FileList) => void;
   reverse?: boolean;
   className?: string;
 }

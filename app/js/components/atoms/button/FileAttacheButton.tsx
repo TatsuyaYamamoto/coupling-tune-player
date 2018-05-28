@@ -7,7 +7,7 @@ import { AttachFile as Icon } from "material-ui-icons";
 
 export interface ComponentProps {
   className?: string;
-  onSelected?: (path: File) => void;
+  onSelected?: (fileList: FileList) => void;
 }
 
 const Input = styled.input`
@@ -63,7 +63,7 @@ class FileAttacheButton extends React.Component<ComponentProps, {}> {
     }
 
     if (this.props.onSelected) {
-      this.props.onSelected(fileList[0]);
+      this.props.onSelected(fileList);
     }
   }
 }

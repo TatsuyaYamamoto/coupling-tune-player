@@ -1,4 +1,5 @@
 import * as React from "react";
+import { connect, Dispatch } from "react-redux";
 
 import {
   Paper,
@@ -10,22 +11,20 @@ import {
 } from "material-ui";
 import { PlayArrow } from "material-ui-icons";
 
+import { States } from "../../modules/redux";
+import { AudioItemState } from "../../modules/audiolist";
+
 export interface ComponentState {}
 
 export interface ComponentProps {
   className?: string;
 }
 
-type Props = ComponentProps;
+type Props = ComponentProps & StateProps & DispatchProps;
 
 class AudioList extends React.Component<Props, ComponentState> {
   public render() {
-    const { className } = this.props;
-    const audioList = [
-      { track: 1, title: "title11111111111111111" },
-      { track: 2, title: "title2" },
-      { track: 3, title: "title3" }
-    ];
+    const { className, list } = this.props;
 
     return (
       <div>
@@ -48,19 +47,24 @@ class AudioList extends React.Component<Props, ComponentState> {
               </TableRow>
             </TableHead>
             <TableBody>
-              {audioList.map(row => (
-                <TableRow key={row.title} hover={true}>
-                  <TableCell padding={"none"} style={{ textAlign: "right" }}>
-                    {row.title}
-                  </TableCell>
-                  <TableCell padding={"none"} style={{ textAlign: "center" }}>
-                    <PlayArrow />
-                  </TableCell>
-                  <TableCell padding={"none"} style={{ textAlign: "left" }}>
-                    {row.title}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {list.map(item => {
+                const { left, right } = item;
+                const leftTitle = left ? left.title : "";
+                const rightTitle = right ? right.title : "";
+                return (
+                  <TableRow key={`${leftTitle}@${rightTitle}`} hover={true}>
+                    <TableCell padding={"none"} style={{ textAlign: "right" }}>
+                      {leftTitle}
+                    </TableCell>
+                    <TableCell padding={"none"} style={{ textAlign: "center" }}>
+                      <PlayArrow />
+                    </TableCell>
+                    <TableCell padding={"none"} style={{ textAlign: "left" }}>
+                      {rightTitle}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </Paper>
@@ -69,4 +73,24 @@ class AudioList extends React.Component<Props, ComponentState> {
   }
 }
 
-export default AudioList;
+interface StateProps {
+  list: AudioItemState[];
+}
+
+function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
+  const { list } = state.audiolist;
+  return { list };
+}
+
+interface DispatchProps {}
+
+function mapDispatchToProps(
+  dispatch: Dispatch<States>,
+  ownProps: ComponentProps
+): DispatchProps {
+  return {};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(
+  AudioList
+) as React.ComponentClass<ComponentProps>;

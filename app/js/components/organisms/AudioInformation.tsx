@@ -12,6 +12,7 @@ import AudioDetail from "../molecules/AudioDetail";
 import LoadingDialog from "./dialog/LoadingDialog";
 
 import { sendEvent } from "../../utils";
+import { select } from "../../modules/audiolist";
 
 export interface ComponentProps {
   className?: string;
@@ -82,8 +83,8 @@ class AudioInformation extends React.Component<
     );
   }
 
-  private onLeftAudioFileSelected(file: File) {
-    this.props.loadAudio(file, "left");
+  private onLeftAudioFileSelected(fileList: FileList) {
+    this.props.selectLeftAudios(fileList);
 
     sendEvent("click", {
       category: "player",
@@ -92,8 +93,8 @@ class AudioInformation extends React.Component<
     });
   }
 
-  private onRightAudioFileSelected(file: File) {
-    this.props.loadAudio(file, "right");
+  private onRightAudioFileSelected(fileList: FileList) {
+    this.props.selectRightAudios(fileList);
 
     sendEvent("click", {
       category: "player",
@@ -120,7 +121,8 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
 }
 
 interface DispatchProps {
-  loadAudio: (file: File, type: "left" | "right") => void;
+  selectLeftAudios: (file: FileList) => void;
+  selectRightAudios: (file: FileList) => void;
 }
 
 function mapDispatchToProps(
@@ -128,8 +130,11 @@ function mapDispatchToProps(
   ownProps: ComponentProps
 ): DispatchProps {
   return {
-    loadAudio: (file: File, type: "left" | "right") => {
-      dispatch(loadAudio(file, type));
+    selectLeftAudios: (files: FileList) => {
+      dispatch(select(files, "left"));
+    },
+    selectRightAudios: (files: FileList) => {
+      dispatch(select(files, "right"));
     }
   };
 }
