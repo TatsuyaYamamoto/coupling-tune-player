@@ -35,6 +35,7 @@ class FileAttacheButton extends React.Component<ComponentProps, {}> {
         <Input
           type="file"
           accept="audio/*"
+          multiple={true}
           innerRef={this.setInnerRef}
           onChange={this.onInputChanged}
         />

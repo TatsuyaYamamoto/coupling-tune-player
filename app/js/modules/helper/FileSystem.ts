@@ -15,3 +15,15 @@ export function readAsArrayBuffer(file: File): Promise<ArrayBuffer> {
 
   return p;
 }
+
+/**
+ * Convert {@code FileList} to Array of {@code File}.
+ *
+ * @param {FileList} fileList
+ * @returns {File[]}
+ */
+export function toFiles(fileList: FileList): File[] {
+  return <File[]>[...Array(fileList.length)]
+    .fill(0)
+    .map((_, i) => fileList.item(i));
+}

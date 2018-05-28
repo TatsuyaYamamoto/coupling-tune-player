@@ -1,45 +1,45 @@
 import { AnyAction, Dispatch } from "redux";
 import { States } from "./redux";
-
-import { loadTags } from "./helper/TagLoader";
-import { analyzeBpm } from "./helper/BpmAnalyzer";
-import Timer = NodeJS.Timer;
-import Audio from "./helper/Audio";
+import { toFiles } from "./helper/FileSystem";
 
 export enum AudioListActionTypes {
   SELECT = "c_tune/audio-list/select"
 }
 
-export const select = (
-  fileList: FileList,
-  type: "left" | "right"
-) => async () => {
-  const files = <File[]>[...Array(fileList.length)]
-    .fill(0)
-    .map((_, i) => fileList.item(i));
+/**
+ * 音声ファイルを選択する
+ *
+ * @param {FileList} fileList
+ * @param {"left" | "right"} type
+ * @returns {(dispatch: Dispatch<States>) => Promise<{type: AudioListActionTypes; payload: {type: "left" | "right"; files: File[]}}>}
+ */
+export const select = (fileList: FileList, type: "left" | "right") => async (
+  dispatch: Dispatch<States>
+) => {
+  const files = toFiles(fileList);
 
-  return {
+  dispatch({
     type: AudioListActionTypes.SELECT,
     payload: {
       type,
       files
     }
-  };
+  });
 };
 
 export interface AudioItemState {
-  left: Audio | null;
-  right: Audio | null;
+  name: string;
 }
 
 export interface AudioListState {
-  list: AudioItemState[];
+  left: AudioItemState[];
+  right: AudioItemState[];
 }
 
 const initialState: AudioListState = {
-  list: []
+  left: [],
+  right: []
 };
-
 export default function reducer(
   state: AudioListState = initialState,
   { type, payload }: AnyAction

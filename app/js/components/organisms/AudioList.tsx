@@ -24,7 +24,8 @@ type Props = ComponentProps & StateProps & DispatchProps;
 
 class AudioList extends React.Component<Props, ComponentState> {
   public render() {
-    const { className, list } = this.props;
+    const { className, leftList } = this.props;
+    console.log(leftList);
 
     return (
       <div>
@@ -47,20 +48,17 @@ class AudioList extends React.Component<Props, ComponentState> {
               </TableRow>
             </TableHead>
             <TableBody>
-              {list.map(item => {
-                const { left, right } = item;
-                const leftTitle = left ? left.title : "";
-                const rightTitle = right ? right.title : "";
+              {leftList.map(item => {
                 return (
-                  <TableRow key={`${leftTitle}@${rightTitle}`} hover={true}>
+                  <TableRow key={item.name} hover={true}>
                     <TableCell padding={"none"} style={{ textAlign: "right" }}>
-                      {leftTitle}
+                      {item.name}
                     </TableCell>
                     <TableCell padding={"none"} style={{ textAlign: "center" }}>
                       <PlayArrow />
                     </TableCell>
                     <TableCell padding={"none"} style={{ textAlign: "left" }}>
-                      {rightTitle}
+                      {item.name}
                     </TableCell>
                   </TableRow>
                 );
@@ -74,12 +72,16 @@ class AudioList extends React.Component<Props, ComponentState> {
 }
 
 interface StateProps {
-  list: AudioItemState[];
+  leftList: AudioItemState[];
+  rightList: AudioItemState[];
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const { list } = state.audiolist;
-  return { list };
+  const { left, right } = state.audiolist;
+  return {
+    leftList: left,
+    rightList: right
+  };
 }
 
 interface DispatchProps {}
