@@ -1,8 +1,10 @@
 import { AnyAction, Dispatch } from "redux";
 import { States } from "./redux";
 
-import { loadTags } from "./helper/TagLoader";
-import { analyzeBpm } from "./helper/BpmAnalyzer";
+import { context } from "./helper/AudioContext";
+
+import Audio from "./model/Audio";
+
 import Timer = NodeJS.Timer;
 
 export enum PlayerActionTypes {
@@ -16,10 +18,6 @@ export enum PlayerActionTypes {
   UPDATE_CURRENT = "c_tune/player/update_current"
 }
 
-// TODO Check supporting WebAudioAPI
-const AudioContext =
-  (window as any).AudioContext || (window as any).webkitAudioContext;
-const context: AudioContext = new AudioContext();
 let leftAudioSource: AudioBufferSourceNode | null = null;
 let rightAudioSource: AudioBufferSourceNode | null = null;
 let lastCheckTime: number | null = null;
@@ -37,30 +35,15 @@ export function load(file: File, type: "left" | "right") {
     // TODO: Check audio file.
     dispatch({ type: PlayerActionTypes.LOAD_REQUEST });
 
-    const audioBuffer = await dispatch(loadAsAudioBuffer(file, type));
-    if (audioBuffer) {
-      await dispatch(analyzeAudioBpm(audioBuffer, type));
-    }
+    const audio = new Audio({ file });
+    const audioBuffer = await audio.loadAsAudioBuffer();
 
-    await dispatch(loadAudioTag(file, type));
+    dispatch({
+      type: PlayerActionTypes.LOAD_BUFFER_SUCCESS,
+      payload: { type, audioBuffer }
+    });
 
-    dispatch({ type: PlayerActionTypes.LOAD_SUCCESS });
-  };
-}
-
-/**
- * {@code File}からメディア情報を読み込む
- *
- * @param {File} file
- * @param {"right" | "left"} type
- * @returns {(dispatch: Dispatch<States>, getState: () => States) => Promise<void>}
- */
-function loadAudioTag(file: File, type: "right" | "left") {
-  return async (dispatch: Dispatch<States>) => {
-    const tag = await loadTags(file).catch(e => console.error(e));
-
-    console.log("Loaded tags", tag);
-
+    const tag = await audio.getTag();
     const title = !!(tag && tag.title) ? tag.title : file.name;
     const artist = !!(tag && tag.artist) ? tag.artist : null;
     const pictureBase64 = !!(tag && tag.pictureBase64)
@@ -76,61 +59,21 @@ function loadAudioTag(file: File, type: "right" | "left") {
         pictureBase64
       }
     });
-  };
-}
 
-/**
- * {@cod File}を{@code AudioBuffer}としてロードする。
- *
- * @param {File} file
- * @param {"right" | "left"} type
- * @returns {(dispatch: Dispatch<States>) => Promise<AudioBuffer | void>}
- */
-function loadAsAudioBuffer(file: File, type: "right" | "left") {
-  return async (dispatch: Dispatch<States>): Promise<AudioBuffer | void> => {
-    const audioBuffer = await Promise.resolve()
-      .then(
-        () =>
-          new Promise<ArrayBuffer>(resolve => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.readAsArrayBuffer(file);
-          })
-      )
-      .then((arrayBuffer: ArrayBuffer) => context.decodeAudioData(arrayBuffer))
-      .catch(e => console.error(e));
+    await audio.analyzeBpm();
+    const bpm = audio.bpm;
+    const startPositionMillis = (audio.startPosition || 0) * 1000;
 
     dispatch({
-      type: PlayerActionTypes.LOAD_BUFFER_SUCCESS,
-      payload: { type, audioBuffer }
+      type: PlayerActionTypes.ANALYZE_BPM_SUCCESS,
+      payload: {
+        type,
+        bpm,
+        startPositionMillis
+      }
     });
 
-    return audioBuffer;
-  };
-}
-
-/**
- * BPMを解析する。
- *
- * @param {AudioBuffer} audio
- * @param {"right" | "left"} type
- * @returns {(dispatch: Dispatch<States>, getState: () => States) => Promise<void>}
- */
-function analyzeAudioBpm(audio: AudioBuffer, type: "right" | "left") {
-  return async (dispatch: Dispatch<States>): Promise<void> => {
-    const result = await analyzeBpm(audio);
-
-    console.log("analyzed BPM", result);
-
-    const payload = {} as any;
-    payload.type = type;
-    payload.bpm = result.bpm;
-    payload.startPositionMillis = result && result.startPosition * 1000;
-
-    dispatch({
-      payload,
-      type: PlayerActionTypes.ANALYZE_BPM_SUCCESS
-    });
+    dispatch({ type: PlayerActionTypes.LOAD_SUCCESS });
   };
 }
 
@@ -141,14 +84,14 @@ function analyzeAudioBpm(audio: AudioBuffer, type: "right" | "left") {
  */
 export function play() {
   return async (dispatch: Dispatch<States>, getState: () => States) => {
-    const { left, right, currentMillis } = getState().player;
+    const { left, right, currentTime } = getState().player;
 
     if (!left || !right) {
       console.error("No audio buffer of right or left.");
       return;
     }
 
-    if (!left.startPositionMillis || !right.startPositionMillis) {
+    if (!left.startPosition || !right.startPosition) {
       console.error("No audio start position of right or left.");
       return;
     }
@@ -167,18 +110,18 @@ export function play() {
     rightAudioSource.connect(gainNode);
 
     gainNode.connect(context.destination);
-    let leftAudioOffset = currentMillis;
-    let rightAudioOffset = currentMillis;
-    const diffMillis = left.startPositionMillis - right.startPositionMillis;
+    let leftAudioOffset = currentTime;
+    let rightAudioOffset = currentTime;
+    const diff = left.startPosition - right.startPosition;
 
-    if (0 < diffMillis) {
-      leftAudioOffset += diffMillis;
+    if (0 < diff) {
+      leftAudioOffset += diff;
     } else {
-      rightAudioOffset += -1 * diffMillis;
+      rightAudioOffset += -1 * diff;
     }
 
-    leftAudioSource.start(0, leftAudioOffset / 1000);
-    rightAudioSource.start(0, rightAudioOffset / 1000);
+    leftAudioSource.start(0, leftAudioOffset);
+    rightAudioSource.start(0, rightAudioOffset);
 
     dispatch({
       type: PlayerActionTypes.PLAY
@@ -231,7 +174,7 @@ export function pause() {
  */
 export function updateCurrentTime(time?: number) {
   return async (dispatch: Dispatch<States>, getState: () => States) => {
-    const { currentMillis } = getState().player;
+    const { currentTime } = getState().player;
 
     if (time) {
       dispatch({
@@ -241,7 +184,7 @@ export function updateCurrentTime(time?: number) {
       return;
     }
 
-    const now = context.currentTime * 1000;
+    const now = context.currentTime;
     if (lastCheckTime == null) {
       lastCheckTime = now;
       return;
@@ -253,35 +196,26 @@ export function updateCurrentTime(time?: number) {
     dispatch({
       type: PlayerActionTypes.UPDATE_CURRENT,
       payload: {
-        currentMillis: currentMillis + add
+        currentMillis: currentTime + add
       }
     });
   };
 }
 
-export interface AudioState {
-  buffer: AudioBuffer;
-  title: string;
-  artist: string | null;
-  pictureBase64: string | null;
-  bpm: number;
-  startPositionMillis: number;
-}
-
 export interface PlayerState {
   loading: boolean;
   playing: boolean;
-  durationMillis: number;
-  currentMillis: number;
-  left: AudioState | null;
-  right: AudioState | null;
+  durationTime: number;
+  currentTime: number;
+  left: Audio | null;
+  right: Audio | null;
 }
 
 const initialState: PlayerState = {
   loading: false,
   playing: false,
-  durationMillis: 0,
-  currentMillis: 0,
+  durationTime: 0,
+  currentTime: 0,
   left: null,
   right: null
 };
