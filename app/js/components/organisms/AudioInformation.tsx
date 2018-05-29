@@ -110,12 +110,12 @@ interface StateProps {
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const { left, right, loading } = state.player;
+  const { loading } = state.player;
 
   return {
-    left,
-    right,
-    loading
+    loading,
+    left: null,
+    right: null
   };
 }
 

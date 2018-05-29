@@ -22,14 +22,9 @@ let intervalId: Timer | number | null = null;
  *
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => Promise<void>}
  */
-export function play() {
+export function play(left: Audio, right: Audio) {
   return async (dispatch: Dispatch<States>, getState: () => States) => {
-    const { left, right, currentTime } = getState().player;
-
-    if (!left || !right) {
-      console.error("No audio buffer of right or left.");
-      return;
-    }
+    const { currentTime } = getState().player;
 
     syncPlay(left, right, currentTime);
 
@@ -111,17 +106,13 @@ export interface PlayerState {
   playing: boolean;
   durationTime: number;
   currentTime: number;
-  left: Audio | null;
-  right: Audio | null;
 }
 
 const initialState: PlayerState = {
   loading: false,
   playing: false,
   durationTime: 0,
-  currentTime: 0,
-  left: null,
-  right: null
+  currentTime: 0
 };
 
 export default function reducer(

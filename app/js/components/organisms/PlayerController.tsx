@@ -20,6 +20,7 @@ import { States } from "../../modules/redux";
 
 import PlayTimeSlider from "../molecules/PlayTimeSlider";
 import { sendEvent } from "../../utils";
+import Audio from "../../modules/model/Audio";
 
 export interface ComponentProps {
   className?: string;
@@ -81,7 +82,12 @@ class PlayerController extends React.Component<Props, ComponentState> {
   }
 
   private onPlay() {
-    this.props.playAudio();
+    const { leftAudio, rightAudio } = this.props;
+    if (!leftAudio || !rightAudio) {
+      return;
+    }
+
+    this.props.playAudio(leftAudio, rightAudio);
 
     sendEvent("click", {
       category: "player",
@@ -107,6 +113,11 @@ class PlayerController extends React.Component<Props, ComponentState> {
   }
 
   private async onSliderFixed(newValue: number) {
+    const { leftAudio, rightAudio } = this.props;
+    if (!leftAudio || !rightAudio) {
+      return;
+    }
+
     this.setState({ manualCurrentTime: null });
     const stopOnce = this.props.playing;
 
@@ -117,7 +128,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
     await this.props.updateCurrentTime(newValue);
 
     if (stopOnce) {
-      await this.props.playAudio();
+      await this.props.playAudio(leftAudio, rightAudio);
     }
 
     sendEvent("click", {
@@ -132,21 +143,28 @@ interface StateProps {
   ready: boolean;
   duration: number;
   current: number;
+  leftAudio: Audio | null;
+  rightAudio: Audio | null;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const { playing, left, right, currentTime } = state.player;
+  const { playing, currentTime } = state.player;
+  const { list } = state.audiolist;
+  const leftAudio = list[0] && list[0].left;
+  const rightAudio = list[0] && list[0].right;
 
   return {
     playing,
-    ready: !!(left && right),
-    duration: !!left ? left.audioBuffer.duration : 0,
+    leftAudio,
+    rightAudio,
+    ready: !!(leftAudio && rightAudio),
+    duration: !!leftAudio ? leftAudio.audioBuffer.duration : 0,
     current: currentTime || 0
   };
 }
 
 interface DispatchProps {
-  playAudio: (offset?: number) => Promise<void>;
+  playAudio: (left: Audio, right: Audio) => Promise<void>;
   pauseAudio: () => Promise<void>;
   updateCurrentTime: (time?: number) => Promise<void>;
 }
@@ -156,7 +174,7 @@ function mapDispatchToProps(
   ownProps: ComponentProps
 ): DispatchProps {
   return {
-    playAudio: () => dispatch(playAudio()),
+    playAudio: (left: Audio, right: Audio) => dispatch(playAudio(left, right)),
     pauseAudio: () => dispatch(pauseAudio()),
     updateCurrentTime: (time?: number) => dispatch(updateCurrentTime(time))
   };
