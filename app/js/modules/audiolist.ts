@@ -7,7 +7,8 @@ import { analyzeBpm } from "./helper/BpmAnalyzer";
 import Audio from "./model/Audio";
 
 export enum AudioListActionTypes {
-  SELECT = "c_tune/audio-list/select"
+  SELECT = "c_tune/audio-list/select",
+  GO_INDEX = "c_tune/audio-list/go_index"
 }
 
 /**
@@ -54,6 +55,55 @@ export const select = (fileList: FileList, type: "left" | "right") => async (
     type: AudioListActionTypes.SELECT,
     payload: { type, list: updatedList }
   });
+};
+
+export const goIndex = (index: number) => (
+  dispatch: Dispatch<States>,
+  getState: () => States
+) => {
+  const { list, playingIndex } = getState().audiolist;
+  const min = 0;
+  const max = list.length - 1;
+  if (!(min <= index || index <= max)) {
+    console.error(
+      `Provided index, ${index}, is out of list range. ${min} <= index <= ${max}`
+    );
+
+    return;
+  }
+  const left = list[index].left;
+  const right = list[index].right;
+  if (!left || !right) {
+    console.error(
+      `Left and right audio of provided index are not ready. left: ${!!left}, right: ${!!right}.`
+    );
+    return;
+  }
+
+  dispatch({
+    type: AudioListActionTypes.GO_INDEX,
+    payload: { index }
+  });
+};
+
+export const goPrevIndex = (index: number) => (
+  dispatch: Dispatch<States>,
+  getState: () => States
+) => {
+  const { playingIndex } = getState().audiolist;
+  if (playingIndex) {
+    dispatch(goIndex(playingIndex - 1));
+  }
+};
+
+export const goNextIndex = (index: number) => (
+  dispatch: Dispatch<States>,
+  getState: () => States
+) => {
+  const { playingIndex } = getState().audiolist;
+  if (playingIndex) {
+    dispatch(goIndex(playingIndex + 1));
+  }
 };
 
 function mergeList(
@@ -114,10 +164,12 @@ export interface AudioListItem {
 
 export interface AudioListState {
   list: AudioListItem[];
+  playingIndex: number | null;
 }
 
 const initialState: AudioListState = {
-  list: []
+  list: [],
+  playingIndex: null
 };
 
 /**
@@ -137,6 +189,12 @@ export default function reducer(
       return {
         ...state,
         list: payload.list
+      };
+
+    case AudioListActionTypes.GO_INDEX:
+      return {
+        ...state,
+        playingIndex: payload.index
       };
 
     default:

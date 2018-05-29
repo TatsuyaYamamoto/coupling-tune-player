@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
+import { connect, DispatchProp } from "react-redux";
 
 import {
   Paper,
@@ -12,7 +12,7 @@ import {
 import { PlayArrow } from "material-ui-icons";
 
 import { States } from "../../modules/redux";
-import { AudioListItem } from "../../modules/audiolist";
+import { goIndex, AudioListItem } from "../../modules/audiolist";
 
 export interface ComponentState {}
 
@@ -20,11 +20,11 @@ export interface ComponentProps {
   className?: string;
 }
 
-type Props = ComponentProps & StateProps & DispatchProps;
+type Props = ComponentProps & StateProps & DispatchProp<States>;
 
 class AudioList extends React.Component<Props, ComponentState> {
   public render() {
-    const { className, audioList } = this.props;
+    const { className, audioList, playingIndex } = this.props;
 
     return (
       <div>
@@ -52,11 +52,18 @@ class AudioList extends React.Component<Props, ComponentState> {
                 const rightTitle = listItem.right
                   ? listItem.right.title
                   : "---";
-
+                const selected = playingIndex === index;
                 const key = index + leftTitle + rightTitle;
+                const onClick = () => this.onClickRow(index);
 
                 return (
-                  <TableRow key={key} hover={true}>
+                  <TableRow
+                    key={key}
+                    hover={true}
+                    selected={selected}
+                    onClick={onClick}
+                    style={{ cursor: "pointer" }}
+                  >
                     <TableCell padding={"none"} style={{ textAlign: "right" }}>
                       {leftTitle}
                     </TableCell>
@@ -75,28 +82,28 @@ class AudioList extends React.Component<Props, ComponentState> {
       </div>
     );
   }
+
+  private onClickRow(index: number) {
+    console.log(`on row clicked. index: ${index}.`);
+    const { dispatch } = this.props;
+
+    dispatch && dispatch(goIndex(index));
+  }
 }
 
 interface StateProps {
   audioList: AudioListItem[];
+  playingIndex: number | null;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const { list } = state.audiolist;
+  const { list, playingIndex } = state.audiolist;
   return {
+    playingIndex,
     audioList: list
   };
 }
 
-interface DispatchProps {}
-
-function mapDispatchToProps(
-  dispatch: Dispatch<States>,
-  ownProps: ComponentProps
-): DispatchProps {
-  return {};
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  AudioList
-) as React.ComponentClass<ComponentProps>;
+export default connect(mapStateToProps)(AudioList) as React.ComponentClass<
+  ComponentProps
+>;

@@ -161,9 +161,9 @@ interface StateProps {
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   const { playing, currentTime } = state.player;
-  const { list } = state.audiolist;
-  const leftAudio = list[0] && list[0].left;
-  const rightAudio = list[0] && list[0].right;
+  const { list, playingIndex } = state.audiolist;
+  const leftAudio = playingIndex !== null ? list[playingIndex].left : null;
+  const rightAudio = playingIndex !== null ? list[playingIndex].right : null;
 
   return {
     playing,
