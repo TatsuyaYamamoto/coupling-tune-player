@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import { default as styled } from "styled-components";
 import { default as AutoBind } from "autobind-decorator";
 
-import { load as loadAudio } from "../../modules/player";
 import { States } from "../../modules/redux";
 import Audio from "../../modules/model/Audio";
 

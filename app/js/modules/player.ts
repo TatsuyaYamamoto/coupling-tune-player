@@ -1,9 +1,7 @@
 import { AnyAction, Dispatch } from "redux";
 import { States } from "./redux";
 
-import { context, loadAsAudioBuffer } from "./helper/AudioContext";
-import { loadTags } from "./helper/TagLoader";
-import { analyzeBpm } from "./helper/BpmAnalyzer";
+import { context } from "./helper/AudioContext";
 
 import Audio from "./model/Audio";
 
@@ -11,11 +9,6 @@ import Timer = NodeJS.Timer;
 import { syncPlay, pause as syncPause } from "./helper/SyncPlayer";
 
 export enum PlayerActionTypes {
-  LOAD_REQUEST = "c_tune/player/load_request",
-  LOAD_SUCCESS = "c_tune/player/load_success",
-  LOAD_BUFFER_SUCCESS = "c_tune/player/load_buffer_success",
-  LOAD_TAG_SUCCESS = "c_tune/player/load_tag_success",
-  ANALYZE_BPM_SUCCESS = "c_tune/player/analyze_bpm_success",
   PLAY = "c_tune/player/play",
   PAUSE = "c_tune/player/pause",
   UPDATE_CURRENT = "c_tune/player/update_current"
@@ -23,47 +16,6 @@ export enum PlayerActionTypes {
 
 let lastCheckTime: number | null = null;
 let intervalId: Timer | number | null = null;
-
-/**
- * 音声ファイルをロードする
- *
- * @param {File} file
- * @param {"left" | "right"} type
- * @returns {(dispatch: Dispatch<States>) => Promise<void>}
- */
-export function load(file: File, type: "left" | "right") {
-  return async (dispatch: Dispatch<States>) => {
-    // TODO: Check audio file.
-    dispatch({ type: PlayerActionTypes.LOAD_REQUEST });
-
-    const audioBuffer = await loadAsAudioBuffer(file);
-    console.log("Loaded audio buffer. length: " + audioBuffer.length);
-
-    const { title, artist, pictureBase64 } = await loadTags(file);
-    console.log("Loaded media tag.", title, artist);
-
-    const { bpm, startPosition } = await analyzeBpm(audioBuffer);
-    console.log("Analyzed BPM.", bpm);
-
-    const audio = new Audio({
-      file,
-      artist,
-      pictureBase64,
-      bpm,
-      startPosition,
-      audioBuffer,
-      title: title || file.name
-    });
-
-    dispatch({
-      type: PlayerActionTypes.LOAD_SUCCESS,
-      payload: {
-        type,
-        audio
-      }
-    });
-  };
-}
 
 /**
  * 音声の再生を開始する。
@@ -179,58 +131,6 @@ export default function reducer(
   const { type, payload } = action;
 
   switch (type) {
-    case PlayerActionTypes.LOAD_REQUEST:
-      return {
-        ...state,
-        loading: true
-      };
-
-    case PlayerActionTypes.LOAD_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        [payload.type]: payload.audio
-      };
-
-    case PlayerActionTypes.LOAD_BUFFER_SUCCESS:
-      return {
-        ...state,
-        [payload.type]: Object.assign(
-          {},
-          payload.type === "right" ? state.right : state.left,
-          {
-            buffer: payload.audioBuffer
-          }
-        )
-      };
-
-    case PlayerActionTypes.ANALYZE_BPM_SUCCESS:
-      return {
-        ...state,
-        [payload.type]: Object.assign(
-          {},
-          payload.type === "right" ? state.right : state.left,
-          {
-            bpm: payload.bpm,
-            startPositionMillis: payload.startPositionMillis
-          }
-        )
-      };
-
-    case PlayerActionTypes.LOAD_TAG_SUCCESS:
-      return {
-        ...state,
-        [payload.type]: Object.assign(
-          {},
-          payload.type === "right" ? state.right : state.left,
-          {
-            title: payload.title,
-            artist: payload.artist,
-            pictureBase64: payload.pictureBase64
-          }
-        )
-      };
-
     case PlayerActionTypes.PLAY:
       return {
         ...state,
