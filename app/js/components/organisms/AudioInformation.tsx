@@ -1,15 +1,16 @@
 import * as React from "react";
+import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { default as styled } from "styled-components";
 import { default as AutoBind } from "autobind-decorator";
 
+import { load as loadAudio } from "../../modules/player";
 import { States } from "../../modules/redux";
+import Audio from "../../modules/model/Audio";
 
 import AudioDetail from "../molecules/AudioDetail";
-
-import { AudioState, load as loadAudio } from "../../modules/player";
-import { Dispatch } from "redux";
 import LoadingDialog from "./dialog/LoadingDialog";
+
 import { sendEvent } from "../../utils";
 
 export interface ComponentProps {
@@ -103,8 +104,8 @@ class AudioInformation extends React.Component<
 }
 
 interface StateProps {
-  left: AudioState | null;
-  right: AudioState | null;
+  left: Audio | null;
+  right: Audio | null;
   loading: boolean;
 }
 

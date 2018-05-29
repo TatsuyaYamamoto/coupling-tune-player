@@ -1,14 +1,14 @@
 import { EventEmitter, ListenerFn } from "eventemitter3";
 import { default as AutoBind } from "autobind-decorator";
-import { loadAsAudioBuffer } from "../helper/AudioContext"; // tslint:disable-line:import-name
-import { analyzeBpm } from "../helper/BpmAnalyzer";
-import { loadTags, Tag } from "../helper/TagLoader";
-import { readAsArrayBuffer } from "../helper/FileSystem";
-
-const { read: readTags } = require("jsmediatags/dist/jsmediatags.min.js");
 
 export interface AudioConstructor {
   file: File;
+  title: string;
+  artist: string | null;
+  pictureBase64: string | null;
+  bpm: BPM;
+  startPosition: number;
+  audioBuffer: AudioBuffer;
 }
 
 export type AudioEvents = "tagloaded" | "hoge";
@@ -18,76 +18,59 @@ export type BPM = number;
 class Audio {
   private _eventEmitter = new EventEmitter();
   private _file: File;
-  private _tag: Tag | null = null;
-  private _bpm: BPM | null = null;
-  private _startPosition: number | null = null;
-  private _audioBuffer: AudioBuffer | null = null;
+  private _title: string;
+  private _artist: string | null;
+  private _pictureBase64: string | null;
+  private _bpm: BPM;
+  private _startPosition: number;
+  private _audioBuffer: AudioBuffer;
 
   public constructor(props: AudioConstructor) {
-    const { file } = props;
+    const {
+      file,
+      title,
+      artist,
+      pictureBase64,
+      bpm,
+      startPosition,
+      audioBuffer
+    } = props;
+
     this._file = file;
-  }
-
-  public static async load(file: File): Promise<Audio> {
-    const audioBuffer = await loadAsAudioBuffer(file);
-    const { title, artist, pictureBase64 } = await loadTags(file);
-    const { bpm, startPosition } = await analyzeBpm(audioBuffer);
-
-    return new Audio({ file });
+    this._title = title;
+    this._artist = artist;
+    this._pictureBase64 = pictureBase64;
+    this._bpm = bpm;
+    this._startPosition = startPosition;
+    this._audioBuffer = audioBuffer;
   }
 
   public get file(): File {
     return this._file;
   }
 
-  public get bpm(): number | null {
+  public get title(): string {
+    return this._title;
+  }
+
+  public get artist(): string | null {
+    return this._artist;
+  }
+
+  public get pictureBase64(): string | null {
+    return this._pictureBase64;
+  }
+
+  public get bpm(): number {
     return this._bpm;
   }
 
-  public get startPosition(): number | null {
+  public get startPosition(): number {
     return this._startPosition;
   }
 
-  /**
-   *
-   * @returns {Promise<AudioBuffer>}
-   */
-  public async loadAsAudioBuffer(): Promise<AudioBuffer> {
-    if (this._audioBuffer) {
-      return this._audioBuffer;
-    }
-
-    const arrayBuffer = await readAsArrayBuffer(this.file);
-    const audioBuffer = await context.decodeAudioData(arrayBuffer);
-    this._audioBuffer = audioBuffer;
-
-    return audioBuffer;
-  }
-
-  /**
-   * BPMを解析する。
-   *
-   * @returns {Promise<BPM>}
-   */
-  public async analyzeBpm(): Promise<BPM> {
-    if (this._bpm) {
-      return this._bpm;
-    }
-    const audioBuffer = await this.loadAsAudioBuffer();
-    const result = await analyzeBpm(audioBuffer);
-
-    console.log("analyzed BPM", result);
-
-    this._bpm = result.bpm;
-    this._startPosition = result.startPosition;
-
-    return this._bpm;
-  }
-
-  public async getTag(): Promise<Tag> {
-    this._tag = await loadTags(this.file);
-
-    return this._tag;
+  public get audioBuffer(): AudioBuffer {
+    return this._audioBuffer;
   }
 
   public on(event: AudioEvents, callback: ListenerFn): this {

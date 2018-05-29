@@ -1,11 +1,14 @@
 import { AnyAction, Dispatch } from "redux";
 import { States } from "./redux";
 
-import { context } from "./helper/AudioContext";
+import { context, loadAsAudioBuffer } from "./helper/AudioContext";
+import { loadTags } from "./helper/TagLoader";
+import { analyzeBpm } from "./helper/BpmAnalyzer";
 
 import Audio from "./model/Audio";
 
 import Timer = NodeJS.Timer;
+import { syncPlay, pause as syncPause } from "./helper/SyncPlayer";
 
 export enum PlayerActionTypes {
   LOAD_REQUEST = "c_tune/player/load_request",
@@ -18,8 +21,6 @@ export enum PlayerActionTypes {
   UPDATE_CURRENT = "c_tune/player/update_current"
 }
 
-let leftAudioSource: AudioBufferSourceNode | null = null;
-let rightAudioSource: AudioBufferSourceNode | null = null;
 let lastCheckTime: number | null = null;
 let intervalId: Timer | number | null = null;
 
@@ -35,45 +36,32 @@ export function load(file: File, type: "left" | "right") {
     // TODO: Check audio file.
     dispatch({ type: PlayerActionTypes.LOAD_REQUEST });
 
-    const audio = new Audio({ file });
-    const audioBuffer = await audio.loadAsAudioBuffer();
+    const audioBuffer = await loadAsAudioBuffer(file);
+    console.log("Loaded audio buffer. length: " + audioBuffer.length);
 
-    dispatch({
-      type: PlayerActionTypes.LOAD_BUFFER_SUCCESS,
-      payload: { type, audioBuffer }
+    const { title, artist, pictureBase64 } = await loadTags(file);
+    console.log("Loaded media tag.", title, artist);
+
+    const { bpm, startPosition } = await analyzeBpm(audioBuffer);
+    console.log("Analyzed BPM.", bpm);
+
+    const audio = new Audio({
+      file,
+      artist,
+      pictureBase64,
+      bpm,
+      startPosition,
+      audioBuffer,
+      title: title || file.name
     });
 
-    const tag = await audio.getTag();
-    const title = !!(tag && tag.title) ? tag.title : file.name;
-    const artist = !!(tag && tag.artist) ? tag.artist : null;
-    const pictureBase64 = !!(tag && tag.pictureBase64)
-      ? tag.pictureBase64
-      : null;
-
     dispatch({
-      type: PlayerActionTypes.LOAD_TAG_SUCCESS,
+      type: PlayerActionTypes.LOAD_SUCCESS,
       payload: {
         type,
-        title,
-        artist,
-        pictureBase64
+        audio
       }
     });
-
-    await audio.analyzeBpm();
-    const bpm = audio.bpm;
-    const startPositionMillis = (audio.startPosition || 0) * 1000;
-
-    dispatch({
-      type: PlayerActionTypes.ANALYZE_BPM_SUCCESS,
-      payload: {
-        type,
-        bpm,
-        startPositionMillis
-      }
-    });
-
-    dispatch({ type: PlayerActionTypes.LOAD_SUCCESS });
   };
 }
 
@@ -91,37 +79,7 @@ export function play() {
       return;
     }
 
-    if (!left.startPosition || !right.startPosition) {
-      console.error("No audio start position of right or left.");
-      return;
-    }
-
-    leftAudioSource = context.createBufferSource();
-    leftAudioSource.buffer = left.buffer;
-
-    rightAudioSource = context.createBufferSource();
-    rightAudioSource.buffer = right.buffer;
-
-    // TODO: Check to arrange gain is requiredz?
-    const gainNode = context.createGain();
-    gainNode.gain.value = 0.8;
-
-    leftAudioSource.connect(gainNode);
-    rightAudioSource.connect(gainNode);
-
-    gainNode.connect(context.destination);
-    let leftAudioOffset = currentTime;
-    let rightAudioOffset = currentTime;
-    const diff = left.startPosition - right.startPosition;
-
-    if (0 < diff) {
-      leftAudioOffset += diff;
-    } else {
-      rightAudioOffset += -1 * diff;
-    }
-
-    leftAudioSource.start(0, leftAudioOffset);
-    rightAudioSource.start(0, rightAudioOffset);
+    syncPlay(left, right, currentTime);
 
     dispatch({
       type: PlayerActionTypes.PLAY
@@ -147,13 +105,7 @@ export function pause() {
       return;
     }
 
-    if (leftAudioSource !== null) {
-      leftAudioSource.stop(0);
-    }
-
-    if (rightAudioSource !== null) {
-      rightAudioSource.stop(0);
-    }
+    syncPause();
 
     lastCheckTime = null;
     if (intervalId !== null) {
@@ -179,7 +131,7 @@ export function updateCurrentTime(time?: number) {
     if (time) {
       dispatch({
         type: PlayerActionTypes.UPDATE_CURRENT,
-        payload: { currentMillis: time }
+        payload: { currentTime: time }
       });
       return;
     }
@@ -196,7 +148,7 @@ export function updateCurrentTime(time?: number) {
     dispatch({
       type: PlayerActionTypes.UPDATE_CURRENT,
       payload: {
-        currentMillis: currentTime + add
+        currentTime: currentTime + add
       }
     });
   };
@@ -228,17 +180,21 @@ export default function reducer(
 
   switch (type) {
     case PlayerActionTypes.LOAD_REQUEST:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         loading: true
-      });
+      };
 
     case PlayerActionTypes.LOAD_SUCCESS:
-      return Object.assign({}, state, {
-        loading: false
-      });
+      return {
+        ...state,
+        loading: false,
+        [payload.type]: payload.audio
+      };
 
     case PlayerActionTypes.LOAD_BUFFER_SUCCESS:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         [payload.type]: Object.assign(
           {},
           payload.type === "right" ? state.right : state.left,
@@ -246,10 +202,11 @@ export default function reducer(
             buffer: payload.audioBuffer
           }
         )
-      });
+      };
 
     case PlayerActionTypes.ANALYZE_BPM_SUCCESS:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         [payload.type]: Object.assign(
           {},
           payload.type === "right" ? state.right : state.left,
@@ -258,10 +215,11 @@ export default function reducer(
             startPositionMillis: payload.startPositionMillis
           }
         )
-      });
+      };
 
     case PlayerActionTypes.LOAD_TAG_SUCCESS:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         [payload.type]: Object.assign(
           {},
           payload.type === "right" ? state.right : state.left,
@@ -271,22 +229,25 @@ export default function reducer(
             pictureBase64: payload.pictureBase64
           }
         )
-      });
+      };
 
     case PlayerActionTypes.PLAY:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         playing: true
-      });
+      };
 
     case PlayerActionTypes.PAUSE:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         playing: false
-      });
+      };
 
     case PlayerActionTypes.UPDATE_CURRENT:
-      return Object.assign({}, state, {
-        currentMillis: payload.currentMillis
-      });
+      return {
+        ...state,
+        currentTime: payload.currentTime
+      };
 
     default:
       return state;

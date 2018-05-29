@@ -135,13 +135,13 @@ interface StateProps {
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const { playing, left, right, currentMillis } = state.player;
+  const { playing, left, right, currentTime } = state.player;
 
   return {
     playing,
     ready: !!(left && right),
-    duration: !!left ? left.buffer.duration * 1000 : 0,
-    current: currentMillis || 0
+    duration: !!left ? left.audioBuffer.duration : 0,
+    current: currentTime || 0
   };
 }
 
