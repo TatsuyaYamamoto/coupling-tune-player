@@ -12,7 +12,7 @@ import {
 import { PlayArrow } from "material-ui-icons";
 
 import { States } from "../../modules/redux";
-import { AudioItemState } from "../../modules/audiolist";
+import { AudioListItem } from "../../modules/audiolist";
 
 export interface ComponentState {}
 
@@ -24,8 +24,7 @@ type Props = ComponentProps & StateProps & DispatchProps;
 
 class AudioList extends React.Component<Props, ComponentState> {
   public render() {
-    const { className, leftList } = this.props;
-    console.log(leftList);
+    const { className, audioList } = this.props;
 
     return (
       <div>
@@ -48,17 +47,24 @@ class AudioList extends React.Component<Props, ComponentState> {
               </TableRow>
             </TableHead>
             <TableBody>
-              {leftList.map(item => {
+              {audioList.map((listItem, index) => {
+                const leftTitle = listItem.left ? listItem.left.title : "---";
+                const rightTitle = listItem.right
+                  ? listItem.right.title
+                  : "---";
+
+                const key = index + leftTitle + rightTitle;
+
                 return (
-                  <TableRow key={item.name} hover={true}>
+                  <TableRow key={key} hover={true}>
                     <TableCell padding={"none"} style={{ textAlign: "right" }}>
-                      {item.name}
+                      {leftTitle}
                     </TableCell>
                     <TableCell padding={"none"} style={{ textAlign: "center" }}>
                       <PlayArrow />
                     </TableCell>
                     <TableCell padding={"none"} style={{ textAlign: "left" }}>
-                      {item.name}
+                      {rightTitle}
                     </TableCell>
                   </TableRow>
                 );
@@ -72,15 +78,13 @@ class AudioList extends React.Component<Props, ComponentState> {
 }
 
 interface StateProps {
-  leftList: AudioItemState[];
-  rightList: AudioItemState[];
+  audioList: AudioListItem[];
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const { left, right } = state.audiolist;
+  const { list } = state.audiolist;
   return {
-    leftList: left,
-    rightList: right
+    audioList: list
   };
 }
 
