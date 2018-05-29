@@ -1,8 +1,7 @@
 import "rc-slider/assets/index.css";
 
 import * as React from "react";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
+import { connect, DispatchProp } from "react-redux";
 import { default as AutoBind } from "autobind-decorator";
 import { default as styled } from "styled-components";
 
@@ -12,17 +11,19 @@ import PlayButton from "../atoms/button/PlayButton";
 import PauseButton from "../atoms/button/PauseButton";
 import PrevButton from "../atoms/button/PrevButton";
 import NextButton from "../atoms/button/NextButton";
+import PlayTimeSlider from "../molecules/PlayTimeSlider";
 
 import {
   play as playAudio,
   pause as pauseAudio,
-  updateCurrentTime
+  updateCurrentTime,
+  skipPrevious,
+  skipNext
 } from "../../modules/player";
 import { States } from "../../modules/redux";
-
-import PlayTimeSlider from "../molecules/PlayTimeSlider";
-import { sendEvent } from "../../utils";
 import Audio from "../../modules/model/Audio";
+
+import { sendEvent } from "../../utils";
 
 export interface ComponentProps {
   className?: string;
@@ -32,7 +33,7 @@ export interface ComponentState {
   manualCurrentTime: number | null;
 }
 
-type Props = ComponentProps & DispatchProps & StateProps;
+type Props = ComponentProps & DispatchProp<States> & StateProps;
 
 const Buttons = styled(CardContent)`
   display: flex;
@@ -86,12 +87,12 @@ class PlayerController extends React.Component<Props, ComponentState> {
   }
 
   private onPlay() {
-    const { leftAudio, rightAudio } = this.props;
-    if (!leftAudio || !rightAudio) {
+    const { leftAudio, rightAudio, dispatch } = this.props;
+    if (!leftAudio || !rightAudio || !dispatch) {
       return;
     }
 
-    this.props.playAudio(leftAudio, rightAudio);
+    dispatch(playAudio(leftAudio, rightAudio));
 
     sendEvent("click", {
       category: "player",
@@ -100,7 +101,12 @@ class PlayerController extends React.Component<Props, ComponentState> {
   }
 
   private onPause() {
-    this.props.pauseAudio();
+    const { dispatch } = this.props;
+    if (!dispatch) {
+      return;
+    }
+
+    dispatch(pauseAudio());
     sendEvent("click", {
       category: "player",
       label: "pause"
@@ -109,10 +115,22 @@ class PlayerController extends React.Component<Props, ComponentState> {
 
   private onPrevClicked() {
     console.log("on prev skip button clicked.");
+    const { dispatch } = this.props;
+    if (!dispatch) {
+      return;
+    }
+
+    dispatch(skipPrevious());
   }
 
   private onNextClicked() {
     console.log("on next skip button clicked.");
+    const { dispatch } = this.props;
+    if (!dispatch) {
+      return;
+    }
+
+    dispatch(skipNext());
   }
 
   private onSliderStart() {
@@ -125,8 +143,8 @@ class PlayerController extends React.Component<Props, ComponentState> {
   }
 
   private async onSliderFixed(newValue: number) {
-    const { leftAudio, rightAudio } = this.props;
-    if (!leftAudio || !rightAudio) {
+    const { leftAudio, rightAudio, dispatch } = this.props;
+    if (!leftAudio || !rightAudio || !dispatch) {
       return;
     }
 
@@ -134,13 +152,13 @@ class PlayerController extends React.Component<Props, ComponentState> {
     const stopOnce = this.props.playing;
 
     if (stopOnce) {
-      await this.props.pauseAudio();
+      dispatch(pauseAudio());
     }
 
-    await this.props.updateCurrentTime(newValue);
+    dispatch(updateCurrentTime(newValue));
 
     if (stopOnce) {
-      await this.props.playAudio(leftAudio, rightAudio);
+      dispatch(playAudio(leftAudio, rightAudio));
     }
 
     sendEvent("click", {
@@ -175,23 +193,24 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   };
 }
 
-interface DispatchProps {
-  playAudio: (left: Audio, right: Audio) => Promise<void>;
-  pauseAudio: () => Promise<void>;
-  updateCurrentTime: (time?: number) => Promise<void>;
-}
+// interface DispatchProps {
+//   playAudio: (left: Audio, right: Audio) => Promise<void>;
+//   pauseAudio: () => Promise<void>;
+//   updateCurrentTime: (time?: number) => Promise<void>;
+// }
+//
+// function mapDispatchToProps(
+//   dispatch: Dispatch<States>,
+//   ownProps: ComponentProps
+// ): DispatchProps {
+//   return {
+//     playAudio: (left: Audio, right: Audio) => dispatch(playAudio(left, right)),
+//     pauseAudio: () => dispatch(pauseAudio()),
+//     updateCurrentTime: (time?: number) => dispatch(updateCurrentTime(time))
+//     updateCurrentTime: (time?: number) => dispatch(updateCurrentTime(time))
+//   };
+// }
 
-function mapDispatchToProps(
-  dispatch: Dispatch<States>,
-  ownProps: ComponentProps
-): DispatchProps {
-  return {
-    playAudio: (left: Audio, right: Audio) => dispatch(playAudio(left, right)),
-    pauseAudio: () => dispatch(pauseAudio()),
-    updateCurrentTime: (time?: number) => dispatch(updateCurrentTime(time))
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(mapStateToProps)(
   PlayerController
 ) as React.ComponentClass<ComponentProps>;

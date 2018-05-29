@@ -86,24 +86,69 @@ export const goIndex = (index: number) => (
   });
 };
 
-export const goPrevIndex = (index: number) => (
+export const goPrevIndex = () => (
   dispatch: Dispatch<States>,
   getState: () => States
 ) => {
-  const { playingIndex } = getState().audiolist;
-  if (playingIndex) {
-    dispatch(goIndex(playingIndex - 1));
+  const { playingIndex: currentIndex, list } = getState().audiolist;
+
+  if (currentIndex === null) {
+    console.error(
+      `Current playing index is null. ignore to request of go next index of audio list.`
+    );
+    return;
   }
+  const from = currentIndex - 1;
+  const to = 0;
+
+  if (from < to) {
+    console.error(`invalid range. from: ${from}, to: ${to}`);
+    return;
+  }
+
+  // tslint:disable-next-line:no-increment-decrement
+  for (let i = from; 0 <= to; i--) {
+    const candidate = list[i];
+    if (candidate && candidate.left && candidate.right) {
+      dispatch(goIndex(i));
+      return;
+    }
+  }
+
+  console.error("Could not find valid audio from list.");
 };
 
-export const goNextIndex = (index: number) => (
+export const goNextIndex = () => (
   dispatch: Dispatch<States>,
   getState: () => States
 ) => {
-  const { playingIndex } = getState().audiolist;
-  if (playingIndex) {
-    dispatch(goIndex(playingIndex + 1));
+  const { playingIndex: currentIndex, list } = getState().audiolist;
+
+  if (currentIndex === null) {
+    console.error(
+      `Current playing index is null. ignore to request of go next index of audio list.`
+    );
+    return;
   }
+
+  const from = currentIndex + 1;
+  const to = list.length - 1;
+
+  if (to < from) {
+    console.error(`invalid range. from: ${from}, to: ${to}`);
+    return;
+  }
+
+  // tslint:disable-next-line:no-increment-decrement
+  for (let i = from; i <= to; i++) {
+    const candidate = list[i];
+    if (candidate && candidate.left && candidate.right) {
+      dispatch(goIndex(i));
+      return;
+    }
+  }
+
+  console.error("Could not find valid audio from list.");
 };
 
 function mergeList(

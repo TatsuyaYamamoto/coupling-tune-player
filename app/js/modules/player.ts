@@ -1,4 +1,6 @@
 import { AnyAction, Dispatch } from "redux";
+import { ThunkAction } from "redux-thunk";
+
 import { States } from "./redux";
 
 import { context } from "./helper/AudioContext";
@@ -7,6 +9,7 @@ import Audio from "./model/Audio";
 
 import Timer = NodeJS.Timer;
 import { syncPlay, pause as syncPause } from "./helper/SyncPlayer";
+import { goNextIndex, goPrevIndex } from "./audiolist";
 
 export enum PlayerActionTypes {
   PLAY = "c_tune/player/play",
@@ -100,6 +103,66 @@ export function updateCurrentTime(time?: number) {
     });
   };
 }
+
+export const skipPrevious = (): ThunkAction<void, States, undefined> => (
+  dispatch,
+  getState
+) => {
+  const stopOnce = getState().player.playing;
+  if (stopOnce) {
+    dispatch(pause());
+  }
+
+  dispatch(updateCurrentTime(0));
+  dispatch(goPrevIndex());
+
+  if (stopOnce) {
+    const { list, playingIndex } = getState().audiolist;
+
+    if (!playingIndex) {
+      console.error("index is null");
+      return;
+    }
+    const { left, right } = list[playingIndex];
+
+    if (!left || !right) {
+      console.error("left or right audio is null");
+      return;
+    }
+
+    dispatch(play(left, right));
+  }
+};
+
+export const skipNext = (): ThunkAction<void, States, undefined> => (
+  dispatch,
+  getState
+) => {
+  const stopOnce = getState().player.playing;
+  if (stopOnce) {
+    dispatch(pause());
+  }
+
+  dispatch(updateCurrentTime(0));
+  dispatch(goNextIndex());
+
+  if (stopOnce) {
+    const { list, playingIndex } = getState().audiolist;
+
+    if (!playingIndex) {
+      console.error("index is null");
+      return;
+    }
+    const { left, right } = list[playingIndex];
+
+    if (!left || !right) {
+      console.error("left or right audio is null");
+      return;
+    }
+
+    dispatch(play(left, right));
+  }
+};
 
 export interface PlayerState {
   loading: boolean;
