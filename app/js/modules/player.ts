@@ -75,7 +75,7 @@ export function updateCurrentTime(time?: number) {
   return async (dispatch: Dispatch<States>, getState: () => States) => {
     const { currentTime } = getState().player;
 
-    if (time) {
+    if (typeof time !== "undefined") {
       dispatch({
         type: PlayerActionTypes.UPDATE_CURRENT,
         payload: { currentTime: time }

@@ -9,9 +9,9 @@ let rightAudioSource: AudioBufferSourceNode | null = null;
  *
  * @param {Audio} left
  * @param {Audio} right
- * @param {number} currentTime
+ * @param {number} offset
  */
-export function syncPlay(left: Audio, right: Audio, currentTime: number = 0) {
+export function syncPlay(left: Audio, right: Audio, offset: number = 0) {
   leftAudioSource = context.createBufferSource();
   leftAudioSource.buffer = left.audioBuffer;
 
@@ -26,8 +26,8 @@ export function syncPlay(left: Audio, right: Audio, currentTime: number = 0) {
   rightAudioSource.connect(gainNode);
 
   gainNode.connect(context.destination);
-  let leftAudioOffset = currentTime;
-  let rightAudioOffset = currentTime;
+  let leftAudioOffset = offset;
+  let rightAudioOffset = offset;
   const diff = left.startPosition - right.startPosition;
 
   if (0 < diff) {

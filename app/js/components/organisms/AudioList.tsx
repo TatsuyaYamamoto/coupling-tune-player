@@ -13,6 +13,11 @@ import { PlayArrow } from "material-ui-icons";
 
 import { States } from "../../modules/redux";
 import { goIndex, AudioListItem } from "../../modules/audiolist";
+import {
+  play as playAudio,
+  pause as pauseAudio,
+  updateCurrentTime
+} from "../../modules/player";
 
 export interface ComponentState {}
 
@@ -85,20 +90,37 @@ class AudioList extends React.Component<Props, ComponentState> {
 
   private onClickRow(index: number) {
     console.log(`on row clicked. index: ${index}.`);
-    const { dispatch } = this.props;
+    const { dispatch, audioList, playing } = this.props;
+    if (!dispatch) {
+      return;
+    }
 
-    dispatch && dispatch(goIndex(index));
+    const left = audioList[index].left;
+    const right = audioList[index].right;
+    if (!left || !right) {
+      console.log("Provided index item has no left or right audio.");
+      return;
+    }
+    if (playing) {
+      dispatch(pauseAudio());
+    }
+    dispatch(goIndex(index));
+    dispatch(updateCurrentTime(0));
+    dispatch(playAudio(left, right));
   }
 }
 
 interface StateProps {
+  playing: boolean;
   audioList: AudioListItem[];
   playingIndex: number | null;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   const { list, playingIndex } = state.audiolist;
+  const { playing } = state.player;
   return {
+    playing,
     playingIndex,
     audioList: list
   };
