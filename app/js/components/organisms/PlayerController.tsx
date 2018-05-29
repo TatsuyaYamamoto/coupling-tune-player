@@ -10,6 +10,8 @@ import Card, { CardContent } from "material-ui/Card";
 
 import PlayButton from "../atoms/button/PlayButton";
 import PauseButton from "../atoms/button/PauseButton";
+import PrevButton from "../atoms/button/PrevButton";
+import NextButton from "../atoms/button/NextButton";
 
 import {
   play as playAudio,
@@ -71,11 +73,13 @@ class PlayerController extends React.Component<Props, ComponentState> {
           onFixed={this.onSliderFixed}
         />
         <Buttons>
+          <PrevButton disabled={!ready} onClick={this.onPrevClicked} />
           {playing ? (
             <Pause onClick={this.onPause} />
           ) : (
             <Play disabled={!ready} onClick={this.onPlay} />
           )}
+          <NextButton disabled={!ready} onClick={this.onNextClicked} />
         </Buttons>
       </Card>
     );
@@ -101,6 +105,14 @@ class PlayerController extends React.Component<Props, ComponentState> {
       category: "player",
       label: "pause"
     });
+  }
+
+  private onPrevClicked() {
+    console.log("on prev skip button clicked.");
+  }
+
+  private onNextClicked() {
+    console.log("on next skip button clicked.");
   }
 
   private onSliderStart() {
