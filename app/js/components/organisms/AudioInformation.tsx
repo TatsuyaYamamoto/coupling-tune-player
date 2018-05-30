@@ -6,12 +6,13 @@ import { default as AutoBind } from "autobind-decorator";
 
 import { States } from "../../modules/redux";
 import Audio from "../../modules/model/Audio";
+import { select } from "../../modules/audiolist";
+import { toFiles } from "../../modules/helper/FileSystem";
 
 import AudioDetail from "../molecules/AudioDetail";
 import LoadingDialog from "./dialog/LoadingDialog";
 
 import { sendEvent } from "../../utils";
-import { select } from "../../modules/audiolist";
 
 export interface ComponentProps {
   className?: string;
@@ -114,11 +115,11 @@ function mapDispatchToProps(
   ownProps: ComponentProps
 ): DispatchProps {
   return {
-    selectLeftAudios: (files: FileList) => {
-      dispatch(select(files, "left"));
+    selectLeftAudios: (fileList: FileList) => {
+      dispatch(select(toFiles(fileList), "left"));
     },
-    selectRightAudios: (files: FileList) => {
-      dispatch(select(files, "right"));
+    selectRightAudios: (fileList: FileList) => {
+      dispatch(select(toFiles(fileList), "right"));
     }
   };
 }

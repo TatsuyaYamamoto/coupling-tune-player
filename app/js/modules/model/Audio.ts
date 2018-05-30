@@ -6,9 +6,6 @@ export interface AudioConstructor {
   title: string;
   artist: string | null;
   pictureBase64: string | null;
-  bpm: BPM;
-  startPosition: number;
-  audioBuffer: AudioBuffer;
 }
 
 export type AudioEvents = "tagloaded" | "hoge";
@@ -21,28 +18,17 @@ class Audio {
   private _title: string;
   private _artist: string | null;
   private _pictureBase64: string | null;
-  private _bpm: BPM;
-  private _startPosition: number;
-  private _audioBuffer: AudioBuffer;
+  private _bpm: BPM | null = null;
+  private _startPosition: number | null = null;
+  private _audioBuffer: AudioBuffer | null = null;
 
   public constructor(props: AudioConstructor) {
-    const {
-      file,
-      title,
-      artist,
-      pictureBase64,
-      bpm,
-      startPosition,
-      audioBuffer
-    } = props;
+    const { file, title, artist, pictureBase64 } = props;
 
     this._file = file;
     this._title = title;
     this._artist = artist;
     this._pictureBase64 = pictureBase64;
-    this._bpm = bpm;
-    this._startPosition = startPosition;
-    this._audioBuffer = audioBuffer;
   }
 
   public get file(): File {
@@ -61,16 +47,40 @@ class Audio {
     return this._pictureBase64;
   }
 
-  public get bpm(): number {
+  public get bpm(): BPM {
+    if (!this._bpm) {
+      throw new Error("Could not access. BPM is not ready.");
+    }
+
     return this._bpm;
   }
 
   public get startPosition(): number {
+    if (!this._startPosition) {
+      throw new Error("Could not access. startPosition is not ready.");
+    }
+
     return this._startPosition;
   }
 
   public get audioBuffer(): AudioBuffer {
+    if (!this._audioBuffer) {
+      throw new Error("Could not access. audioBuffer is not ready.");
+    }
+
     return this._audioBuffer;
+  }
+
+  public set bpm(bpm: BPM) {
+    this._bpm = bpm;
+  }
+
+  public set startPosition(startPosition: number) {
+    this._startPosition = startPosition;
+  }
+
+  public set audioBuffer(audioBuffer: AudioBuffer) {
+    this._audioBuffer = audioBuffer;
   }
 
   public on(event: AudioEvents, callback: ListenerFn): this {

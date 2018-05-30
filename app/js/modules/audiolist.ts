@@ -1,67 +1,90 @@
 import { AnyAction, Dispatch } from "redux";
+import { ThunkAction } from "redux-thunk";
+
 import { States } from "./redux";
-import { toFiles } from "./helper/FileSystem";
+import Audio from "./model/Audio";
 import { loadAsAudioBuffer } from "./helper/AudioContext";
 import { loadTags } from "./helper/TagLoader";
 import { analyzeBpm } from "./helper/BpmAnalyzer";
-import Audio from "./model/Audio";
 
-export enum AudioListActionTypes {
-  SELECT = "c_tune/audio-list/select",
+export enum Actions {
+  SELECT_REQUEST = "c_tune/audio-list/select_request",
+  SELECT_SUCCESS = "c_tune/audio-list/select_success",
+  SELECT_FAILURE = "c_tune/audio-list/select_failure",
+  LOAD_AUDIO_REQUEST = "c_tune/audio-list/load_audio_request",
+  LOAD_AUDIO_SUCCESS = "c_tune/audio-list/load_audio_success",
+  LOAD_AUDIO_FAILURE = "c_tune/audio-list/load_audio_failure",
+  ANALYZE_AUDIO_REQUEST = "c_tune/audio-list/analyze_audio_request",
+  ANALYZE_AUDIO_SUCCESS = "c_tune/audio-list/analyze_audio_success",
+  ANALYZE_AUDIO_FAILURE = "c_tune/audio-list/analyze_audio_failure",
   GO_INDEX = "c_tune/audio-list/go_index"
 }
 
 /**
  * 音声ファイルを選択する
  *
- * @param {FileList} fileList
+ * @param {File[]} files
  * @param {"left" | "right"} type
- * @returns {(dispatch: Dispatch<States>) => Promise<{type: AudioListActionTypes; payload: {type: "left" | "right"; files: File[]}}>}
+ * @returns {ThunkAction<Promise<void>, States, any>}
  */
-export const select = (fileList: FileList, type: "left" | "right") => async (
-  dispatch: Dispatch<States>,
-  getState: () => States
-) => {
-  const files = toFiles(fileList);
-  const audios = [];
-  for (const file of files) {
-    const audioBuffer = await loadAsAudioBuffer(file);
-    console.log("Loaded audio buffer. length: " + audioBuffer.length);
+export const select = (
+  files: File[],
+  type: "left" | "right"
+): ThunkAction<Promise<void>, States, any> => async (dispatch, getState) => {
+  dispatch({ type: Actions.SELECT_REQUEST });
 
+  for (const file of files) {
     const { title, artist, pictureBase64 } = await loadTags(file);
     console.log("Loaded media tag.", title, artist);
 
-    const { bpm, startPosition } = await analyzeBpm(audioBuffer);
-    console.log("Analyzed BPM.", bpm);
+    const audio = new Audio({
+      file,
+      artist,
+      pictureBase64,
+      title: title || file.name
+    });
+    const currentList = getState().audiolist.list;
 
-    audios.push(
-      new Audio({
-        file,
-        audioBuffer,
-        artist,
-        pictureBase64,
-        bpm,
-        startPosition,
-        title: title || file.name
-      })
-    );
+    const updatedList = mergeToList(type, audio, currentList);
+
+    dispatch({
+      type: Actions.LOAD_AUDIO_SUCCESS,
+      payload: { list: updatedList }
+    });
+
+    (async () => {
+      dispatch({ type: Actions.ANALYZE_AUDIO_REQUEST });
+
+      const audioBuffer = await loadAsAudioBuffer(file);
+      console.log(
+        `Loaded. Title: ${audio.title}, array length: ${audioBuffer.length}`
+      );
+
+      const { bpm, startPosition } = await analyzeBpm(audioBuffer);
+      console.log(`Analyzed. Title: ${audio.title}, BPM: ${bpm}`);
+
+      const currentList = getState().audiolist.list;
+      audio.audioBuffer = audioBuffer;
+      audio.bpm = bpm;
+      audio.startPosition = startPosition;
+
+      const updatedList = mergeToList(type, audio, currentList);
+
+      dispatch({
+        type: Actions.ANALYZE_AUDIO_SUCCESS,
+        payload: { list: updatedList }
+      });
+    })();
   }
-  console.log("Load audios", audios);
 
-  const updatedList = mergeList(type, audios, getState().audiolist.list);
-  console.log("Merged list", audios);
-
-  dispatch({
-    type: AudioListActionTypes.SELECT,
-    payload: { type, list: updatedList }
-  });
+  dispatch({ type: Actions.SELECT_SUCCESS });
 };
 
 export const goIndex = (index: number) => (
   dispatch: Dispatch<States>,
   getState: () => States
 ) => {
-  const { list, playingIndex } = getState().audiolist;
+  const { list } = getState().audiolist;
   const min = 0;
   const max = list.length - 1;
   if (!(min <= index || index <= max)) {
@@ -81,7 +104,7 @@ export const goIndex = (index: number) => (
   }
 
   dispatch({
-    type: AudioListActionTypes.GO_INDEX,
+    type: Actions.GO_INDEX,
     payload: { index }
   });
 };
@@ -118,9 +141,9 @@ export const goPrevIndex = () => (
   console.error("Could not find valid audio from list.");
 };
 
-export const goNextIndex = () => (
-  dispatch: Dispatch<States>,
-  getState: () => States
+export const goNextIndex = (): ThunkAction<void, States, any> => (
+  dispatch,
+  getState
 ) => {
   const { playingIndex: currentIndex, list } = getState().audiolist;
 
@@ -151,38 +174,59 @@ export const goNextIndex = () => (
   console.error("Could not find valid audio from list.");
 };
 
-function mergeList(
+/**
+ * get updated Audio List.
+ *
+ * @param {"left" | "right"} type
+ * @param {Audio} provided
+ * @param {AudioListItem[]} currentList
+ * @returns {AudioListItem[]}
+ */
+function mergeToList(
   type: "left" | "right",
-  providedItems: Audio[],
+  provided: Audio,
   currentList: AudioListItem[]
-) {
-  const updatedList: AudioListItem[] = [...currentList];
-  const targetType = type === "left" ? "right" : "left";
+): AudioListItem[] {
+  const otherSideType = type === "left" ? "right" : "left";
+  let newTrack = true;
 
-  providedItems.forEach(provided => {
-    let match = false;
-    for (const item of updatedList) {
-      const target = item[targetType];
-      if (!target) {
-        continue;
-      }
+  const updatedList = currentList.map(item => {
+    const ownSide = item[type];
+    const otherSide = item[otherSideType];
 
-      if (matchTitle(provided.title, target.title)) {
-        item[type] = provided;
-        match = true;
-      }
+    if (
+      (ownSide && matchTitle(provided.title, ownSide.title)) ||
+      (otherSide && matchTitle(provided.title, otherSide.title))
+    ) {
+      newTrack = false;
+
+      return {
+        ...item,
+        [type]: provided
+      };
     }
-    if (!match) {
-      updatedList.push({
-        left: type === "left" ? provided : null,
-        right: type === "right" ? provided : null
-      });
-    }
+
+    return item;
   });
+
+  if (newTrack) {
+    updatedList.push({
+      left: type === "left" ? provided : null,
+      right: type === "right" ? provided : null
+    });
+  }
 
   return updatedList;
 }
 
+/**
+ * Return true if judged that provide titles are same.
+ *
+ * @param {string} title1
+ * @param {string} title2
+ * @param {number} threshold
+ * @returns {boolean}
+ */
 function matchTitle(
   title1: string,
   title2: string,
@@ -230,13 +274,19 @@ export default function reducer(
   { type, payload }: AnyAction
 ): AudioListState {
   switch (type) {
-    case AudioListActionTypes.SELECT:
+    case Actions.LOAD_AUDIO_SUCCESS:
       return {
         ...state,
         list: payload.list
       };
 
-    case AudioListActionTypes.GO_INDEX:
+    case Actions.ANALYZE_AUDIO_SUCCESS:
+      return {
+        ...state,
+        list: payload.list
+      };
+
+    case Actions.GO_INDEX:
       return {
         ...state,
         playingIndex: payload.index
