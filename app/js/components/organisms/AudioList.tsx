@@ -1,15 +1,9 @@
 import * as React from "react";
 import { connect, DispatchProp } from "react-redux";
 
-import {
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody
-} from "material-ui";
-import { PlayArrow } from "material-ui-icons";
+import TrackTable from "./table/TrackTable";
+import TrackTableHead from "./table/TrackTableHead";
+import TrackTableBody from "./table/TrackTableBody";
 
 import { States } from "../../modules/redux";
 import { goIndex, AudioListItem } from "../../modules/audiolist";
@@ -28,82 +22,26 @@ export interface ComponentProps {
 type Props = ComponentProps & StateProps & DispatchProp<States>;
 
 class AudioList extends React.Component<Props, ComponentState> {
+  constructor(props: any) {
+    super(props);
+
+    this.onClickRow = this.onClickRow.bind(this);
+  }
+
   public render() {
-    const { className, audioList, playingIndex } = this.props;
-
-    const tableHeader = (
-      <TableHead>
-        <TableRow style={{ verticalAlign: "middle" }}>
-          <TableCell padding={"none"} style={{ textAlign: "right" }}>
-            Left title
-          </TableCell>
-          <TableCell
-            padding={"none"}
-            style={{ width: 100, textAlign: "center" }}
-          >
-            Status
-          </TableCell>
-          <TableCell padding={"none"} style={{ textAlign: "left" }}>
-            Right title
-          </TableCell>
-        </TableRow>
-      </TableHead>
-    );
-
-    const tableBody =
-      audioList.length === 0 ? (
-        <TableBody>
-          <TableRow>
-            <TableCell
-              padding={"none"}
-              style={{ textAlign: "center" }}
-              colSpan={3}
-            >
-              No track.
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      ) : (
-        <TableBody>
-          {audioList.map((listItem, index) => {
-            const leftTitle = listItem.left ? listItem.left.title : "---";
-            const rightTitle = listItem.right ? listItem.right.title : "---";
-            const selected = playingIndex === index;
-            const key = index + leftTitle + rightTitle;
-            const onClick = () => this.onClickRow(index);
-
-            return (
-              <TableRow
-                key={key}
-                hover={true}
-                selected={selected}
-                onClick={onClick}
-                style={{ cursor: "pointer" }}
-              >
-                <TableCell padding={"none"} style={{ textAlign: "right" }}>
-                  {leftTitle}
-                </TableCell>
-                <TableCell padding={"none"} style={{ textAlign: "center" }}>
-                  <PlayArrow />
-                </TableCell>
-                <TableCell padding={"none"} style={{ textAlign: "left" }}>
-                  {rightTitle}
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      );
+    const { audioList, playingIndex } = this.props;
 
     return (
-      <div>
-        <Paper className={className}>
-          <Table>
-            {tableHeader}
-            {tableBody}
-          </Table>
-        </Paper>
-      </div>
+      <React.Fragment>
+        <TrackTable>
+          <TrackTableHead />
+          <TrackTableBody
+            onRowClicked={this.onClickRow}
+            list={audioList}
+            playingIndex={playingIndex}
+          />
+        </TrackTable>
+      </React.Fragment>
     );
   }
 
