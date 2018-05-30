@@ -21,14 +21,11 @@ export interface ComponentState {}
 
 const Root = styled.div`
   display: flex;
+  justify-content: space-around;
   max-width: 900px;
   margin: 0 auto;
-  padding: 30px 10px;
+  padding: 30px 0;
 `;
-
-interface DetailProps {
-  reverse?: boolean;
-}
 
 const Detail = styled(AudioDetail)``;
 

@@ -23,8 +23,8 @@ const Root = styled.div`
 `;
 
 const CdCover = styled.div`
-  width: 200px;
-  height: 200px;
+  width: 300px;
+  height: 300px;
   @media (max-width: 480px) {
     width: 100px;
     height: 100px;
