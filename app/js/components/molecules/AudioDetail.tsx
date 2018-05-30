@@ -2,13 +2,9 @@ import * as React from "react";
 import { default as styled } from "styled-components";
 
 import FileAttacheButton from "../atoms/button/FileAttacheButton";
-import { default as Title } from "../atoms/AudioTitle";
-import { default as Artist } from "../atoms/AudioArtist";
 import CdSvg from "../atoms/CdSvg";
 
 interface Props {
-  title: string | null;
-  artist: string | null;
   imageSrc: string | null;
   onAudioSelected?: (fileList: FileList) => void;
   reverse?: boolean;
@@ -24,27 +20,6 @@ const Root = styled.div`
   flex-direction: ${(props: RootProps) =>
     props.reverse ? "row-reverse" : "row"};
   align-items: center;
-`;
-
-const WrapTitle = styled(Title)`
-  margin-top: 5px;
-  margin-bottom: 5px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-size: 35px;
-  @media (max-width: 480px) {
-    font-size: 20px;
-  }
-`;
-
-const WrapArtist = styled(Artist)`
-  margin-top: 5px;
-  margin-bottom: 5px;
-  font-size: 15px;
-  @media (max-width: 480px) {
-    font-size: 10px;
-  }
 `;
 
 const CdCover = styled.div`
@@ -83,19 +58,10 @@ const NoImage = styled(CdSvg)`
 `;
 
 const AudioDetail = (props: Props) => {
-  const {
-    title,
-    artist,
-    imageSrc,
-    onAudioSelected,
-    reverse,
-    className
-  } = props;
+  const { imageSrc, onAudioSelected, reverse, className } = props;
 
   const detail = (
     <Detail reverse={reverse}>
-      <WrapTitle>{title}</WrapTitle>
-      <WrapArtist>{artist}</WrapArtist>
       <FileButton onSelected={onAudioSelected} />
     </Detail>
   );
