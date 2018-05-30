@@ -31,57 +31,76 @@ class AudioList extends React.Component<Props, ComponentState> {
   public render() {
     const { className, audioList, playingIndex } = this.props;
 
+    const tableHeader = (
+      <TableHead>
+        <TableRow style={{ verticalAlign: "middle" }}>
+          <TableCell padding={"none"} style={{ textAlign: "right" }}>
+            Left title
+          </TableCell>
+          <TableCell
+            padding={"none"}
+            style={{ width: 100, textAlign: "center" }}
+          >
+            Status
+          </TableCell>
+          <TableCell padding={"none"} style={{ textAlign: "left" }}>
+            Right title
+          </TableCell>
+        </TableRow>
+      </TableHead>
+    );
+
+    const tableBody =
+      audioList.length === 0 ? (
+        <TableBody>
+          <TableRow>
+            <TableCell
+              padding={"none"}
+              style={{ textAlign: "center" }}
+              colSpan={3}
+            >
+              No track.
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      ) : (
+        <TableBody>
+          {audioList.map((listItem, index) => {
+            const leftTitle = listItem.left ? listItem.left.title : "---";
+            const rightTitle = listItem.right ? listItem.right.title : "---";
+            const selected = playingIndex === index;
+            const key = index + leftTitle + rightTitle;
+            const onClick = () => this.onClickRow(index);
+
+            return (
+              <TableRow
+                key={key}
+                hover={true}
+                selected={selected}
+                onClick={onClick}
+                style={{ cursor: "pointer" }}
+              >
+                <TableCell padding={"none"} style={{ textAlign: "right" }}>
+                  {leftTitle}
+                </TableCell>
+                <TableCell padding={"none"} style={{ textAlign: "center" }}>
+                  <PlayArrow />
+                </TableCell>
+                <TableCell padding={"none"} style={{ textAlign: "left" }}>
+                  {rightTitle}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      );
+
     return (
       <div>
         <Paper className={className}>
           <Table>
-            <TableHead>
-              <TableRow style={{ verticalAlign: "middle" }}>
-                <TableCell padding={"none"} style={{ textAlign: "right" }}>
-                  Left title
-                </TableCell>
-                <TableCell
-                  padding={"none"}
-                  style={{ width: 100, textAlign: "center" }}
-                >
-                  Status
-                </TableCell>
-                <TableCell padding={"none"} style={{ textAlign: "left" }}>
-                  Right title
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {audioList.map((listItem, index) => {
-                const leftTitle = listItem.left ? listItem.left.title : "---";
-                const rightTitle = listItem.right
-                  ? listItem.right.title
-                  : "---";
-                const selected = playingIndex === index;
-                const key = index + leftTitle + rightTitle;
-                const onClick = () => this.onClickRow(index);
-
-                return (
-                  <TableRow
-                    key={key}
-                    hover={true}
-                    selected={selected}
-                    onClick={onClick}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <TableCell padding={"none"} style={{ textAlign: "right" }}>
-                      {leftTitle}
-                    </TableCell>
-                    <TableCell padding={"none"} style={{ textAlign: "center" }}>
-                      <PlayArrow />
-                    </TableCell>
-                    <TableCell padding={"none"} style={{ textAlign: "left" }}>
-                      {rightTitle}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
+            {tableHeader}
+            {tableBody}
           </Table>
         </Paper>
       </div>
