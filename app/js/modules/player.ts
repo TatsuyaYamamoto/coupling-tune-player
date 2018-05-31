@@ -13,8 +13,8 @@ import { goNextIndex, goPrevIndex } from "./audiolist";
 import { analyzeBpm } from "./helper/BpmAnalyzer";
 
 export enum PlayerActionTypes {
-  PLAY_REQUEST = "c_tune/player/play_request",
   PLAY = "c_tune/player/play",
+  PLAY_REQUEST = "c_tune/player/play_request",
   PAUSE = "c_tune/player/pause",
   UPDATE_CURRENT = "c_tune/player/update_current"
 }
@@ -29,32 +29,19 @@ let intervalId: Timer | number | null = null;
  * @param {Audio} rightAudio
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => Promise<void>}
  */
-export function play(leftAudio: Audio, rightAudio: Audio) {
-  return async (dispatch: Dispatch<States>, getState: () => States) => {
-    dispatch({
-      type: PlayerActionTypes.PLAY_REQUEST
-    });
-
-    const { currentTime } = getState().player;
-
-    const analyze = async (file: File, type: "left" | "right") => {
-      const audioBuffer = await loadAsAudioBuffer(file);
-      console.log(
-        `Loaded as audio buffer. type: ${type}, length: ${audioBuffer.length}`
-      );
-
-      const { bpm, startPosition } = await analyzeBpm(audioBuffer);
-      console.log(`Analyzed. type: ${type}, BPM: ${bpm}`);
-
-      return { audioBuffer, startPosition };
-    };
+export function play(
+  leftAudio: Audio,
+  rightAudio: Audio
+): ThunkAction<void, States, undefined> {
+  return async (dispatch, getState) => {
+    dispatch({ type: PlayerActionTypes.PLAY_REQUEST });
 
     const [left, right] = await Promise.all([
       analyze(leftAudio.file, "left"),
       analyze(rightAudio.file, "right")
     ]);
-    // Success analyze.
 
+    const { currentTime } = getState().player;
     syncPlay(
       left.audioBuffer,
       left.startPosition,
@@ -63,14 +50,30 @@ export function play(leftAudio: Audio, rightAudio: Audio) {
       currentTime
     );
 
-    dispatch({
-      type: PlayerActionTypes.PLAY
-    });
+    dispatch({ type: PlayerActionTypes.PLAY });
 
     intervalId = setInterval(() => {
       dispatch(updateCurrentTime());
     }, 500);
   };
+}
+
+/**
+ *
+ * @param {File} file
+ * @param {"left" | "right"} type
+ * @returns {Promise<{audioBuffer: AudioBuffer; startPosition: number}>}
+ */
+async function analyze(file: File, type: "left" | "right") {
+  const audioBuffer = await loadAsAudioBuffer(file);
+  console.log(
+    `Loaded as audio buffer. type: ${type}, length: ${audioBuffer.length}`
+  );
+
+  const { bpm, startPosition } = await analyzeBpm(audioBuffer);
+  console.log(`Analyzed. type: ${type}, BPM: ${bpm}`);
+
+  return { audioBuffer, startPosition };
 }
 
 /**

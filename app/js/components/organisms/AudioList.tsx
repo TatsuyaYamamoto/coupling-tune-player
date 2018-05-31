@@ -22,12 +22,6 @@ export interface ComponentProps {
 type Props = ComponentProps & StateProps & DispatchProp<States>;
 
 class AudioList extends React.Component<Props, ComponentState> {
-  constructor(props: any) {
-    super(props);
-
-    this.onClickRow = this.onClickRow.bind(this);
-  }
-
   public render() {
     const { audioList, playingIndex } = this.props;
 
@@ -45,7 +39,7 @@ class AudioList extends React.Component<Props, ComponentState> {
     );
   }
 
-  private onClickRow(index: number) {
+  private onClickRow = (index: number) => {
     console.log(`on row clicked. index: ${index}.`);
     const { dispatch, audioList, playing } = this.props;
     if (!dispatch) {
@@ -64,7 +58,7 @@ class AudioList extends React.Component<Props, ComponentState> {
     dispatch(goIndex(index));
     dispatch(updateCurrentTime(0));
     dispatch(playAudio(left, right));
-  }
+  };
 }
 
 interface StateProps {

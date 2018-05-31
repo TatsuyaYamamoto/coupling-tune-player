@@ -14,9 +14,6 @@ export enum Actions {
   LOAD_AUDIO_REQUEST = "c_tune/audio-list/load_audio_request",
   LOAD_AUDIO_SUCCESS = "c_tune/audio-list/load_audio_success",
   LOAD_AUDIO_FAILURE = "c_tune/audio-list/load_audio_failure",
-  ANALYZE_AUDIO_REQUEST = "c_tune/audio-list/analyze_audio_request",
-  ANALYZE_AUDIO_SUCCESS = "c_tune/audio-list/analyze_audio_success",
-  ANALYZE_AUDIO_FAILURE = "c_tune/audio-list/analyze_audio_failure",
   GO_INDEX = "c_tune/audio-list/go_index"
 }
 
@@ -51,30 +48,6 @@ export const select = (
       type: Actions.LOAD_AUDIO_SUCCESS,
       payload: { list: updatedList }
     });
-
-    (async () => {
-      dispatch({ type: Actions.ANALYZE_AUDIO_REQUEST });
-
-      const audioBuffer = await loadAsAudioBuffer(file);
-      console.log(
-        `Loaded. Title: ${audio.title}, array length: ${audioBuffer.length}`
-      );
-
-      const { bpm, startPosition } = await analyzeBpm(audioBuffer);
-      console.log(`Analyzed. Title: ${audio.title}, BPM: ${bpm}`);
-
-      const currentList = getState().audiolist.list;
-      audio.audioBuffer = audioBuffer;
-      audio.bpm = bpm;
-      audio.startPosition = startPosition;
-
-      const updatedList = mergeToList(type, audio, currentList);
-
-      dispatch({
-        type: Actions.ANALYZE_AUDIO_SUCCESS,
-        payload: { list: updatedList }
-      });
-    })();
   }
 
   dispatch({ type: Actions.SELECT_SUCCESS });
@@ -275,12 +248,6 @@ export default function reducer(
 ): AudioListState {
   switch (type) {
     case Actions.LOAD_AUDIO_SUCCESS:
-      return {
-        ...state,
-        list: payload.list
-      };
-
-    case Actions.ANALYZE_AUDIO_SUCCESS:
       return {
         ...state,
         list: payload.list
