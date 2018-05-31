@@ -16,7 +16,6 @@
   "license": "MIT",
   "dependencies": {
     "autobind-decorator": "^2.1.0",
-    "eventemitter3": "^3.0.1",
     "jsmediatags": "^3.8.1",
     "material-ui": "^1.0.0-beta.40",
     "material-ui-icons": "^1.0.0-beta.36",

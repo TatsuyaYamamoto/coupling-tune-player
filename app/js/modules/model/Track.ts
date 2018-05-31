@@ -1,4 +1,3 @@
-import { EventEmitter, ListenerFn } from "eventemitter3";
 import { default as AutoBind } from "autobind-decorator";
 
 export interface AudioConstructor {
@@ -9,12 +8,8 @@ export interface AudioConstructor {
   duration: number;
 }
 
-export type AudioEvents = "tagloaded" | "hoge";
-export type BPM = number;
-
 @AutoBind
 class Track {
-  private _eventEmitter = new EventEmitter();
   private _file: File;
   private _title: string;
   private _artist: string | null;
@@ -49,21 +44,6 @@ class Track {
 
   public get duration(): number {
     return this._duration;
-  }
-
-  public on(event: AudioEvents, callback: ListenerFn): this {
-    this._eventEmitter.on(event, callback);
-    return this;
-  }
-
-  public once(event: AudioEvents, callback: ListenerFn): this {
-    this._eventEmitter.once(event, callback);
-    return this;
-  }
-
-  public off(event: AudioEvents, callback: ListenerFn): this {
-    this._eventEmitter.off(event, callback);
-    return this;
   }
 }
 
