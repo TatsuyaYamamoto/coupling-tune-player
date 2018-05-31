@@ -1,15 +1,9 @@
 import * as React from "react";
-import {
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  IconButton,
-  CircularProgress,
-  Typography
-} from "material-ui";
+import { TableRow, TableCell, TableBody } from "material-ui";
+import { PlayArrow } from "material-ui-icons";
+
+import withHover, { WithHoverProps } from "../../hoc/withHover";
+
 import { AudioListItem } from "../../../modules/audiolist";
 
 export interface ComponentProps {
@@ -19,10 +13,12 @@ export interface ComponentProps {
   onRowClicked: (index: number) => void;
 }
 
-const NoTrackInfo = () => (
-  <TableCell padding={"none"} style={{ textAlign: "center" }} colSpan={3}>
-    No track.
-  </TableCell>
+const NoTrackRow = () => (
+  <TableRow>
+    <TableCell padding={"none"} style={{ textAlign: "center" }} colSpan={3}>
+      No track.
+    </TableCell>
+  </TableRow>
 );
 
 const LeftTrack = ({ title, artist }: any) => (
@@ -39,6 +35,12 @@ const TrackNumber = ({ trackNumber }: any) => (
   </TableCell>
 );
 
+const PlayTrack = () => (
+  <TableCell padding={"none"} style={{ textAlign: "center" }}>
+    <PlayArrow />
+  </TableCell>
+);
+
 const RightTrack = ({ title, artist }: any) => (
   <TableCell padding={"none"} style={{ textAlign: "left" }}>
     <span>
@@ -47,43 +49,82 @@ const RightTrack = ({ title, artist }: any) => (
   </TableCell>
 );
 
+interface TrackRowProps {
+  trackNumber: number;
+  leftTitle: string;
+  leftArtist: string;
+  rightTitle: string;
+  rightArtist: string;
+  selected: boolean;
+  onClick: () => void;
+}
+
+const TrackRow = withHover<TrackRowProps>(props => {
+  const {
+    trackNumber,
+    leftTitle,
+    leftArtist,
+    rightTitle,
+    rightArtist,
+    selected,
+    onClick,
+    hover,
+    onMouseEnter,
+    onMouseLeave
+  } = props;
+
+  return (
+    <TableRow
+      hover={true}
+      selected={selected}
+      onClick={onClick}
+      style={{ cursor: "pointer" }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <LeftTrack title={leftTitle} artist={leftArtist} />
+      {hover ? <PlayTrack /> : <TrackNumber trackNumber={trackNumber} />}
+      <RightTrack title={rightTitle} artist={rightArtist} />
+    </TableRow>
+  );
+});
+
 const TrackTable: React.SFC<ComponentProps> = props => {
   const { list, playingIndex, onRowClicked } = props;
 
   if (!list || list.length === 0) {
     return (
       <TableBody>
-        <TableRow>
-          <NoTrackInfo />
-        </TableRow>
+        <NoTrackRow />
       </TableBody>
     );
   }
+
   return (
     <TableBody>
       {list.map((listItem, index) => {
+        const { left, right } = listItem;
+        const leftTitle = left ? left.title : "---";
+        const leftArtist = left && left.artist ? left.artist : "---";
+        const rightTitle = right ? right.title : "---";
+        const rightArtist = right && right.artist ? right.artist : "---";
         const trackNumber = index + 1;
-        const leftTitle = listItem.left ? listItem.left.title : "---";
-        const leftArtist = listItem.left ? listItem.left.artist : "---";
-        const rightTitle = listItem.right ? listItem.right.title : "---";
-        const rightArtist = listItem.right ? listItem.right.artist : "---";
 
         const selected = playingIndex === index;
         const key = index + leftTitle + rightTitle;
         const onClick = () => onRowClicked(index);
 
         return (
-          <TableRow
+          <TrackRow
             key={key}
-            hover={true}
             selected={selected}
             onClick={onClick}
-            style={{ cursor: "pointer" }}
-          >
-            <LeftTrack title={leftTitle} artist={leftArtist} />
-            <TrackNumber trackNumber={trackNumber} />
-            <RightTrack title={rightTitle} artist={rightArtist} />
-          </TableRow>
+            trackNumber={trackNumber}
+            leftTitle={leftTitle}
+            leftArtist={leftArtist}
+            rightTitle={rightTitle}
+            rightArtist={rightArtist}
+          />
         );
       })}
     </TableBody>

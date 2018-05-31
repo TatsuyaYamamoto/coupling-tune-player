@@ -13,6 +13,8 @@ export type BPM = number;
 
 @AutoBind
 class Audio {
+  public static NO_INFO = "---";
+
   private _eventEmitter = new EventEmitter();
   private _file: File;
   private _title: string;

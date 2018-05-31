@@ -2,28 +2,48 @@ import * as React from "react";
 
 export interface WithHoverProps {
   hover: boolean;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 }
 
-function withHover(WrappedComponent: React.ComponentType) {
-  return class extends React.Component {
-    state = {
+interface HocProps {}
+
+interface HocState {
+  hover: boolean;
+}
+
+/**
+ * HOC for provide onHover state.
+ *
+ * @param {React.ComponentClass} WrappedComponent
+ * @returns {React.ComponentClass}
+ */
+function withHover<P>(
+  WrappedComponent: React.ComponentType<P & WithHoverProps>
+): React.ComponentType<P> {
+  return class extends React.Component<P> {
+    public state = {
       hover: false
     };
 
     private onMouseEnter = () => {
-      this.setState({ isHovered: true });
+      this.setState({ hover: true });
     };
 
     private onMouseLeave = () => {
-      this.setState({ isHovered: false });
+      this.setState({ hover: false });
     };
 
     render() {
-      return (
-        <div>
-          <WrappedComponent />
-        </div>
-      );
+      const { hover } = this.state;
+
+      const newProps = Object.assign({}, this.props, {
+        hover,
+        onMouseEnter: this.onMouseEnter,
+        onMouseLeave: this.onMouseLeave
+      });
+
+      return React.createElement(WrappedComponent, newProps);
     }
   };
 }

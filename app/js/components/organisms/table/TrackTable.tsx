@@ -1,15 +1,5 @@
 import * as React from "react";
-import {
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  IconButton,
-  CircularProgress,
-  Typography
-} from "material-ui";
+import { Paper, Table } from "material-ui";
 
 export interface ComponentProps {
   className?: string;
