@@ -7,16 +7,24 @@ let rightAudioSource: AudioBufferSourceNode | null = null;
 /**
  * Play audio file synchronously.
  *
- * @param {Audio} left
- * @param {Audio} right
+ * @param {AudioBuffer} leftAudioBuffer
+ * @param {number} leftStartPosition
+ * @param {AudioBuffer} rightAudioBuffer
+ * @param {number} rightStartPosition
  * @param {number} offset
  */
-export function syncPlay(left: Audio, right: Audio, offset: number = 0) {
+export function syncPlay(
+  leftAudioBuffer: AudioBuffer,
+  leftStartPosition: number,
+  rightAudioBuffer: AudioBuffer,
+  rightStartPosition: number,
+  offset: number = 0
+) {
   leftAudioSource = context.createBufferSource();
-  leftAudioSource.buffer = left.audioBuffer;
+  leftAudioSource.buffer = leftAudioBuffer;
 
   rightAudioSource = context.createBufferSource();
-  rightAudioSource.buffer = right.audioBuffer;
+  rightAudioSource.buffer = rightAudioBuffer;
 
   // TODO: Check to arrange gain is required?
   const gainNode = context.createGain();
@@ -28,7 +36,7 @@ export function syncPlay(left: Audio, right: Audio, offset: number = 0) {
   gainNode.connect(context.destination);
   let leftAudioOffset = offset;
   let rightAudioOffset = offset;
-  const diff = left.startPosition - right.startPosition;
+  const diff = leftStartPosition - rightStartPosition;
 
   if (0 < diff) {
     leftAudioOffset += diff;

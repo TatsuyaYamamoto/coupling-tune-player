@@ -3,15 +3,17 @@ import { ThunkAction } from "redux-thunk";
 
 import { States } from "./redux";
 
-import { context } from "./helper/AudioContext";
+import { context, loadAsAudioBuffer } from "./helper/AudioContext";
 
 import Audio from "./model/Audio";
 
 import Timer = NodeJS.Timer;
 import { syncPlay, pause as syncPause } from "./helper/SyncPlayer";
 import { goNextIndex, goPrevIndex } from "./audiolist";
+import { analyzeBpm } from "./helper/BpmAnalyzer";
 
 export enum PlayerActionTypes {
+  PLAY_REQUEST = "c_tune/player/play_request",
   PLAY = "c_tune/player/play",
   PAUSE = "c_tune/player/pause",
   UPDATE_CURRENT = "c_tune/player/update_current"
@@ -23,13 +25,43 @@ let intervalId: Timer | number | null = null;
 /**
  * 音声の再生を開始する。
  *
+ * @param {Audio} leftAudio
+ * @param {Audio} rightAudio
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => Promise<void>}
  */
-export function play(left: Audio, right: Audio) {
+export function play(leftAudio: Audio, rightAudio: Audio) {
   return async (dispatch: Dispatch<States>, getState: () => States) => {
+    dispatch({
+      type: PlayerActionTypes.PLAY_REQUEST
+    });
+
     const { currentTime } = getState().player;
 
-    syncPlay(left, right, currentTime);
+    const analyze = async (file: File, type: "left" | "right") => {
+      const audioBuffer = await loadAsAudioBuffer(file);
+      console.log(
+        `Loaded as audio buffer. type: ${type}, length: ${audioBuffer.length}`
+      );
+
+      const { bpm, startPosition } = await analyzeBpm(audioBuffer);
+      console.log(`Analyzed. type: ${type}, BPM: ${bpm}`);
+
+      return { audioBuffer, startPosition };
+    };
+
+    const [left, right] = await Promise.all([
+      analyze(leftAudio.file, "left"),
+      analyze(rightAudio.file, "right")
+    ]);
+    // Success analyze.
+
+    syncPlay(
+      left.audioBuffer,
+      left.startPosition,
+      right.audioBuffer,
+      right.startPosition,
+      currentTime
+    );
 
     dispatch({
       type: PlayerActionTypes.PLAY
