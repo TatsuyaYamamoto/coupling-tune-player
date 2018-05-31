@@ -13,16 +13,11 @@ export type BPM = number;
 
 @AutoBind
 class Track {
-  public static NO_INFO = "---";
-
   private _eventEmitter = new EventEmitter();
   private _file: File;
   private _title: string;
   private _artist: string | null;
   private _pictureBase64: string | null;
-  private _bpm: BPM | null = null;
-  private _startPosition: number | null = null;
-  private _audioBuffer: AudioBuffer | null = null;
 
   public constructor(props: AudioConstructor) {
     const { file, title, artist, pictureBase64 } = props;
@@ -47,42 +42,6 @@ class Track {
 
   public get pictureBase64(): string | null {
     return this._pictureBase64;
-  }
-
-  public get bpm(): BPM {
-    if (!this._bpm) {
-      throw new Error("Could not access. BPM is not ready.");
-    }
-
-    return this._bpm;
-  }
-
-  public get startPosition(): number {
-    if (!this._startPosition) {
-      throw new Error("Could not access. startPosition is not ready.");
-    }
-
-    return this._startPosition;
-  }
-
-  public get audioBuffer(): AudioBuffer {
-    if (!this._audioBuffer) {
-      throw new Error("Could not access. audioBuffer is not ready.");
-    }
-
-    return this._audioBuffer;
-  }
-
-  public set bpm(bpm: BPM) {
-    this._bpm = bpm;
-  }
-
-  public set startPosition(startPosition: number) {
-    this._startPosition = startPosition;
-  }
-
-  public set audioBuffer(audioBuffer: AudioBuffer) {
-    this._audioBuffer = audioBuffer;
   }
 
   public on(event: AudioEvents, callback: ListenerFn): this {
