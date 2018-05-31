@@ -21,7 +21,7 @@ import {
   skipNext
 } from "../../modules/player";
 import { States } from "../../modules/redux";
-import Audio from "../../modules/model/Audio";
+import Track from "../../modules/model/Track";
 
 import { sendEvent } from "../../utils";
 
@@ -173,8 +173,8 @@ interface StateProps {
   ready: boolean;
   duration: number;
   current: number;
-  leftAudio: Audio | null;
-  rightAudio: Audio | null;
+  leftAudio: Track | null;
+  rightAudio: Track | null;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
@@ -194,7 +194,7 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
 }
 
 // interface DispatchProps {
-//   playAudio: (left: Audio, right: Audio) => Promise<void>;
+//   playAudio: (left: Track, right: Track) => Promise<void>;
 //   pauseAudio: () => Promise<void>;
 //   updateCurrentTime: (time?: number) => Promise<void>;
 // }
@@ -204,7 +204,7 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
 //   ownProps: ComponentProps
 // ): DispatchProps {
 //   return {
-//     playAudio: (left: Audio, right: Audio) => dispatch(playAudio(left, right)),
+//     playAudio: (left: Track, right: Track) => dispatch(playAudio(left, right)),
 //     pauseAudio: () => dispatch(pauseAudio()),
 //     updateCurrentTime: (time?: number) => dispatch(updateCurrentTime(time))
 //     updateCurrentTime: (time?: number) => dispatch(updateCurrentTime(time))

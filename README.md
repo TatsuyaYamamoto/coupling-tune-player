@@ -12,7 +12,7 @@ App is hosted at [https://apps.sokontokoro-factory.net/coupling-tune-player/]().
 
 ## How it works
 
-This audio player analyze BPM and plays synchronously audio with [Web Audio API](https://developer.mozilla.org/ja/docs/Web/API/Web_Audio_API).
+This audio player analyze BPM and plays synchronously audio with [Web Track API](https://developer.mozilla.org/ja/docs/Web/API/Web_Audio_API).
 
 ## Getting start
 

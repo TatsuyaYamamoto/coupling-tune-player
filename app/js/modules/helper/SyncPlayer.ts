@@ -1,5 +1,5 @@
 import { context } from "./AudioContext";
-import Audio from "../model/Audio";
+import Track from "../model/Track";
 
 let leftAudioSource: AudioBufferSourceNode | null = null;
 let rightAudioSource: AudioBufferSourceNode | null = null;

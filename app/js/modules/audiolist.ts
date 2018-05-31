@@ -2,7 +2,7 @@ import { AnyAction, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
 
 import { States } from "./redux";
-import Audio from "./model/Audio";
+import Track from "./model/Track";
 import { loadAsAudioBuffer } from "./helper/AudioContext";
 import { loadTags } from "./helper/TagLoader";
 import { analyzeBpm } from "./helper/BpmAnalyzer";
@@ -34,7 +34,7 @@ export const select = (
     const { title, artist, pictureBase64 } = await loadTags(file);
     console.log("Loaded media tag.", title, artist);
 
-    const audio = new Audio({
+    const audio = new Track({
       file,
       artist,
       pictureBase64,
@@ -148,16 +148,16 @@ export const goNextIndex = (): ThunkAction<void, States, any> => (
 };
 
 /**
- * get updated Audio List.
+ * get updated Track List.
  *
  * @param {"left" | "right"} type
- * @param {Audio} provided
+ * @param {Track} provided
  * @param {AudioListItem[]} currentList
  * @returns {AudioListItem[]}
  */
 function mergeToList(
   type: "left" | "right",
-  provided: Audio,
+  provided: Track,
   currentList: AudioListItem[]
 ): AudioListItem[] {
   const otherSideType = type === "left" ? "right" : "left";
@@ -220,8 +220,8 @@ function matchTitle(
 }
 
 export interface AudioListItem {
-  left: Audio | null;
-  right: Audio | null;
+  left: Track | null;
+  right: Track | null;
 }
 
 export interface AudioListState {

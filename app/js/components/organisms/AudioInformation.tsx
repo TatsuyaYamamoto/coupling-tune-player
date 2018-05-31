@@ -5,7 +5,7 @@ import { default as styled } from "styled-components";
 import { default as AutoBind } from "autobind-decorator";
 
 import { States } from "../../modules/redux";
-import Audio from "../../modules/model/Audio";
+import Track from "../../modules/model/Track";
 import { select } from "../../modules/audiolist";
 import { toFiles } from "../../modules/helper/FileSystem";
 
@@ -87,8 +87,8 @@ class AudioInformation extends React.Component<
 }
 
 interface StateProps {
-  left: Audio | null;
-  right: Audio | null;
+  left: Track | null;
+  right: Track | null;
   loading: boolean;
 }
 

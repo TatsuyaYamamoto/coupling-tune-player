@@ -5,7 +5,7 @@ import { States } from "./redux";
 
 import { context, loadAsAudioBuffer } from "./helper/AudioContext";
 
-import Audio from "./model/Audio";
+import Track from "./model/Track";
 
 import Timer = NodeJS.Timer;
 import { syncPlay, pause as syncPause } from "./helper/SyncPlayer";
@@ -25,13 +25,13 @@ let intervalId: Timer | number | null = null;
 /**
  * 音声の再生を開始する。
  *
- * @param {Audio} leftAudio
- * @param {Audio} rightAudio
+ * @param {Track} leftAudio
+ * @param {Track} rightAudio
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => Promise<void>}
  */
 export function play(
-  leftAudio: Audio,
-  rightAudio: Audio
+  leftAudio: Track,
+  rightAudio: Track
 ): ThunkAction<void, States, undefined> {
   return async (dispatch, getState) => {
     dispatch({ type: PlayerActionTypes.PLAY_REQUEST });

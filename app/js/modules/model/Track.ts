@@ -12,7 +12,7 @@ export type AudioEvents = "tagloaded" | "hoge";
 export type BPM = number;
 
 @AutoBind
-class Audio {
+class Track {
   public static NO_INFO = "---";
 
   private _eventEmitter = new EventEmitter();
@@ -101,4 +101,4 @@ class Audio {
   }
 }
 
-export default Audio;
+export default Track;
