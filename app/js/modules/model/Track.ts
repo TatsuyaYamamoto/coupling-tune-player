@@ -6,6 +6,7 @@ export interface AudioConstructor {
   title: string;
   artist: string | null;
   pictureBase64: string | null;
+  duration: number;
 }
 
 export type AudioEvents = "tagloaded" | "hoge";
@@ -18,14 +19,16 @@ class Track {
   private _title: string;
   private _artist: string | null;
   private _pictureBase64: string | null;
+  private _duration: number;
 
   public constructor(props: AudioConstructor) {
-    const { file, title, artist, pictureBase64 } = props;
+    const { file, title, artist, pictureBase64, duration } = props;
 
     this._file = file;
     this._title = title;
     this._artist = artist;
     this._pictureBase64 = pictureBase64;
+    this._duration = duration;
   }
 
   public get file(): File {
@@ -42,6 +45,10 @@ class Track {
 
   public get pictureBase64(): string | null {
     return this._pictureBase64;
+  }
+
+  public get duration(): number {
+    return this._duration;
   }
 
   public on(event: AudioEvents, callback: ListenerFn): this {

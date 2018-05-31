@@ -188,28 +188,10 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
     leftAudio,
     rightAudio,
     ready: !!(leftAudio && rightAudio),
-    duration: !!leftAudio ? leftAudio.audioBuffer.duration : 0,
+    duration: !!leftAudio ? leftAudio.duration : 0,
     current: currentTime || 0
   };
 }
-
-// interface DispatchProps {
-//   playAudio: (left: Track, right: Track) => Promise<void>;
-//   pauseAudio: () => Promise<void>;
-//   updateCurrentTime: (time?: number) => Promise<void>;
-// }
-//
-// function mapDispatchToProps(
-//   dispatch: Dispatch<States>,
-//   ownProps: ComponentProps
-// ): DispatchProps {
-//   return {
-//     playAudio: (left: Track, right: Track) => dispatch(playAudio(left, right)),
-//     pauseAudio: () => dispatch(pauseAudio()),
-//     updateCurrentTime: (time?: number) => dispatch(updateCurrentTime(time))
-//     updateCurrentTime: (time?: number) => dispatch(updateCurrentTime(time))
-//   };
-// }
 
 export default connect(mapStateToProps)(
   PlayerController

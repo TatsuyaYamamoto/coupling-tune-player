@@ -6,6 +6,7 @@ import Track from "./model/Track";
 import { loadAsAudioBuffer } from "./helper/AudioContext";
 import { loadTags } from "./helper/TagLoader";
 import { analyzeBpm } from "./helper/BpmAnalyzer";
+import { loadAsAudio, readAsDataURL } from "./helper/FileSystem";
 
 export enum Actions {
   SELECT_REQUEST = "c_tune/audio-list/select_request",
@@ -34,15 +35,19 @@ export const select = (
     const { title, artist, pictureBase64 } = await loadTags(file);
     console.log("Loaded media tag.", title, artist);
 
-    const audio = new Track({
+    const dataUrl = await readAsDataURL(file);
+    const audio = await loadAsAudio(dataUrl);
+
+    const track = new Track({
       file,
       artist,
       pictureBase64,
-      title: title || file.name
+      title: title || file.name,
+      duration: audio.duration
     });
     const currentList = getState().audiolist.list;
 
-    const updatedList = mergeToList(type, audio, currentList);
+    const updatedList = mergeToList(type, track, currentList);
 
     dispatch({
       type: Actions.LOAD_AUDIO_SUCCESS,
