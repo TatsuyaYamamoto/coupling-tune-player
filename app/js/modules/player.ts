@@ -13,8 +13,8 @@ import { goNextIndex, goPrevIndex } from "./audiolist";
 import { analyzeBpm } from "./helper/BpmAnalyzer";
 
 export enum PlayerActionTypes {
-  PLAY = "c_tune/player/play",
   PLAY_REQUEST = "c_tune/player/play_request",
+  PLAY_SUCCESS = "c_tune/player/play_success",
   PAUSE = "c_tune/player/pause",
   UPDATE_CURRENT = "c_tune/player/update_current"
 }
@@ -50,7 +50,7 @@ export function play(
       currentTime
     );
 
-    dispatch({ type: PlayerActionTypes.PLAY });
+    dispatch({ type: PlayerActionTypes.PLAY_SUCCESS });
 
     intervalId = setInterval(() => {
       dispatch(updateCurrentTime());
@@ -220,9 +220,16 @@ export default function reducer(
   const { type, payload } = action;
 
   switch (type) {
-    case PlayerActionTypes.PLAY:
+    case PlayerActionTypes.PLAY_REQUEST:
       return {
         ...state,
+        loading: true
+      };
+
+    case PlayerActionTypes.PLAY_SUCCESS:
+      return {
+        ...state,
+        loading: false,
         playing: true
       };
 

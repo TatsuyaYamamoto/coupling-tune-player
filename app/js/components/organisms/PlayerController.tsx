@@ -60,8 +60,22 @@ class PlayerController extends React.Component<Props, ComponentState> {
   };
 
   public render() {
-    const { playing, ready, className, duration, current } = this.props;
+    const { playerState, className, duration, current } = this.props;
     const { manualCurrentTime } = this.state;
+
+    let centerButton = null;
+    switch (playerState) {
+      case "playing":
+        centerButton = <Pause onClick={this.onPause} />;
+        break;
+      case "pausing":
+        centerButton = <Play onClick={this.onPlay} />;
+        break;
+      case "unavailable":
+      default:
+        centerButton = <Play disabled={true} />;
+        break;
+    }
 
     return (
       <Card className={className}>
@@ -74,13 +88,9 @@ class PlayerController extends React.Component<Props, ComponentState> {
           onFixed={this.onSliderFixed}
         />
         <Buttons>
-          <PrevButton disabled={!ready} onClick={this.onPrevClicked} />
-          {playing ? (
-            <Pause onClick={this.onPause} />
-          ) : (
-            <Play disabled={!ready} onClick={this.onPlay} />
-          )}
-          <NextButton disabled={!ready} onClick={this.onNextClicked} />
+          <PrevButton onClick={this.onPrevClicked} />
+          {centerButton}
+          <NextButton onClick={this.onNextClicked} />
         </Buttons>
       </Card>
     );
@@ -149,7 +159,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
     }
 
     this.setState({ manualCurrentTime: null });
-    const stopOnce = this.props.playing;
+    const stopOnce = this.props.playerState === "playing";
 
     if (stopOnce) {
       dispatch(pauseAudio());
@@ -169,8 +179,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
 }
 
 interface StateProps {
-  playing: boolean;
-  ready: boolean;
+  playerState: "unavailable" | "playing" | "pausing";
   duration: number;
   current: number;
   leftAudio: Track | null;
@@ -178,16 +187,18 @@ interface StateProps {
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const { playing, currentTime } = state.player;
+  const { loading, playing, currentTime } = state.player;
   const { list, playingIndex } = state.audiolist;
   const leftAudio = playingIndex !== null ? list[playingIndex].left : null;
   const rightAudio = playingIndex !== null ? list[playingIndex].right : null;
+  const ready = !!(leftAudio && rightAudio);
+  const playerState =
+    loading || !ready ? "unavailable" : playing ? "playing" : "pausing";
 
   return {
-    playing,
+    playerState,
     leftAudio,
     rightAudio,
-    ready: !!(leftAudio && rightAudio),
     duration: !!leftAudio ? leftAudio.duration : 0,
     current: currentTime || 0
   };
