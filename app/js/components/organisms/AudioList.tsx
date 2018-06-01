@@ -62,6 +62,7 @@ class AudioList extends React.Component<Props, ComponentState> {
 }
 
 interface StateProps {
+  playerState: "unavailable" | "playing" | "pausing";
   playing: boolean;
   audioList: AudioListItem[];
   playingIndex: number | null;
