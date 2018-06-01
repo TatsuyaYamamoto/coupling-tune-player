@@ -1,9 +1,9 @@
 import * as React from "react";
 
-import Button, { ButtonProps } from "material-ui/Button";
+import IconButton, { IconButtonProps } from "material-ui/IconButton";
 import { SkipNext } from "material-ui-icons";
 
-interface Props extends ButtonProps {
+interface Props extends IconButtonProps {
   onClick?: () => void;
 }
 
@@ -11,9 +11,9 @@ const NextButton = (props: Props) => {
   const { onClick, ...other } = props;
 
   return (
-    <Button variant="fab" color="primary" onClick={onClick} {...other}>
+    <IconButton color="primary" onClick={onClick} {...other}>
       <SkipNext />
-    </Button>
+    </IconButton>
   );
 };
 
