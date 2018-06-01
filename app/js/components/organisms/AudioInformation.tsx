@@ -93,7 +93,7 @@ interface StateProps {
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const { loading } = state.player;
+  const { loading } = state.audiolist;
   const { list, playingIndex } = state.audiolist;
   const left = playingIndex !== null ? list[playingIndex].left : null;
   const right = playingIndex !== null ? list[playingIndex].right : null;

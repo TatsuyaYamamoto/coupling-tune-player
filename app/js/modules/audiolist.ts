@@ -232,11 +232,13 @@ export interface AudioListItem {
 export interface AudioListState {
   list: AudioListItem[];
   playingIndex: number | null;
+  loading: boolean;
 }
 
 const initialState: AudioListState = {
   list: [],
-  playingIndex: null
+  playingIndex: null,
+  loading: false
 };
 
 /**
@@ -252,6 +254,18 @@ export default function reducer(
   { type, payload }: AnyAction
 ): AudioListState {
   switch (type) {
+    case Actions.SELECT_REQUEST:
+      return {
+        ...state,
+        loading: true
+      };
+
+    case Actions.SELECT_SUCCESS:
+      return {
+        ...state,
+        loading: false
+      };
+
     case Actions.LOAD_AUDIO_SUCCESS:
       return {
         ...state,
