@@ -23,7 +23,7 @@ type Props = ComponentProps & StateProps & DispatchProp<States>;
 
 class AudioList extends React.Component<Props, ComponentState> {
   public render() {
-    const { audioList, playingIndex } = this.props;
+    const { audioList, playingIndex, playerState } = this.props;
 
     return (
       <React.Fragment>
@@ -32,6 +32,7 @@ class AudioList extends React.Component<Props, ComponentState> {
           <TrackTableBody
             onRowClicked={this.onClickRow}
             list={audioList}
+            playerState={playerState}
             playingIndex={playingIndex}
           />
         </TrackTable>
@@ -41,7 +42,7 @@ class AudioList extends React.Component<Props, ComponentState> {
 
   private onClickRow = (index: number) => {
     console.log(`on row clicked. index: ${index}.`);
-    const { dispatch, audioList, playing } = this.props;
+    const { dispatch, audioList, playerState } = this.props;
     if (!dispatch) {
       return;
     }
@@ -52,7 +53,7 @@ class AudioList extends React.Component<Props, ComponentState> {
       console.log("Provided index item has no left or right audio.");
       return;
     }
-    if (playing) {
+    if (playerState === "playing") {
       dispatch(pauseAudio());
     }
     dispatch(goIndex(index));
@@ -63,16 +64,21 @@ class AudioList extends React.Component<Props, ComponentState> {
 
 interface StateProps {
   playerState: "unavailable" | "playing" | "pausing";
-  playing: boolean;
   audioList: AudioListItem[];
   playingIndex: number | null;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
+  const { loading, playing, currentTime } = state.player;
   const { list, playingIndex } = state.audiolist;
-  const { playing } = state.player;
+  const leftAudio = playingIndex !== null ? list[playingIndex].left : null;
+  const rightAudio = playingIndex !== null ? list[playingIndex].right : null;
+  const ready = !!(leftAudio && rightAudio);
+  const playerState =
+    loading || !ready ? "unavailable" : playing ? "playing" : "pausing";
+
   return {
-    playing,
+    playerState,
     playingIndex,
     audioList: list
   };

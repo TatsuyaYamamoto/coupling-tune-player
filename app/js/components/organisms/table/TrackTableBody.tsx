@@ -1,6 +1,6 @@
 import * as React from "react";
 import { TableRow, TableCell, TableBody } from "material-ui";
-import { PlayArrow } from "material-ui-icons";
+import { PlayArrow, VolumeUp, VolumeMute, Refresh } from "material-ui-icons";
 
 import withHover, { WithHoverProps } from "../../hoc/withHover";
 
@@ -11,6 +11,7 @@ export interface ComponentProps {
   list: AudioListItem[] | null;
   playingIndex: number | null;
   onRowClicked: (index: number) => void;
+  playerState: "unavailable" | "playing" | "pausing";
 }
 
 const NoTrackRow = () => (
@@ -26,18 +27,6 @@ const LeftTrack = ({ title, artist }: any) => (
     <span>
       {title} / {artist}
     </span>
-  </TableCell>
-);
-
-const TrackNumber = ({ trackNumber }: any) => (
-  <TableCell padding={"none"} style={{ textAlign: "center" }}>
-    <span>{trackNumber}</span>
-  </TableCell>
-);
-
-const PlayTrack = () => (
-  <TableCell padding={"none"} style={{ textAlign: "center" }}>
-    <PlayArrow />
   </TableCell>
 );
 
@@ -57,6 +46,7 @@ interface TrackRowProps {
   rightArtist: string;
   selected: boolean;
   onClick: () => void;
+  playerState: "unavailable" | "playing" | "pausing";
 }
 
 const TrackRow = withHover<TrackRowProps>(props => {
@@ -70,8 +60,26 @@ const TrackRow = withHover<TrackRowProps>(props => {
     onClick,
     hover,
     onMouseEnter,
-    onMouseLeave
+    onMouseLeave,
+    playerState
   } = props;
+
+  let statusIcon = null;
+  if (selected) {
+    switch (playerState) {
+      case "playing":
+        statusIcon = <VolumeUp />;
+        break;
+      case "pausing":
+        statusIcon = <VolumeMute />;
+        break;
+      case "unavailable":
+        statusIcon = <Refresh />;
+        break;
+    }
+  } else {
+    statusIcon = hover ? <PlayArrow /> : <span>{trackNumber}</span>;
+  }
 
   return (
     <TableRow
@@ -83,14 +91,16 @@ const TrackRow = withHover<TrackRowProps>(props => {
       onMouseLeave={onMouseLeave}
     >
       <LeftTrack title={leftTitle} artist={leftArtist} />
-      {hover ? <PlayTrack /> : <TrackNumber trackNumber={trackNumber} />}
+      <TableCell padding={"none"} style={{ textAlign: "center" }}>
+        {statusIcon}
+      </TableCell>
       <RightTrack title={rightTitle} artist={rightArtist} />
     </TableRow>
   );
 });
 
 const TrackTable: React.SFC<ComponentProps> = props => {
-  const { list, playingIndex, onRowClicked } = props;
+  const { list, playingIndex, onRowClicked, playerState } = props;
 
   if (!list || list.length === 0) {
     return (
@@ -118,6 +128,7 @@ const TrackTable: React.SFC<ComponentProps> = props => {
           <TrackRow
             key={key}
             selected={selected}
+            playerState={playerState}
             onClick={onClick}
             trackNumber={trackNumber}
             leftTitle={leftTitle}
