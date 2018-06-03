@@ -46,8 +46,7 @@ export const select = (
       duration: audio.duration
     });
     const currentList = getState().audiolist.list;
-
-    const updatedList = mergeToList(type, track, currentList);
+    const updatedList = currentList.merge(type, track);
 
     dispatch({
       type: Actions.LOAD_AUDIO_SUCCESS,
@@ -150,51 +149,6 @@ export const goNextIndex = (): ThunkAction<void, States, any> => (
 
   console.error("Could not find valid audio from list.");
 };
-
-/**
- * get updated Track List.
- *
- * @param {"left" | "right"} type
- * @param {Track} provided
- * @param {AudioListItem[]} currentList
- * @returns {AudioListItem[]}
- */
-function mergeToList(
-  type: "left" | "right",
-  provided: Track,
-  currentList: TrackList
-): TrackList {
-  const otherSideType = type === "left" ? "right" : "left";
-  let newTrack = true;
-
-  const updatedList = currentList.value.map(item => {
-    const ownSide = item[type];
-    const otherSide = item[otherSideType];
-
-    if (
-      (ownSide && matchTitle(provided.title, ownSide.title)) ||
-      (otherSide && matchTitle(provided.title, otherSide.title))
-    ) {
-      newTrack = false;
-
-      return {
-        ...item,
-        [type]: provided
-      };
-    }
-
-    return item;
-  });
-
-  if (newTrack) {
-    updatedList.push({
-      left: type === "left" ? provided : null,
-      right: type === "right" ? provided : null
-    });
-  }
-
-  return new TrackList(updatedList);
-}
 
 /**
  * Return true if judged that provide titles are same.
