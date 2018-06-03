@@ -141,33 +141,6 @@ export const goNextIndex = (): ThunkAction<void, States, any> => (
   dispatch(goIndex(nextIndex));
 };
 
-/**
- * Return true if judged that provide titles are same.
- *
- * @param {string} title1
- * @param {string} title2
- * @param {number} threshold
- * @returns {boolean}
- */
-function matchTitle(
-  title1: string,
-  title2: string,
-  threshold: number = 3
-): boolean {
-  if (title1.length <= threshold) {
-    return title1 === title2;
-  }
-
-  // tslint:disable-next-line:no-increment-decrement
-  for (let i = 0; i < title1.length - threshold; i++) {
-    if (title2.indexOf(title1.substr(i, threshold)) !== -1) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
 export interface AudioListState {
   list: TrackList;
   focusIndex: Index | null;
