@@ -60,7 +60,14 @@ class PlayerController extends React.Component<Props, ComponentState> {
   };
 
   public render() {
-    const { playerState, className, duration, current } = this.props;
+    const {
+      playerState,
+      className,
+      duration,
+      current,
+      hasPrev,
+      hasNext
+    } = this.props;
     const { manualCurrentTime } = this.state;
 
     let centerButton = null;
@@ -88,9 +95,9 @@ class PlayerController extends React.Component<Props, ComponentState> {
           onFixed={this.onSliderFixed}
         />
         <Buttons>
-          <PrevButton onClick={this.onPrevClicked} />
+          <PrevButton disabled={!hasPrev} onClick={this.onPrevClicked} />
           {centerButton}
-          <NextButton onClick={this.onNextClicked} />
+          <NextButton disabled={!hasNext} onClick={this.onNextClicked} />
         </Buttons>
       </Card>
     );
@@ -184,21 +191,27 @@ interface StateProps {
   current: number;
   leftAudio: Track | null;
   rightAudio: Track | null;
+  hasPrev: boolean;
+  hasNext: boolean;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   const { loading, playing, currentTime } = state.player;
-  const { list, focusIndex } = state.audiolist;
+  const { list, focusIndex, prevIndex, nextIndex } = state.audiolist;
   const leftAudio = focusIndex ? list.get(focusIndex).left : null;
   const rightAudio = focusIndex ? list.get(focusIndex).right : null;
   const ready = !!(leftAudio && rightAudio);
   const playerState =
     loading || !ready ? "unavailable" : playing ? "playing" : "pausing";
+  const hasPrev = prevIndex !== null;
+  const hasNext = nextIndex !== null;
 
   return {
     playerState,
     leftAudio,
     rightAudio,
+    hasPrev,
+    hasNext,
     duration: !!leftAudio ? leftAudio.duration : 0,
     current: currentTime || 0
   };

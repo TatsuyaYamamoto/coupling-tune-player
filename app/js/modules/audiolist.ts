@@ -79,9 +79,31 @@ export const goIndex = (index: Index) => (
     return;
   }
 
+  let prevIndex: Index | null = null;
+  if (!list.min().equals(index)) {
+    // tslint:disable-next-line:no-increment-decrement
+    for (let i = index.value - 1; 0 <= i; i--) {
+      const candidate = list.get(new Index(i));
+      if (candidate && candidate.left && candidate.right) {
+        prevIndex = new Index(i);
+      }
+    }
+  }
+
+  let nextIndex: Index | null = null;
+  if (!list.max().equals(index)) {
+    // tslint:disable-next-line:no-increment-decrement
+    for (let i = index.value + 1; i < list.size(); i++) {
+      const candidate = list.get(new Index(i));
+      if (candidate && candidate.left && candidate.right) {
+        nextIndex = new Index(i);
+      }
+    }
+  }
+
   dispatch({
     type: Actions.GO_INDEX,
-    payload: { index }
+    payload: { index, prevIndex, nextIndex }
   });
 };
 
@@ -89,65 +111,32 @@ export const goPrevIndex = () => (
   dispatch: Dispatch<States>,
   getState: () => States
 ) => {
-  const { focusIndex: currentIndex, list } = getState().audiolist;
+  const { prevIndex } = getState().audiolist;
 
-  if (currentIndex === null) {
+  if (prevIndex === null) {
     console.error(
-      `Current playing index is null. ignore to request of go next index of audio list.`
+      `Prev index is null. ignore to request of go next index of audio list.`
     );
     return;
   }
-  const from = currentIndex.value - 1;
-  const to = 0;
 
-  if (from < to) {
-    console.error(`invalid range. from: ${from}, to: ${to}`);
-    return;
-  }
-
-  // tslint:disable-next-line:no-increment-decrement
-  for (let i = from; 0 <= to; i--) {
-    const candidate = list.get(new Index(i));
-    if (candidate && candidate.left && candidate.right) {
-      dispatch(goIndex(new Index(i)));
-      return;
-    }
-  }
-
-  console.error("Could not find valid audio from list.");
+  dispatch(goIndex(prevIndex));
 };
 
 export const goNextIndex = (): ThunkAction<void, States, any> => (
   dispatch,
   getState
 ) => {
-  const { focusIndex: currentIndex, list } = getState().audiolist;
+  const { nextIndex } = getState().audiolist;
 
-  if (currentIndex === null) {
+  if (nextIndex === null) {
     console.error(
-      `Current playing index is null. ignore to request of go next index of audio list.`
+      `Next index is null. ignore to request of go next index of audio list.`
     );
     return;
   }
 
-  const from = currentIndex.value + 1;
-  const to = list.size() - 1;
-
-  if (to < from) {
-    console.error(`invalid range. from: ${from}, to: ${to}`);
-    return;
-  }
-
-  // tslint:disable-next-line:no-increment-decrement
-  for (let i = from; i <= to; i++) {
-    const candidate = list.get(new Index(i));
-    if (candidate && candidate.left && candidate.right) {
-      dispatch(goIndex(new Index(i)));
-      return;
-    }
-  }
-
-  console.error("Could not find valid audio from list.");
+  dispatch(goIndex(nextIndex));
 };
 
 /**
@@ -227,7 +216,9 @@ export default function reducer(
     case Actions.GO_INDEX:
       return {
         ...state,
-        focusIndex: payload.index
+        focusIndex: payload.index,
+        prevIndex: payload.prevIndex,
+        nextIndex: payload.nextIndex
       };
 
     default:

@@ -14,7 +14,7 @@ class TrackList {
 
     const item = this.value[i];
     if (!item) {
-      throw new Error("");
+      throw new Error(`No item having provided index, ${i}.`);
     }
 
     return item;
