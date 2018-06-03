@@ -12,6 +12,7 @@ let rightAudioSource: AudioBufferSourceNode | null = null;
  * @param {AudioBuffer} rightAudioBuffer
  * @param {number} rightStartPosition
  * @param {number} offset
+ * @returns {Promise<void>}
  */
 export function syncPlay(
   leftAudioBuffer: AudioBuffer,
@@ -19,7 +20,7 @@ export function syncPlay(
   rightAudioBuffer: AudioBuffer,
   rightStartPosition: number,
   offset: number = 0
-) {
+): Promise<{}> {
   leftAudioSource = context.createBufferSource();
   leftAudioSource.buffer = leftAudioBuffer;
 
@@ -44,8 +45,22 @@ export function syncPlay(
     rightAudioOffset += -1 * diff;
   }
 
+  const leftEndPromise = new Promise(resolve => {
+    if (leftAudioSource) {
+      leftAudioSource.onended = resolve;
+    }
+  });
+  const rightEndPromise = new Promise(resolve => {
+    if (rightAudioSource) {
+      rightAudioSource.onended = resolve;
+    }
+  });
+
+  // Start sync play!
   leftAudioSource.start(0, leftAudioOffset);
   rightAudioSource.start(0, rightAudioOffset);
+
+  return Promise.race([leftEndPromise, rightEndPromise]);
 }
 
 /**

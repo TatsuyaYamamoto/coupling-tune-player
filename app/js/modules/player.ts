@@ -48,7 +48,11 @@ export function play(
       right.audioBuffer,
       right.startPosition,
       currentTime
-    );
+    ).then(() => {
+      console.log("Sync play is ended.");
+      dispatch(updateCurrentTime(0));
+      dispatch(pause());
+    });
 
     dispatch({ type: PlayerActionTypes.PLAY_SUCCESS });
 
