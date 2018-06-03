@@ -4,6 +4,7 @@ import { ThunkAction } from "redux-thunk";
 import { States } from "./redux";
 import Track from "./model/Track";
 import Index from "./model/Index";
+import TrackList from "./model/TrackList";
 import { loadTags } from "./helper/TagLoader";
 import { loadAsAudio, readAsDataURL } from "./helper/FileSystem";
 
@@ -62,17 +63,16 @@ export const goIndex = (index: Index) => (
   getState: () => States
 ) => {
   const { list } = getState().audiolist;
-  const min = 0;
-  const max = list.length - 1;
-  if (!(min <= index.value || index.value <= max)) {
+
+  if (!(list.min().value <= index.value || index.value <= list.max().value)) {
     console.error(
-      `Provided index, ${index}, is out of list range. ${min} <= index <= ${max}`
+      `Provided index, ${index}, is out of list range. ${list.min()} <= index <= ${list.max()}`
     );
 
     return;
   }
-  const left = list[index.value].left;
-  const right = list[index.value].right;
+  const left = list.get(index).left;
+  const right = list.get(index).right;
   if (!left || !right) {
     console.error(
       `Left and right audio of provided index are not ready. left: ${!!left}, right: ${!!right}.`
@@ -108,7 +108,7 @@ export const goPrevIndex = () => (
 
   // tslint:disable-next-line:no-increment-decrement
   for (let i = from; 0 <= to; i--) {
-    const candidate = list[i];
+    const candidate = list.get(new Index(i));
     if (candidate && candidate.left && candidate.right) {
       dispatch(goIndex(new Index(i)));
       return;
@@ -132,7 +132,7 @@ export const goNextIndex = (): ThunkAction<void, States, any> => (
   }
 
   const from = currentIndex.value + 1;
-  const to = list.length - 1;
+  const to = list.size() - 1;
 
   if (to < from) {
     console.error(`invalid range. from: ${from}, to: ${to}`);
@@ -141,7 +141,7 @@ export const goNextIndex = (): ThunkAction<void, States, any> => (
 
   // tslint:disable-next-line:no-increment-decrement
   for (let i = from; i <= to; i++) {
-    const candidate = list[i];
+    const candidate = list.get(new Index(i));
     if (candidate && candidate.left && candidate.right) {
       dispatch(goIndex(new Index(i)));
       return;
@@ -162,12 +162,12 @@ export const goNextIndex = (): ThunkAction<void, States, any> => (
 function mergeToList(
   type: "left" | "right",
   provided: Track,
-  currentList: AudioListItem[]
-): AudioListItem[] {
+  currentList: TrackList
+): TrackList {
   const otherSideType = type === "left" ? "right" : "left";
   let newTrack = true;
 
-  const updatedList = currentList.map(item => {
+  const updatedList = currentList.value.map(item => {
     const ownSide = item[type];
     const otherSide = item[otherSideType];
 
@@ -193,7 +193,7 @@ function mergeToList(
     });
   }
 
-  return updatedList;
+  return new TrackList(updatedList);
 }
 
 /**
@@ -223,13 +223,8 @@ function matchTitle(
   return false;
 }
 
-export interface AudioListItem {
-  left: Track | null;
-  right: Track | null;
-}
-
 export interface AudioListState {
-  list: AudioListItem[];
+  list: TrackList;
   focusIndex: Index | null;
   prevIndex: Index | null;
   nextIndex: Index | null;
@@ -237,7 +232,7 @@ export interface AudioListState {
 }
 
 const initialState: AudioListState = {
-  list: [],
+  list: new TrackList([]),
   focusIndex: null,
   prevIndex: null,
   nextIndex: null,

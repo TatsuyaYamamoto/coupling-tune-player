@@ -189,8 +189,8 @@ interface StateProps {
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   const { loading, playing, currentTime } = state.player;
   const { list, focusIndex } = state.audiolist;
-  const leftAudio = focusIndex ? list[focusIndex.value].left : null;
-  const rightAudio = focusIndex ? list[focusIndex.value].right : null;
+  const leftAudio = focusIndex ? list.get(focusIndex).left : null;
+  const rightAudio = focusIndex ? list.get(focusIndex).right : null;
   const ready = !!(leftAudio && rightAudio);
   const playerState =
     loading || !ready ? "unavailable" : playing ? "playing" : "pausing";

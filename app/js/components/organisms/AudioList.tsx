@@ -6,13 +6,14 @@ import TrackTableHead from "./table/TrackTableHead";
 import TrackTableBody from "./table/TrackTableBody";
 
 import { States } from "../../modules/redux";
-import { goIndex, AudioListItem } from "../../modules/audiolist";
+import { goIndex } from "../../modules/audiolist";
 import {
   play as playAudio,
   pause as pauseAudio,
   updateCurrentTime
 } from "../../modules/player";
 import Index from "../../modules/model/Index";
+import TrackList from "../../modules/model/TrackList";
 
 export interface ComponentState {}
 
@@ -47,9 +48,9 @@ class AudioList extends React.Component<Props, ComponentState> {
     if (!dispatch) {
       return;
     }
-
-    const left = audioList[index].left;
-    const right = audioList[index].right;
+    const i = new Index(index);
+    const left = audioList.get(i).left;
+    const right = audioList.get(i).right;
     if (!left || !right) {
       console.log("Provided index item has no left or right audio.");
       return;
@@ -57,7 +58,7 @@ class AudioList extends React.Component<Props, ComponentState> {
     if (playerState === "playing") {
       dispatch(pauseAudio());
     }
-    dispatch(goIndex(new Index(index)));
+    dispatch(goIndex(i));
     dispatch(updateCurrentTime(0));
     dispatch(playAudio(left, right));
   };
@@ -65,15 +66,15 @@ class AudioList extends React.Component<Props, ComponentState> {
 
 interface StateProps {
   playerState: "unavailable" | "playing" | "pausing";
-  audioList: AudioListItem[];
+  audioList: TrackList;
   focusIndex: Index | null;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   const { loading, playing, currentTime } = state.player;
   const { list, focusIndex } = state.audiolist;
-  const leftAudio = focusIndex ? list[focusIndex.value].left : null;
-  const rightAudio = focusIndex ? list[focusIndex.value].right : null;
+  const leftAudio = focusIndex ? list.get(focusIndex).left : null;
+  const rightAudio = focusIndex ? list.get(focusIndex).right : null;
   const ready = !!(leftAudio && rightAudio);
   const playerState =
     loading || !ready ? "unavailable" : playing ? "playing" : "pausing";
