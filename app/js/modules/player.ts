@@ -49,9 +49,15 @@ export function play(
       right.startPosition,
       currentTime
     ).then(() => {
-      const { player } = getState();
+      lastCheckTime = null;
+      if (intervalId !== null) {
+        clearInterval(intervalId as number);
+      }
+      intervalId = null;
 
-      if (player.playing) {
+      const { player, audiolist } = getState();
+
+      if (player.playing && audiolist.nextIndex !== null) {
         dispatch(skipNext());
       }
     });
@@ -97,12 +103,6 @@ export function pause() {
     }
 
     syncStop();
-
-    lastCheckTime = null;
-    if (intervalId !== null) {
-      clearInterval(intervalId as number);
-    }
-    intervalId = null;
 
     dispatch({
       type: PlayerActionTypes.PAUSE
