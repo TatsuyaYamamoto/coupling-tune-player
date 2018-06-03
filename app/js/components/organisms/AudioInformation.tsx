@@ -94,9 +94,9 @@ interface StateProps {
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   const { loading } = state.audiolist;
-  const { list, playingIndex } = state.audiolist;
-  const left = playingIndex !== null ? list[playingIndex].left : null;
-  const right = playingIndex !== null ? list[playingIndex].right : null;
+  const { list, focusIndex } = state.audiolist;
+  const left = focusIndex ? list[focusIndex.value].left : null;
+  const right = focusIndex ? list[focusIndex.value].right : null;
 
   return {
     loading,

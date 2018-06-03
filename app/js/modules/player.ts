@@ -156,13 +156,13 @@ export const skipPrevious = (): ThunkAction<void, States, undefined> => (
   dispatch(goPrevIndex());
 
   if (stopOnce) {
-    const { list, playingIndex } = getState().audiolist;
+    const { list, focusIndex } = getState().audiolist;
 
-    if (!playingIndex) {
+    if (!focusIndex) {
       console.error("index is null");
       return;
     }
-    const { left, right } = list[playingIndex];
+    const { left, right } = list[focusIndex.value];
 
     if (!left || !right) {
       console.error("left or right audio is null");
@@ -186,13 +186,13 @@ export const skipNext = (): ThunkAction<void, States, undefined> => (
   dispatch(goNextIndex());
 
   if (stopOnce) {
-    const { list, playingIndex } = getState().audiolist;
+    const { list, focusIndex } = getState().audiolist;
 
-    if (!playingIndex) {
+    if (!focusIndex) {
       console.error("index is null");
       return;
     }
-    const { left, right } = list[playingIndex];
+    const { left, right } = list[focusIndex.value];
 
     if (!left || !right) {
       console.error("left or right audio is null");

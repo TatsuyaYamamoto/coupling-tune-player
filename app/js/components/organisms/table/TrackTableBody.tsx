@@ -5,11 +5,12 @@ import { PlayArrow, VolumeUp, VolumeMute, Refresh } from "material-ui-icons";
 import withHover, { WithHoverProps } from "../../hoc/withHover";
 
 import { AudioListItem } from "../../../modules/audiolist";
+import Index from "../../../modules/model/Index";
 
 export interface ComponentProps {
   className?: string;
   list: AudioListItem[] | null;
-  playingIndex: number | null;
+  focusIndex: Index | null;
   onRowClicked: (index: number) => void;
   playerState: "unavailable" | "playing" | "pausing";
 }
@@ -100,7 +101,7 @@ const TrackRow = withHover<TrackRowProps>(props => {
 });
 
 const TrackTable: React.SFC<ComponentProps> = props => {
-  const { list, playingIndex, onRowClicked, playerState } = props;
+  const { list, focusIndex, onRowClicked, playerState } = props;
 
   if (!list || list.length === 0) {
     return (
@@ -120,7 +121,7 @@ const TrackTable: React.SFC<ComponentProps> = props => {
         const rightArtist = right && right.artist ? right.artist : "---";
         const trackNumber = index + 1;
 
-        const selected = playingIndex === index;
+        const selected = !!focusIndex && focusIndex.equals(index);
         const key = index + leftTitle + rightTitle;
         const onClick = () => onRowClicked(index);
 

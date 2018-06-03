@@ -3,9 +3,8 @@ import { ThunkAction } from "redux-thunk";
 
 import { States } from "./redux";
 import Track from "./model/Track";
-import { loadAsAudioBuffer } from "./helper/AudioContext";
+import Index from "./model/Index";
 import { loadTags } from "./helper/TagLoader";
-import { analyzeBpm } from "./helper/BpmAnalyzer";
 import { loadAsAudio, readAsDataURL } from "./helper/FileSystem";
 
 export enum Actions {
@@ -58,22 +57,22 @@ export const select = (
   dispatch({ type: Actions.SELECT_SUCCESS });
 };
 
-export const goIndex = (index: number) => (
+export const goIndex = (index: Index) => (
   dispatch: Dispatch<States>,
   getState: () => States
 ) => {
   const { list } = getState().audiolist;
   const min = 0;
   const max = list.length - 1;
-  if (!(min <= index || index <= max)) {
+  if (!(min <= index.value || index.value <= max)) {
     console.error(
       `Provided index, ${index}, is out of list range. ${min} <= index <= ${max}`
     );
 
     return;
   }
-  const left = list[index].left;
-  const right = list[index].right;
+  const left = list[index.value].left;
+  const right = list[index.value].right;
   if (!left || !right) {
     console.error(
       `Left and right audio of provided index are not ready. left: ${!!left}, right: ${!!right}.`
@@ -91,7 +90,7 @@ export const goPrevIndex = () => (
   dispatch: Dispatch<States>,
   getState: () => States
 ) => {
-  const { playingIndex: currentIndex, list } = getState().audiolist;
+  const { focusIndex: currentIndex, list } = getState().audiolist;
 
   if (currentIndex === null) {
     console.error(
@@ -99,7 +98,7 @@ export const goPrevIndex = () => (
     );
     return;
   }
-  const from = currentIndex - 1;
+  const from = currentIndex.value - 1;
   const to = 0;
 
   if (from < to) {
@@ -111,7 +110,7 @@ export const goPrevIndex = () => (
   for (let i = from; 0 <= to; i--) {
     const candidate = list[i];
     if (candidate && candidate.left && candidate.right) {
-      dispatch(goIndex(i));
+      dispatch(goIndex(new Index(i)));
       return;
     }
   }
@@ -123,7 +122,7 @@ export const goNextIndex = (): ThunkAction<void, States, any> => (
   dispatch,
   getState
 ) => {
-  const { playingIndex: currentIndex, list } = getState().audiolist;
+  const { focusIndex: currentIndex, list } = getState().audiolist;
 
   if (currentIndex === null) {
     console.error(
@@ -132,7 +131,7 @@ export const goNextIndex = (): ThunkAction<void, States, any> => (
     return;
   }
 
-  const from = currentIndex + 1;
+  const from = currentIndex.value + 1;
   const to = list.length - 1;
 
   if (to < from) {
@@ -144,7 +143,7 @@ export const goNextIndex = (): ThunkAction<void, States, any> => (
   for (let i = from; i <= to; i++) {
     const candidate = list[i];
     if (candidate && candidate.left && candidate.right) {
-      dispatch(goIndex(i));
+      dispatch(goIndex(new Index(i)));
       return;
     }
   }
@@ -231,13 +230,17 @@ export interface AudioListItem {
 
 export interface AudioListState {
   list: AudioListItem[];
-  playingIndex: number | null;
+  focusIndex: Index | null;
+  prevIndex: Index | null;
+  nextIndex: Index | null;
   loading: boolean;
 }
 
 const initialState: AudioListState = {
   list: [],
-  playingIndex: null,
+  focusIndex: null,
+  prevIndex: null,
+  nextIndex: null,
   loading: false
 };
 
@@ -275,7 +278,7 @@ export default function reducer(
     case Actions.GO_INDEX:
       return {
         ...state,
-        playingIndex: payload.index
+        focusIndex: payload.index
       };
 
     default:

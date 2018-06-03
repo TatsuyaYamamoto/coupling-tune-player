@@ -12,6 +12,7 @@ import {
   pause as pauseAudio,
   updateCurrentTime
 } from "../../modules/player";
+import Index from "../../modules/model/Index";
 
 export interface ComponentState {}
 
@@ -23,7 +24,7 @@ type Props = ComponentProps & StateProps & DispatchProp<States>;
 
 class AudioList extends React.Component<Props, ComponentState> {
   public render() {
-    const { audioList, playingIndex, playerState } = this.props;
+    const { audioList, focusIndex, playerState } = this.props;
 
     return (
       <React.Fragment>
@@ -33,7 +34,7 @@ class AudioList extends React.Component<Props, ComponentState> {
             onRowClicked={this.onClickRow}
             list={audioList}
             playerState={playerState}
-            playingIndex={playingIndex}
+            focusIndex={focusIndex}
           />
         </TrackTable>
       </React.Fragment>
@@ -56,7 +57,7 @@ class AudioList extends React.Component<Props, ComponentState> {
     if (playerState === "playing") {
       dispatch(pauseAudio());
     }
-    dispatch(goIndex(index));
+    dispatch(goIndex(new Index(index)));
     dispatch(updateCurrentTime(0));
     dispatch(playAudio(left, right));
   };
@@ -65,21 +66,21 @@ class AudioList extends React.Component<Props, ComponentState> {
 interface StateProps {
   playerState: "unavailable" | "playing" | "pausing";
   audioList: AudioListItem[];
-  playingIndex: number | null;
+  focusIndex: Index | null;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   const { loading, playing, currentTime } = state.player;
-  const { list, playingIndex } = state.audiolist;
-  const leftAudio = playingIndex !== null ? list[playingIndex].left : null;
-  const rightAudio = playingIndex !== null ? list[playingIndex].right : null;
+  const { list, focusIndex } = state.audiolist;
+  const leftAudio = focusIndex ? list[focusIndex.value].left : null;
+  const rightAudio = focusIndex ? list[focusIndex.value].right : null;
   const ready = !!(leftAudio && rightAudio);
   const playerState =
     loading || !ready ? "unavailable" : playing ? "playing" : "pausing";
 
   return {
     playerState,
-    playingIndex,
+    focusIndex,
     audioList: list
   };
 }
