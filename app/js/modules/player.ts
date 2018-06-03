@@ -8,7 +8,7 @@ import { context, loadAsAudioBuffer } from "./helper/AudioContext";
 import Track from "./model/Track";
 
 import Timer = NodeJS.Timer;
-import { syncPlay, pause as syncPause } from "./helper/SyncPlayer";
+import { syncPlay, stop as syncStop } from "./helper/SyncPlayer";
 import { goNextIndex, goPrevIndex } from "./audiolist";
 import { analyzeBpm } from "./helper/BpmAnalyzer";
 
@@ -49,9 +49,11 @@ export function play(
       right.startPosition,
       currentTime
     ).then(() => {
-      console.log("Sync play is ended.");
-      dispatch(updateCurrentTime(0));
-      dispatch(pause());
+      const { player } = getState();
+
+      if (player.playing) {
+        dispatch(skipNext());
+      }
     });
 
     dispatch({ type: PlayerActionTypes.PLAY_SUCCESS });
@@ -94,7 +96,7 @@ export function pause() {
       return;
     }
 
-    syncPause();
+    syncStop();
 
     lastCheckTime = null;
     if (intervalId !== null) {

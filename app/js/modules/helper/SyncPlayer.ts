@@ -47,18 +47,29 @@ export function syncPlay(
 
   const leftEndPromise = new Promise(resolve => {
     if (leftAudioSource) {
-      leftAudioSource.onended = resolve;
+      leftAudioSource.onended = () => {
+        console.log(`Left audio is ended.`);
+        leftAudioSource = null;
+        resolve();
+      };
     }
   });
   const rightEndPromise = new Promise(resolve => {
     if (rightAudioSource) {
-      rightAudioSource.onended = resolve;
+      rightAudioSource.onended = () => {
+        console.log(`Right audio is ended.`);
+        rightAudioSource = null;
+        resolve();
+      };
     }
   });
 
   // Start sync play!
   leftAudioSource.start(0, leftAudioOffset);
   rightAudioSource.start(0, rightAudioOffset);
+  console.log(
+    `Start sync play. Left offset: ${leftAudioOffset}, right offset ${rightAudioOffset}.`
+  );
 
   return Promise.race([leftEndPromise, rightEndPromise]);
 }
@@ -66,7 +77,7 @@ export function syncPlay(
 /**
  * Stop audio source.
  */
-export function pause() {
+export function stop(): void {
   if (leftAudioSource !== null) {
     leftAudioSource.stop(0);
     leftAudioSource = null;
