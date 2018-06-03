@@ -86,6 +86,7 @@ export const goIndex = (index: Index) => (
       const candidate = list.get(new Index(i));
       if (candidate && candidate.left && candidate.right) {
         prevIndex = new Index(i);
+        break;
       }
     }
   }
@@ -97,6 +98,7 @@ export const goIndex = (index: Index) => (
       const candidate = list.get(new Index(i));
       if (candidate && candidate.left && candidate.right) {
         nextIndex = new Index(i);
+        break;
       }
     }
   }
