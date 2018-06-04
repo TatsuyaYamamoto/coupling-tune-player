@@ -1,8 +1,12 @@
 import * as React from "react";
 import { TableRow, TableCell, TableBody } from "material-ui";
-import { PlayArrow, VolumeUp, VolumeMute, Refresh } from "material-ui-icons";
 
-import withHover, { WithHoverProps } from "../../hoc/withHover";
+import PlayIcon from "../../atoms/icon/PlayIcon";
+import PlayingIcon from "../../atoms/icon/PlayingIcon";
+import LoadingIcon from "../../atoms/icon/LoadingIcon";
+import PausingIcon from "../../atoms/icon/PausingIcon";
+
+import withHover from "../../hoc/withHover";
 
 import Index from "../../../modules/model/Index";
 import TrackList from "../../../modules/model/TrackList";
@@ -69,17 +73,17 @@ const TrackRow = withHover<TrackRowProps>(props => {
   if (selected) {
     switch (playerState) {
       case "playing":
-        statusIcon = <VolumeUp />;
+        statusIcon = <PlayingIcon />;
         break;
       case "pausing":
-        statusIcon = <VolumeMute />;
+        statusIcon = <PausingIcon />;
         break;
       case "unavailable":
-        statusIcon = <Refresh />;
+        statusIcon = <LoadingIcon />;
         break;
     }
   } else {
-    statusIcon = hover ? <PlayArrow /> : <span>{trackNumber}</span>;
+    statusIcon = hover ? <PlayIcon /> : <span>{trackNumber}</span>;
   }
 
   return (
