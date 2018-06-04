@@ -2,9 +2,8 @@ import * as React from "react";
 import { TableRow, TableCell, TableBody } from "material-ui";
 
 import PlayIcon from "../../atoms/icon/PlayIcon";
-import PlayingIcon from "../../atoms/icon/PlayingIcon";
 import LoadingIcon from "../../atoms/icon/LoadingIcon";
-import PausingIcon from "../../atoms/icon/PausingIcon";
+import AudioWaveIcon from "../../atoms/icon/AudioWaveIcon";
 
 import withHover from "../../hoc/withHover";
 
@@ -73,10 +72,10 @@ const TrackRow = withHover<TrackRowProps>(props => {
   if (selected) {
     switch (playerState) {
       case "playing":
-        statusIcon = <PlayingIcon />;
+        statusIcon = <AudioWaveIcon animation={true} />;
         break;
       case "pausing":
-        statusIcon = <PausingIcon />;
+        statusIcon = <AudioWaveIcon animation={false} />;
         break;
       case "unavailable":
         statusIcon = <LoadingIcon animation={true} />;
