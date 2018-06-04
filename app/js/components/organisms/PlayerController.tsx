@@ -196,7 +196,7 @@ interface StateProps {
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const { loading, playing, currentTime } = state.player;
+  const { loading, playing, currentTime, duration } = state.player;
   const { list, focusIndex, prevIndex, nextIndex } = state.audiolist;
   const leftAudio = focusIndex ? list.get(focusIndex).left : null;
   const rightAudio = focusIndex ? list.get(focusIndex).right : null;
@@ -212,7 +212,7 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
     rightAudio,
     hasPrev,
     hasNext,
-    duration: !!leftAudio ? leftAudio.duration : 0,
+    duration,
     current: currentTime || 0
   };
 }

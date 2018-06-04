@@ -35,15 +35,11 @@ export const select = (
     const { title, artist, pictureBase64 } = await loadTags(file);
     console.log("Loaded media tag.", title, artist);
 
-    const dataUrl = await readAsDataURL(file);
-    const audio = await loadAsAudio(dataUrl);
-
     const track = new Track({
       file,
       artist,
       pictureBase64,
-      title: title || file.name,
-      duration: audio.duration
+      title: title || file.name
     });
     const currentList = getState().audiolist.list;
     const updatedList = currentList.merge(type, track);

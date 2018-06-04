@@ -62,7 +62,12 @@ export function play(
       }
     });
 
-    dispatch({ type: PlayerActionTypes.PLAY_SUCCESS });
+    dispatch({
+      type: PlayerActionTypes.PLAY_SUCCESS,
+      payload: {
+        duration: left.audioBuffer.duration
+      }
+    });
 
     intervalId = setInterval(() => {
       dispatch(updateCurrentTime());
@@ -208,14 +213,14 @@ export const skipNext = (): ThunkAction<void, States, undefined> => (
 export interface PlayerState {
   loading: boolean;
   playing: boolean;
-  durationTime: number;
+  duration: number;
   currentTime: number;
 }
 
 const initialState: PlayerState = {
   loading: false,
   playing: false,
-  durationTime: 0,
+  duration: 0,
   currentTime: 0
 };
 
@@ -236,7 +241,8 @@ export default function reducer(
       return {
         ...state,
         loading: false,
-        playing: true
+        playing: true,
+        duration: payload.duration
       };
 
     case PlayerActionTypes.PAUSE:
