@@ -2,6 +2,7 @@ import * as React from "react";
 import { TableRow, TableCell, TableBody } from "material-ui";
 
 import PlayIcon from "../../atoms/icon/PlayIcon";
+import UnavailableIcon from "../../atoms/icon/UnavailableIcon";
 import LoadingIcon from "../../atoms/icon/LoadingIcon";
 import AudioWaveIcon from "../../atoms/icon/AudioWaveIcon";
 
@@ -50,6 +51,7 @@ interface TrackRowProps {
   rightArtist: string;
   selected: boolean;
   onClick: () => void;
+  available: boolean;
   playerState: "unavailable" | "playing" | "pausing";
 }
 
@@ -61,6 +63,7 @@ const TrackRow = withHover<TrackRowProps>(props => {
     rightTitle,
     rightArtist,
     selected,
+    available,
     onClick,
     hover,
     onMouseEnter,
@@ -82,7 +85,11 @@ const TrackRow = withHover<TrackRowProps>(props => {
         break;
     }
   } else {
-    statusIcon = hover ? <PlayIcon /> : <span>{trackNumber}</span>;
+    if (hover) {
+      statusIcon = available ? <PlayIcon /> : <UnavailableIcon />;
+    } else {
+      statusIcon = <span>{trackNumber}</span>;
+    }
   }
 
   return (
@@ -124,6 +131,7 @@ const TrackTable: React.SFC<ComponentProps> = props => {
         const rightArtist = right && right.artist ? right.artist : "---";
         const trackNumber = index + 1;
 
+        const available = !!left && !!right;
         const selected = !!focusIndex && focusIndex.equals(index);
         const key = index + leftTitle + rightTitle;
         const onClick = () => onRowClicked(index);
@@ -132,6 +140,7 @@ const TrackTable: React.SFC<ComponentProps> = props => {
           <TrackRow
             key={key}
             selected={selected}
+            available={available}
             playerState={playerState}
             onClick={onClick}
             trackNumber={trackNumber}
