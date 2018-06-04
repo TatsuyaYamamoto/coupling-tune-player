@@ -79,7 +79,7 @@ const TrackRow = withHover<TrackRowProps>(props => {
         statusIcon = <PausingIcon />;
         break;
       case "unavailable":
-        statusIcon = <LoadingIcon />;
+        statusIcon = <LoadingIcon animation={true} />;
         break;
     }
   } else {
