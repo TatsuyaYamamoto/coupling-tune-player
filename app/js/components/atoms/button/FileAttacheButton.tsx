@@ -7,6 +7,7 @@ import { AttachFile as Icon } from "material-ui-icons";
 
 export interface ComponentProps {
   className?: string;
+  reverse?: boolean;
   onSelected?: (fileList: FileList) => void;
 }
 
@@ -19,17 +20,18 @@ class FileAttacheButton extends React.Component<ComponentProps, {}> {
   private inputRef: HTMLInputElement | null = null;
 
   public render() {
-    const { className } = this.props;
+    const { className, reverse } = this.props;
     return (
       <React.Fragment>
         <Button
-          variant="fab"
-          mini={true}
+          variant="raised"
           color="primary"
           onClick={this.onClick}
           className={className}
         >
-          <Icon />
+          {!reverse && <Icon />}
+          {reverse ? "Right Track" : "Left Track"}
+          {reverse && <Icon />}
         </Button>
 
         <Input
