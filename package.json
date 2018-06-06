@@ -1,6 +1,6 @@
 {
   "name": "coupling-tune-player",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description":
     "Provide the justice audio! Play 2 audio files and analyze BPM and beat to sync.",
   "main": "index.js",
