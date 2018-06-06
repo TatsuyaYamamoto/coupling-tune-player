@@ -2,8 +2,8 @@ import * as React from "react";
 import { default as AutoBind } from "autobind-decorator";
 import { default as styled } from "styled-components";
 
-import { Button } from "material-ui";
-import { AttachFile as Icon } from "material-ui-icons";
+import { Button, withTheme, WithTheme } from "material-ui";
+import { Audiotrack as Icon } from "material-ui-icons";
 
 export interface ComponentProps {
   className?: string;
@@ -16,11 +16,14 @@ const Input = styled.input`
 `;
 
 @AutoBind
-class FileAttacheButton extends React.Component<ComponentProps, {}> {
+class FileAttacheButton extends React.Component<
+  ComponentProps & WithTheme,
+  {}
+> {
   private inputRef: HTMLInputElement | null = null;
 
   public render() {
-    const { className, reverse } = this.props;
+    const { className, reverse, theme } = this.props;
     return (
       <React.Fragment>
         <Button
@@ -29,9 +32,9 @@ class FileAttacheButton extends React.Component<ComponentProps, {}> {
           onClick={this.onClick}
           className={className}
         >
-          {!reverse && <Icon />}
+          {!reverse && <Icon style={{ marginRight: theme.spacing.unit }} />}
           {reverse ? "Right Track" : "Left Track"}
-          {reverse && <Icon />}
+          {reverse && <Icon style={{ marginLeft: theme.spacing.unit }} />}
         </Button>
 
         <Input
@@ -71,4 +74,4 @@ class FileAttacheButton extends React.Component<ComponentProps, {}> {
   }
 }
 
-export default FileAttacheButton;
+export default withTheme()(FileAttacheButton);
