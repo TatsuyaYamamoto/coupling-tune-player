@@ -18,12 +18,24 @@ const AudioContext =
 const context: AudioContext = new AudioContext();
 
 /**
+ * Load provided {@code File} as AudioBuffer with AudioContext.
  *
  * @returns {Promise<AudioBuffer>}
  */
 async function loadAsAudioBuffer(file: File): Promise<AudioBuffer> {
   const arrayBuffer = await readAsArrayBuffer(file);
-  return await context.decodeAudioData(arrayBuffer);
+
+  return new Promise<AudioBuffer>((resolve, reject) => {
+    context.decodeAudioData(
+      arrayBuffer,
+      decodedData => {
+        resolve(decodedData);
+      },
+      error => {
+        reject(error);
+      }
+    );
+  });
 }
 
 export { context, loadAsAudioBuffer };
