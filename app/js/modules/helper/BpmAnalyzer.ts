@@ -1,3 +1,5 @@
+// tslint:disable:no-increment-decrement
+
 const { sin, cos, atan2, floor, sqrt, PI } = Math;
 
 const SAMPLES_PER_FRAME = 512;
@@ -23,29 +25,32 @@ export function analyzeBpm(audio: AudioBuffer): AnalyzeResult {
 
   const N = floor(samplingCount / SAMPLES_PER_FRAME);
 
-  const effectiveVolumes: number[] = [];
-  // tslint:disable-next-line
+  const volumeDiffs: number[] = [];
+  let prevEffectiveValue: number | null = null;
+
   for (let i = 0; i < N; i++) {
     const startIndex = i * SAMPLES_PER_FRAME;
     const endIndex = startIndex + SAMPLES_PER_FRAME;
 
-    effectiveVolumes.push(
-      effectiveValueOf(channel.slice(startIndex, endIndex))
-    );
+    const effectiveValue = channel
+      .slice(startIndex, endIndex)
+      .reduce((previous, current) => {
+        return previous + current * current;
+      }, 0);
+
+    if (prevEffectiveValue) {
+      const diff = effectiveValue - prevEffectiveValue;
+      volumeDiffs.push(diff > 0 ? diff : 0);
+    }
+
+    prevEffectiveValue = effectiveValue;
   }
-
-  const volumeDiffs = effectiveVolumes.map((value, index) => {
-    const diff = effectiveVolumes[index + 1] - effectiveVolumes[index];
-
-    return diff > 0 ? diff : 0;
-  });
 
   const a = [];
   const b = [];
   const r = [];
   const framesPerSec = samplingRate / SAMPLES_PER_FRAME;
 
-  // tslint:disable-next-line:no-increment-decrement
   for (let i /*BPM*/ = MIN_BPM; i <= MAX_BPM; i++) {
     let aSum = 0;
     let bSum = 0;
@@ -87,12 +92,6 @@ export function analyzeBpm(audio: AudioBuffer): AnalyzeResult {
     bpm,
     startPosition
   };
-}
-
-function effectiveValueOf(numbers: Float32Array) {
-  return numbers.reduce((previous, current) => {
-    return previous + current * current;
-  }, 0);
 }
 
 /**
