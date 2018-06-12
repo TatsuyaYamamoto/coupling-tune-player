@@ -25,16 +25,17 @@ export function analyzeBpm(audio: AudioBuffer): AnalyzeResult {
     numberOfChannels
   } = audio;
 
-  const N = floor(samplingCount / SAMPLES_PER_FRAME);
+  const frameCount = floor(samplingCount / SAMPLES_PER_FRAME);
 
-  const channelDataList = Array(numberOfChannels)
-    .fill(0)
-    .map((_, i) => audio.getChannelData(i));
+  const channelDataList: Float32Array[] = [];
+  for (let i = 0; i < numberOfChannels; i++) {
+    channelDataList.push(audio.getChannelData(i));
+  }
 
   const volumeDiffs: number[] = [];
   let prevEffectiveValue: number | null = null;
 
-  for (let i = 0; i < N; i++) {
+  for (let i = 0; i < frameCount; i++) {
     const startIndex = i * SAMPLES_PER_FRAME;
     const endIndex = startIndex + SAMPLES_PER_FRAME;
 
@@ -70,14 +71,14 @@ export function analyzeBpm(audio: AudioBuffer): AnalyzeResult {
     const beatsPerFrame = beatsPerSec / framesPerSec;
 
     volumeDiffs.forEach((diff, j) => {
-      const win = hannWindow(j / N);
+      const win = hannWindow(j / frameCount);
 
       aSum += diff * cos(2 * PI * beatsPerFrame * j) * win;
       bSum += diff * sin(2 * PI * beatsPerFrame * j) * win;
     });
 
-    const aBpm = aSum / N;
-    const bBpm = bSum / N;
+    const aBpm = aSum / frameCount;
+    const bBpm = bSum / frameCount;
 
     a[i - MIN_BPM] = aBpm;
     b[i - MIN_BPM] = bBpm;
