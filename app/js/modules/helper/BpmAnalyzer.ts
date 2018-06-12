@@ -19,11 +19,17 @@ export interface AnalyzeResult {
  * @returns {AnalyzeResult}
  */
 export function analyzeBpm(audio: AudioBuffer): AnalyzeResult {
-  const { length: samplingCount, sampleRate: samplingRate } = audio;
-
-  const channel = audio.getChannelData(0);
+  const {
+    length: samplingCount,
+    sampleRate: samplingRate,
+    numberOfChannels
+  } = audio;
 
   const N = floor(samplingCount / SAMPLES_PER_FRAME);
+
+  const channelDataList = Array(numberOfChannels)
+    .fill(0)
+    .map((_, i) => audio.getChannelData(i));
 
   const volumeDiffs: number[] = [];
   let prevEffectiveValue: number | null = null;
@@ -32,18 +38,24 @@ export function analyzeBpm(audio: AudioBuffer): AnalyzeResult {
     const startIndex = i * SAMPLES_PER_FRAME;
     const endIndex = startIndex + SAMPLES_PER_FRAME;
 
-    const effectiveValue = channel
-      .slice(startIndex, endIndex)
-      .reduce((previous, current) => {
-        return previous + current * current;
-      }, 0);
+    let monoEffectiveValue: number = 0;
+
+    for (let j = startIndex; j < endIndex; j++) {
+      let synthesizedMonoData = 0;
+
+      for (let k = 0; k < numberOfChannels; k++) {
+        synthesizedMonoData += channelDataList[k][j];
+      }
+
+      monoEffectiveValue += synthesizedMonoData * synthesizedMonoData;
+    }
 
     if (prevEffectiveValue) {
-      const diff = effectiveValue - prevEffectiveValue;
+      const diff = monoEffectiveValue - prevEffectiveValue;
       volumeDiffs.push(diff > 0 ? diff : 0);
     }
 
-    prevEffectiveValue = effectiveValue;
+    prevEffectiveValue = monoEffectiveValue;
   }
 
   const a = [];
