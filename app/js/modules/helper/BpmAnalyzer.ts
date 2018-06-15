@@ -61,15 +61,17 @@ export function analyzeBpm(audio: AudioBuffer): AnalyzeResult {
     prevEffectiveValue = monoEffectiveValue;
   }
 
-  const a = [];
-  const b = [];
-  const r = [];
+  const a: number[] = [];
+  const b: number[] = [];
+  const r: number[] = [];
+  let maxAmp = 0;
+  let maxAmpBpm = 0;
   const framesPerSec = samplingRate / SAMPLES_PER_FRAME;
 
-  for (let i /*BPM*/ = MIN_BPM; i <= MAX_BPM; i++) {
+  for (let bpm = MIN_BPM; bpm <= MAX_BPM; bpm++) {
     let aSum = 0;
     let bSum = 0;
-    const beatsPerSec = i / 60;
+    const beatsPerSec = bpm / 60;
     const beatsPerFrame = beatsPerSec / framesPerSec;
 
     volumeDiffs.forEach((diff, j) => {
@@ -82,30 +84,22 @@ export function analyzeBpm(audio: AudioBuffer): AnalyzeResult {
     const aBpm = aSum / frameCount;
     const bBpm = bSum / frameCount;
 
-    a[i - MIN_BPM] = aBpm;
-    b[i - MIN_BPM] = bBpm;
-    r[i - MIN_BPM] = sqrt(aBpm * aBpm + bBpm * bBpm);
+    a[bpm] = aBpm;
+    b[bpm] = bBpm;
+    r[bpm] = sqrt(aBpm * aBpm + bBpm * bBpm);
+
+    if (maxAmp < r[bpm]) {
+      maxAmp = r[bpm];
+      maxAmpBpm = bpm;
+    }
   }
 
-  let bpm = 0;
-  let maxAmp = 0;
-
-  r.forEach((value, index) => {
-    if (maxAmp < value) {
-      maxAmp = value;
-      bpm = index;
-    }
-  });
-
-  bpm += MIN_BPM;
-
-  // 位相差
-  const theta = atan2(b[bpm - MIN_BPM], a[bpm - MIN_BPM]);
-  const startPosition = theta / (2 * PI * bpm / 60);
+  const theta = atan2(b[maxAmpBpm], a[maxAmpBpm]);
+  const startPosition = theta / (2 * PI * maxAmpBpm / 60);
 
   return {
-    bpm,
-    startPosition
+    startPosition,
+    bpm: maxAmpBpm
   };
 }
 
