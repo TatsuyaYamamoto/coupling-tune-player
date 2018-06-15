@@ -87,7 +87,7 @@ async function analyze(file: File, type: "left" | "right") {
     `Loaded as audio buffer. type: ${type}, length: ${audioBuffer.length}`
   );
 
-  const { bpm, startPosition } = await analyzeBpm(audioBuffer);
+  const { bpm, startPosition } = analyzeBpm(audioBuffer);
   console.log(`Analyzed. type: ${type}, BPM: ${bpm}`);
 
   return { audioBuffer, startPosition };
