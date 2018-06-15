@@ -1,5 +1,7 @@
 // tslint:disable:no-increment-decrement
 
+import { isNull } from "util";
+
 const { sin, cos, atan2, floor, sqrt, PI } = Math;
 
 const SAMPLES_PER_FRAME = 512;
@@ -51,7 +53,7 @@ export function analyzeBpm(audio: AudioBuffer): AnalyzeResult {
       monoEffectiveValue += synthesizedMonoData * synthesizedMonoData;
     }
 
-    if (prevEffectiveValue) {
+    if (!isNull(prevEffectiveValue)) {
       const diff = monoEffectiveValue - prevEffectiveValue;
       volumeDiffs.push(diff > 0 ? diff : 0);
     }
