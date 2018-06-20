@@ -15,10 +15,10 @@
   "author": "TatsuyaYamamoto",
   "license": "MIT",
   "dependencies": {
+    "@material-ui/core": "^1.2.2",
+    "@material-ui/icons": "^1.1.0",
     "autobind-decorator": "^2.1.0",
     "jsmediatags": "^3.8.1",
-    "material-ui": "^1.0.0-beta.40",
-    "material-ui-icons": "^1.0.0-beta.36",
     "rc-slider": "^8.6.1",
     "react": "^16.3.0",
     "react-dom": "^16.3.0",
