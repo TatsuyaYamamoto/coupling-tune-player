@@ -1,9 +1,11 @@
 import * as React from "react";
 import { connect, DispatchProp } from "react-redux";
 
-import TrackTable from "./table/TrackTable";
-import TrackTableHead from "./table/TrackTableHead";
-import TrackTableBody from "./table/TrackTableBody";
+import {
+  default as TrackTable,
+  TrackTableHead,
+  TrackTableBody
+} from "../../components/molecules/TrackTable";
 
 import { States } from "../../modules/redux";
 import { goIndex } from "../../modules/audiolist";

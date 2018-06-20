@@ -9,8 +9,8 @@ import Track from "../../modules/model/Track";
 import { select } from "../../modules/audiolist";
 import { toFiles } from "../../modules/helper/FileSystem";
 
-import AudioDetail from "../molecules/AudioDetail";
-import LoadingDialog from "./dialog/LoadingDialog";
+import AudioDetail from "../../components/molecules/AudioDetail";
+import LoadingDialog from "../../components/molecules/LoadingDialog";
 
 import { sendEvent } from "../../utils";
 

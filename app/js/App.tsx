@@ -10,7 +10,7 @@ import {
 
 import { store } from "./modules/redux";
 
-import Index from "./components/pages/Index";
+import Index from "./containers/temaplates/Index";
 
 const muiTheme = createMuiTheme({
   palette: {

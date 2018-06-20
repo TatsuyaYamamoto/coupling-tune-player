@@ -3,9 +3,9 @@ import { default as styled } from "styled-components";
 
 import Button from "@material-ui/core/Button";
 import { Dialog, DialogActions, DialogContent } from "@material-ui/core";
-import { sendEvent } from "../../../utils";
+import { sendEvent } from "../../utils";
 
-const { version } = require("../../../../../package.json");
+const { version } = require("../../../../package.json");
 
 export interface Props {
   open: boolean;

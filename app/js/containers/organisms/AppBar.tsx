@@ -4,10 +4,10 @@ import { default as AutoBind } from "autobind-decorator";
 
 import { AppBar as MuiAppBar, Toolbar } from "@material-ui/core";
 
-import TitleTypography from "../atoms/TitleTypography";
-import InfoIconButton from "../atoms/button/InfoIconButton";
-import TweetButton from "../atoms/button/TweetButton";
-import InfoDialog from "./dialog/InfoDialog";
+import TitleTypography from "../../components/atoms/TitleTypography";
+import InfoIconButton from "../../components/atoms/button/InfoIconButton";
+import TweetButton from "../../components/atoms/button/TweetButton";
+import InfoDialog from "../../components/molecules/InfoDialog";
 
 import { sendEvent, tweetByWebIntent } from "../../utils";
 import { URL } from "../../constants";

@@ -7,11 +7,11 @@ import { default as styled } from "styled-components";
 
 import { Card, CardContent } from "@material-ui/core";
 
-import PlayButton from "../atoms/button/PlayButton";
-import PauseButton from "../atoms/button/PauseButton";
-import PrevButton from "../atoms/button/PrevButton";
-import NextButton from "../atoms/button/NextButton";
-import PlayTimeSlider from "../molecules/PlayTimeSlider";
+import PlayButton from "../../components/atoms/button/PlayButton";
+import PauseButton from "../../components/atoms/button/PauseButton";
+import PrevButton from "../../components/atoms/button/PrevButton";
+import NextButton from "../../components/atoms/button/NextButton";
+import PlayTimeSlider from "../../components/molecules/PlayTimeSlider";
 
 import {
   play as playAudio,
