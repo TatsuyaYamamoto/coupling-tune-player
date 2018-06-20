@@ -2,7 +2,7 @@ import * as React from "react";
 import { default as styled } from "styled-components";
 import { default as AutoBind } from "autobind-decorator";
 
-import { AppBar as MuiAppBar, Toolbar } from "material-ui";
+import { AppBar as MuiAppBar, Toolbar } from "@material-ui/core";
 
 import TitleTypography from "../atoms/TitleTypography";
 import InfoIconButton from "../atoms/button/InfoIconButton";

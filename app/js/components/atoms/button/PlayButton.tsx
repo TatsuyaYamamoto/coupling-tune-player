@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import Button, { ButtonProps } from "material-ui/Button";
-import { PlayArrow } from "material-ui-icons";
+import Button, { ButtonProps } from "@material-ui/core/Button";
+import { PlayArrow } from "@material-ui/icons";
 
 interface Props extends ButtonProps {
   onClick?: () => void;

@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import IconButton, { IconButtonProps } from "material-ui/IconButton";
-import { SkipPrevious } from "material-ui-icons";
+import IconButton, { IconButtonProps } from "@material-ui/core/IconButton";
+import { SkipPrevious } from "@material-ui/icons";
 
 interface Props extends IconButtonProps {
   onClick?: () => void;

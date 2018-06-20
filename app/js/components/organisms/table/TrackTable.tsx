@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Paper, Table } from "material-ui";
+import { Paper, Table } from "@material-ui/core";
 
 export interface ComponentProps {
   className?: string;

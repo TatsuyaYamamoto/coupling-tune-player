@@ -1,8 +1,8 @@
 import * as React from "react";
 import { default as styled } from "styled-components";
 
-import Button from "material-ui/Button";
-import Dialog, { DialogActions, DialogContent } from "material-ui/Dialog";
+import Button from "@material-ui/core/Button";
+import { Dialog, DialogActions, DialogContent } from "@material-ui/core";
 import { sendEvent } from "../../../utils";
 
 const { version } = require("../../../../../package.json");

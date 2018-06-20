@@ -5,7 +5,7 @@ import { connect, DispatchProp } from "react-redux";
 import { default as AutoBind } from "autobind-decorator";
 import { default as styled } from "styled-components";
 
-import Card, { CardContent } from "material-ui/Card";
+import { Card, CardContent } from "@material-ui/core";
 
 import PlayButton from "../atoms/button/PlayButton";
 import PauseButton from "../atoms/button/PauseButton";

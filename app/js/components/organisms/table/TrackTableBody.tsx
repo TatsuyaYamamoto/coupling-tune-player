@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TableRow, TableCell, TableBody } from "material-ui";
+import { TableRow, TableCell, TableBody } from "@material-ui/core";
 
 import PlayIcon from "../../atoms/icon/PlayIcon";
 import UnavailableIcon from "../../atoms/icon/UnavailableIcon";

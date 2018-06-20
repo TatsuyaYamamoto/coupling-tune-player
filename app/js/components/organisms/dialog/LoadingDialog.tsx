@@ -1,8 +1,7 @@
 import * as React from "react";
 import { default as styled } from "styled-components";
 
-import Dialog, { DialogContent } from "material-ui/Dialog";
-import { CircularProgress } from "material-ui/Progress";
+import { Dialog, DialogContent, CircularProgress } from "@material-ui/core";
 
 export interface Props {
   open: boolean;

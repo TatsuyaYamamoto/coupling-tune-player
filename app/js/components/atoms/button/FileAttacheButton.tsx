@@ -2,8 +2,8 @@ import * as React from "react";
 import { default as AutoBind } from "autobind-decorator";
 import { default as styled } from "styled-components";
 
-import { Button, withTheme, WithTheme } from "material-ui";
-import { Audiotrack as Icon } from "material-ui-icons";
+import { Button, withTheme, WithTheme } from "@material-ui/core";
+import { Audiotrack as Icon } from "@material-ui/icons";
 
 export interface ComponentProps {
   className?: string;

@@ -9,7 +9,7 @@ import {
   IconButton,
   CircularProgress,
   Typography
-} from "material-ui";
+} from "@material-ui/core";
 
 export interface ComponentProps {
   className?: string;

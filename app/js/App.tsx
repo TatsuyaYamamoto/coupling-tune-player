@@ -1,9 +1,12 @@
 import * as React from "react";
 import { Provider } from "react-redux";
 
-import { MuiThemeProvider, createMuiTheme } from "material-ui/styles";
-import * as colors from "material-ui/colors";
-import { CssBaseline } from "material-ui";
+import {
+  MuiThemeProvider,
+  createMuiTheme,
+  colors,
+  CssBaseline
+} from "@material-ui/core";
 
 import { store } from "./modules/redux";
 

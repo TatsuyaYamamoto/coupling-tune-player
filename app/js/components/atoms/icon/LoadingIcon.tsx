@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components"; // tslint:disable-line:import-name
 
-import { Refresh } from "material-ui-icons";
+import { Refresh } from "@material-ui/icons";
 
 interface Props {
   animation?: boolean;

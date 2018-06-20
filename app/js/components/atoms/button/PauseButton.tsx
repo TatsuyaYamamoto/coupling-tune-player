@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import { Button } from "material-ui";
-import { Pause } from "material-ui-icons";
+import { Button } from "@material-ui/core";
+import { Pause } from "@material-ui/icons";
 
 interface Props {
   onClick?: () => void;
