@@ -2,13 +2,12 @@ import * as React from "react";
 import { default as AutoBind } from "autobind-decorator";
 import { default as styled } from "styled-components";
 
-import { Button, withTheme, WithTheme } from "@material-ui/core";
-import { Audiotrack as Icon } from "@material-ui/icons";
+import { default as Button, ButtonProps } from "@material-ui/core/Button";
 
-export interface ComponentProps {
-  className?: string;
-  reverse?: boolean;
+export interface ComponentProps extends ButtonProps {
   onSelected?: (fileList: FileList) => void;
+  accept: string;
+  multiple: boolean;
 }
 
 const Input = styled.input`
@@ -16,31 +15,26 @@ const Input = styled.input`
 `;
 
 @AutoBind
-class FileAttacheButton extends React.Component<
-  ComponentProps & WithTheme,
-  {}
-> {
+class SelectableButton extends React.Component<ComponentProps, {}> {
   private inputRef: HTMLInputElement | null = null;
 
   public render() {
-    const { className, reverse, theme } = this.props;
+    const { children, accept, multiple, onSelected, ...others } = this.props;
     return (
       <React.Fragment>
         <Button
           variant="raised"
           color="primary"
           onClick={this.onClick}
-          className={className}
+          {...others}
         >
-          {!reverse && <Icon style={{ marginRight: theme.spacing.unit }} />}
-          {reverse ? "Right Track" : "Left Track"}
-          {reverse && <Icon style={{ marginLeft: theme.spacing.unit }} />}
+          {children}
         </Button>
 
         <Input
           type="file"
-          accept="audio/*"
-          multiple={true}
+          accept={accept}
+          multiple={multiple}
           innerRef={this.setInnerRef}
           onChange={this.onInputChanged}
         />
@@ -74,4 +68,4 @@ class FileAttacheButton extends React.Component<
   }
 }
 
-export default withTheme()(FileAttacheButton);
+export default SelectableButton;

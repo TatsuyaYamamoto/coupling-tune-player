@@ -2,12 +2,12 @@ import * as React from "react";
 import { default as styled } from "styled-components";
 import { default as AutoBind } from "autobind-decorator";
 
-import { AppBar as MuiAppBar, Toolbar } from "@material-ui/core";
+import { AppBar as MuiAppBar, IconButton, Toolbar } from "@material-ui/core";
 
 import TitleTypography from "../../components/atoms/TitleTypography";
-import InfoIconButton from "../../components/atoms/button/InfoIconButton";
-import TweetButton from "../../components/atoms/button/TweetButton";
 import InfoDialog from "../../components/molecules/InfoDialog";
+import TwitterLogoSvg from "../../components/atoms/icon/TwitterLogoSvg";
+import InfoIcon from "../../components/atoms/icon/InfoIcon";
 
 import { sendEvent, tweetByWebIntent } from "../../utils";
 import { URL } from "../../constants";
@@ -35,15 +35,32 @@ class AppBar extends React.Component<ComponentProps, ComponentState> {
   public render() {
     const { isInfoDialogOpen } = this.state;
 
+    const title = (
+      <TitleTypography>
+        かぷちゅうプレイヤー/Coupling Tune Player
+      </TitleTypography>
+    );
+
+    const tweetButton = (
+      <IconButton onClick={this.onShowTweet}>
+        <TwitterLogoSvg />
+      </IconButton>
+    );
+
+    const infoButton = (
+      <IconButton onClick={this.onOpenInfoDialog} color="inherit">
+        <InfoIcon />
+      </IconButton>
+    );
+
     return (
       <Root>
         <MuiAppBar position="fixed">
           <Toolbar>
-            <TitleTypography />
-
+            {title}
             <CenterSpace />
-            <TweetButton onClick={this.onShowTweet} />
-            <InfoIconButton onClick={this.onOpenInfoDialog} />
+            {tweetButton}
+            {infoButton}
           </Toolbar>
         </MuiAppBar>
 

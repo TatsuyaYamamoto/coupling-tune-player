@@ -1,12 +1,12 @@
-import * as React from "react";
-import SvgIcon from "@material-ui/core/SvgIcon";
-import IconButton from "@material-ui/core/IconButton";
-
 /**
- * Twitter SVG Logo
+ * @fileOverview Twitter SVG Logo
  * @see https://about.twitter.com/ja/company/brand-resources.html
  */
-const svgIcon = (
+
+import * as React from "react";
+import SvgIcon from "@material-ui/core/SvgIcon";
+
+const icon = () => (
   <SvgIcon
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
@@ -34,14 +34,4 @@ const svgIcon = (
   </SvgIcon>
 );
 
-export interface Props {
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-}
-
-const TweetButton = (props: Props) => {
-  const { onClick } = props;
-
-  return <IconButton onClick={onClick}>{svgIcon}</IconButton>;
-};
-
-export default TweetButton;
+export default icon;

@@ -4,12 +4,16 @@ import { connect } from "react-redux";
 import { default as styled } from "styled-components";
 import { default as AutoBind } from "autobind-decorator";
 
+import { WithTheme, withTheme } from "@material-ui/core";
+import { Audiotrack as AudiotrackIcon } from "@material-ui/icons";
+
 import { States } from "../../redux/store";
 import Track from "../../redux/model/Track";
 import { select } from "../../redux/modules/audiolist";
 import { toFiles } from "../../helper/FileSystem";
 
-import AudioDetail from "../../components/molecules/AudioDetail";
+import CdSvg from "../../components/atoms/CdSvg";
+import SelectableButton from "../../components/atoms/SelectableButton";
 import LoadingDialog from "../../components/molecules/LoadingDialog";
 
 import { sendEvent } from "../../utils";
@@ -28,37 +32,95 @@ const Root = styled.div`
   padding: 30px 0;
 `;
 
-const Detail = styled(AudioDetail)``;
+const Detail = styled.div`
+  text-align: center;
+`;
+
+const CdCover = styled.div`
+  width: 300px;
+  height: 300px;
+  @media (max-width: 480px) {
+    width: 100px;
+    height: 100px;
+  }
+`;
+
+const StyledSelectableButton = styled(SelectableButton)`
+  margin: 10px !important;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+`;
+
+const NoImage = styled(CdSvg)`
+  width: 100%;
+  height: 100%;
+`;
 
 // TODO rename to.... JacketsArea?
 @AutoBind
 class AudioInformation extends React.Component<
-  ComponentProps & DispatchProps & StateProps,
+  ComponentProps & DispatchProps & StateProps & WithTheme,
   ComponentState
 > {
   public render() {
-    const { className, left, right, loading } = this.props;
-    let leftImageSrc = null;
-    if (left) {
-      leftImageSrc = left.pictureBase64;
-    }
+    const { className, left, right, loading, theme } = this.props;
 
-    let rightImageSrc = null;
-    if (right) {
-      rightImageSrc = right.pictureBase64;
-    }
+    const leftImage = (
+      <CdCover>
+        {left && left.pictureBase64 ? (
+          <Image src={left.pictureBase64} />
+        ) : (
+          <NoImage />
+        )}
+      </CdCover>
+    );
+
+    const rightImage = (
+      <CdCover>
+        {right && right.pictureBase64 ? (
+          <Image src={right.pictureBase64} />
+        ) : (
+          <NoImage />
+        )}
+      </CdCover>
+    );
+
+    const leftFileButton = (
+      <StyledSelectableButton
+        accept="audio/*"
+        multiple={true}
+        onSelected={this.onLeftAudioFileSelected}
+      >
+        <AudiotrackIcon style={{ marginRight: theme.spacing.unit }} />
+        <span>Left Track</span>
+      </StyledSelectableButton>
+    );
+
+    const rightFileButton = (
+      <StyledSelectableButton
+        accept="audio/*"
+        multiple={true}
+        onSelected={this.onRightAudioFileSelected}
+      >
+        <span>Right Track</span>
+        <AudiotrackIcon style={{ marginLeft: theme.spacing.unit }} />
+      </StyledSelectableButton>
+    );
 
     return (
       <Root className={className}>
-        <Detail
-          imageSrc={leftImageSrc}
-          onAudioSelected={this.onLeftAudioFileSelected}
-        />
-        <Detail
-          reverse={true}
-          imageSrc={rightImageSrc}
-          onAudioSelected={this.onRightAudioFileSelected}
-        />
+        <Detail>
+          {leftImage}
+          {leftFileButton}
+        </Detail>
+
+        <Detail>
+          {rightImage}
+          {rightFileButton}
+        </Detail>
 
         <LoadingDialog open={loading} />
       </Root>
@@ -125,5 +187,5 @@ function mapDispatchToProps(
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  AudioInformation
+  withTheme()(AudioInformation)
 ) as React.ComponentClass<ComponentProps>;

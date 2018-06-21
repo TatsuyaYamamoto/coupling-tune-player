@@ -1,7 +1,7 @@
 import * as React from "react";
 import { TableRow, TableCell, TableBody } from "@material-ui/core";
 
-import PlayIcon from "../../atoms/icon/PlayIcon";
+import PLayTrackIcon from "../../atoms/icon/PLayTrackIcon";
 import UnavailableIcon from "../../atoms/icon/UnavailableIcon";
 import LoadingIcon from "../../atoms/icon/LoadingIcon";
 import AudioWaveIcon from "../../atoms/icon/AudioWaveIcon";
@@ -86,7 +86,7 @@ const TrackRow = withHover<TrackRowProps>(props => {
     }
   } else {
     if (hover) {
-      statusIcon = available ? <PlayIcon /> : <UnavailableIcon />;
+      statusIcon = available ? <PLayTrackIcon /> : <UnavailableIcon />;
     } else {
       statusIcon = <span>{trackNumber}</span>;
     }

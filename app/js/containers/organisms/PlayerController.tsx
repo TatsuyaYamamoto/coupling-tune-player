@@ -5,12 +5,11 @@ import { connect, DispatchProp } from "react-redux";
 import { default as AutoBind } from "autobind-decorator";
 import { default as styled } from "styled-components";
 
-import { Card, CardContent } from "@material-ui/core";
+import { Button, Card, CardContent, IconButton } from "@material-ui/core";
 
-import PlayButton from "../../components/atoms/button/PlayButton";
-import PauseButton from "../../components/atoms/button/PauseButton";
-import PrevButton from "../../components/atoms/button/PrevButton";
-import NextButton from "../../components/atoms/button/NextButton";
+import PLayTrackIcon from "../../components/atoms/icon/PLayTrackIcon";
+import PrevTrackIcon from "../../components/atoms/icon/PrevTrackIcon";
+import NextTrackIcon from "../../components/atoms/icon/NextTrackIcon";
 import PlayTimeSlider from "../../components/molecules/PlayTimeSlider";
 
 import {
@@ -41,13 +40,7 @@ const Buttons = styled(CardContent)`
   align-items: center;
 `;
 
-const Play = styled(PlayButton)`
-  && {
-    margin: 10px;
-  }
-`;
-
-const Pause = styled(PauseButton)`
+const CenterButton = styled(Button)`
   && {
     margin: 10px;
   }
@@ -70,19 +63,55 @@ class PlayerController extends React.Component<Props, ComponentState> {
     } = this.props;
     const { manualCurrentTime } = this.state;
 
-    let centerButton = null;
-    switch (playerState) {
-      case "playing":
-        centerButton = <Pause onClick={this.onPause} />;
-        break;
-      case "pausing":
-        centerButton = <Play onClick={this.onPlay} />;
-        break;
-      case "unavailable":
-      default:
-        centerButton = <Play disabled={true} />;
-        break;
-    }
+    const playButton = (
+      <CenterButton variant="fab" color="primary" onClick={this.onPlay}>
+        <PLayTrackIcon />
+      </CenterButton>
+    );
+
+    const unavailableButton = (
+      <CenterButton variant="fab" color="primary" disabled={true}>
+        <PLayTrackIcon />
+      </CenterButton>
+    );
+
+    const pauseButton = (
+      <CenterButton variant="fab" color="primary" onClick={this.onPause}>
+        <PLayTrackIcon />
+      </CenterButton>
+    );
+
+    const centerButton = (() => {
+      switch (playerState) {
+        case "playing":
+          return playButton;
+        case "pausing":
+          return pauseButton;
+        case "unavailable":
+        default:
+          return unavailableButton;
+      }
+    })();
+
+    const prevButton = (
+      <IconButton
+        color="primary"
+        disabled={!hasPrev}
+        onClick={this.onPrevClicked}
+      >
+        <PrevTrackIcon />
+      </IconButton>
+    );
+
+    const nextButton = (
+      <IconButton
+        color="primary"
+        disabled={!hasNext}
+        onClick={this.onNextClicked}
+      >
+        <NextTrackIcon />
+      </IconButton>
+    );
 
     return (
       <Card className={className}>
@@ -95,9 +124,9 @@ class PlayerController extends React.Component<Props, ComponentState> {
           onFixed={this.onSliderFixed}
         />
         <Buttons>
-          <PrevButton disabled={!hasPrev} onClick={this.onPrevClicked} />
+          {prevButton}
           {centerButton}
-          <NextButton disabled={!hasNext} onClick={this.onNextClicked} />
+          {nextButton}
         </Buttons>
       </Card>
     );
