@@ -1,16 +1,16 @@
 import { AnyAction, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
 
-import { States } from "./redux";
+import { States } from "../store";
 
-import { context, loadAsAudioBuffer } from "./helper/AudioContext";
+import { context, loadAsAudioBuffer } from "../../helper/AudioContext";
 
-import Track from "./model/Track";
+import Track from "../model/Track";
 
 import Timer = NodeJS.Timer;
-import { syncPlay, stop as syncStop } from "./helper/SyncPlayer";
+import { syncPlay, stop as syncStop } from "../../helper/SyncPlayer";
 import { goNextIndex, goPrevIndex } from "./audiolist";
-import { analyzeBpm } from "./helper/BpmAnalyzer";
+import { analyzeBpm } from "../../helper/BpmAnalyzer";
 
 export enum PlayerActionTypes {
   PLAY_REQUEST = "c_tune/player/play_request",

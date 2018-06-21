@@ -8,7 +8,7 @@ import {
   CssBaseline
 } from "@material-ui/core";
 
-import { store } from "./modules/redux";
+import { createStore } from "./redux/store";
 
 import Index from "./containers/temaplates/Index";
 
@@ -28,6 +28,8 @@ const muiTheme = createMuiTheme({
     }
   }
 });
+
+const store = createStore();
 
 const App = () => (
   <React.Fragment>

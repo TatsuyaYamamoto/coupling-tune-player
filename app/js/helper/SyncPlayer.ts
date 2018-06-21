@@ -1,5 +1,5 @@
 import { context } from "./AudioContext";
-import Track from "../model/Track";
+import Track from "../redux/model/Track";
 
 let leftAudioSource: AudioBufferSourceNode | null = null;
 let rightAudioSource: AudioBufferSourceNode | null = null;

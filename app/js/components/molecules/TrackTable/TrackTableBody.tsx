@@ -6,10 +6,10 @@ import UnavailableIcon from "../../atoms/icon/UnavailableIcon";
 import LoadingIcon from "../../atoms/icon/LoadingIcon";
 import AudioWaveIcon from "../../atoms/icon/AudioWaveIcon";
 
-import withHover from "../../hoc/withHover";
+import withHover from "../../../helper/hoc/withHover";
 
-import Index from "../../../modules/model/Index";
-import TrackList from "../../../modules/model/TrackList";
+import Index from "../../../redux/model/Index";
+import TrackList from "../../../redux/model/TrackList";
 
 export interface ComponentProps {
   className?: string;

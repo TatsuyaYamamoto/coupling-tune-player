@@ -7,15 +7,15 @@ import {
   TrackTableBody
 } from "../../components/molecules/TrackTable";
 
-import { States } from "../../modules/redux";
-import { goIndex } from "../../modules/audiolist";
+import { States } from "../../redux/store";
+import { goIndex } from "../../redux/modules/audiolist";
 import {
   play as playAudio,
   pause as pauseAudio,
   updateCurrentTime
-} from "../../modules/player";
-import Index from "../../modules/model/Index";
-import TrackList from "../../modules/model/TrackList";
+} from "../../redux/modules/player";
+import Index from "../../redux/model/Index";
+import TrackList from "../../redux/model/TrackList";
 
 export interface ComponentState {}
 

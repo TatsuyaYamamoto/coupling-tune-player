@@ -19,9 +19,9 @@ import {
   updateCurrentTime,
   skipPrevious,
   skipNext
-} from "../../modules/player";
-import { States } from "../../modules/redux";
-import Track from "../../modules/model/Track";
+} from "../../redux/modules/player";
+import { States } from "../../redux/store";
+import Track from "../../redux/model/Track";
 
 import { sendEvent } from "../../utils";
 

@@ -4,10 +4,10 @@ import { connect } from "react-redux";
 import { default as styled } from "styled-components";
 import { default as AutoBind } from "autobind-decorator";
 
-import { States } from "../../modules/redux";
-import Track from "../../modules/model/Track";
-import { select } from "../../modules/audiolist";
-import { toFiles } from "../../modules/helper/FileSystem";
+import { States } from "../../redux/store";
+import Track from "../../redux/model/Track";
+import { select } from "../../redux/modules/audiolist";
+import { toFiles } from "../../helper/FileSystem";
 
 import AudioDetail from "../../components/molecules/AudioDetail";
 import LoadingDialog from "../../components/molecules/LoadingDialog";

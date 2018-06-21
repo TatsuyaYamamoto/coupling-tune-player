@@ -1,12 +1,12 @@
 import { AnyAction, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
 
-import { States } from "./redux";
-import Track from "./model/Track";
-import Index from "./model/Index";
-import TrackList from "./model/TrackList";
-import { loadTags } from "./helper/TagLoader";
-import { loadAsAudio, readAsDataURL } from "./helper/FileSystem";
+import { States } from "../store";
+import Track from "../model/Track";
+import Index from "../model/Index";
+import TrackList from "../model/TrackList";
+import { loadTags } from "../../helper/TagLoader";
+import { loadAsAudio, readAsDataURL } from "../../helper/FileSystem";
 
 export enum Actions {
   SELECT_REQUEST = "c_tune/audio-list/select_request",
