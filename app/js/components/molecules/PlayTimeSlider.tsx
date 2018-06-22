@@ -1,3 +1,5 @@
+import "rc-slider/assets/index.css";
+
 import * as React from "react";
 
 import { default as Slider } from "rc-slider";

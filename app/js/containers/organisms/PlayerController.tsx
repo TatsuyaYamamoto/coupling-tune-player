@@ -1,16 +1,12 @@
-import "rc-slider/assets/index.css";
-
 import * as React from "react";
 import { connect, DispatchProp } from "react-redux";
 import { default as AutoBind } from "autobind-decorator";
 import { default as styled } from "styled-components";
 
-import { Button, Card, CardContent, IconButton } from "@material-ui/core";
+import { Card, CardContent } from "@material-ui/core";
 
-import PLayTrackIcon from "../../components/atoms/icon/PLayTrackIcon";
-import PrevTrackIcon from "../../components/atoms/icon/PrevTrackIcon";
-import NextTrackIcon from "../../components/atoms/icon/NextTrackIcon";
 import PlayTimeSlider from "../../components/molecules/PlayTimeSlider";
+import TrackController from "../../components/molecules/TrackController";
 
 import {
   play as playAudio,
@@ -24,9 +20,7 @@ import Track from "../../redux/model/Track";
 
 import { sendEvent } from "../../utils";
 
-export interface ComponentProps {
-  className?: string;
-}
+export interface ComponentProps {}
 
 export interface ComponentState {
   manualCurrentTime: number | null;
@@ -40,12 +34,6 @@ const Buttons = styled(CardContent)`
   align-items: center;
 `;
 
-const CenterButton = styled(Button)`
-  && {
-    margin: 10px;
-  }
-`;
-
 @AutoBind
 class PlayerController extends React.Component<Props, ComponentState> {
   public state = {
@@ -55,78 +43,35 @@ class PlayerController extends React.Component<Props, ComponentState> {
   public render() {
     const {
       playerState,
-      className,
       duration,
       current,
       hasPrev,
-      hasNext
+      hasNext,
+      ...others
     } = this.props;
     const { manualCurrentTime } = this.state;
-
-    const playButton = (
-      <CenterButton variant="fab" color="primary" onClick={this.onPlay}>
-        <PLayTrackIcon />
-      </CenterButton>
-    );
-
-    const unavailableButton = (
-      <CenterButton variant="fab" color="primary" disabled={true}>
-        <PLayTrackIcon />
-      </CenterButton>
-    );
-
-    const pauseButton = (
-      <CenterButton variant="fab" color="primary" onClick={this.onPause}>
-        <PLayTrackIcon />
-      </CenterButton>
-    );
-
-    const centerButton = (() => {
-      switch (playerState) {
-        case "playing":
-          return playButton;
-        case "pausing":
-          return pauseButton;
-        case "unavailable":
-        default:
-          return unavailableButton;
-      }
-    })();
-
-    const prevButton = (
-      <IconButton
-        color="primary"
-        disabled={!hasPrev}
-        onClick={this.onPrevClicked}
-      >
-        <PrevTrackIcon />
-      </IconButton>
-    );
-
-    const nextButton = (
-      <IconButton
-        color="primary"
-        disabled={!hasNext}
-        onClick={this.onNextClicked}
-      >
-        <NextTrackIcon />
-      </IconButton>
-    );
+    const currentTime = manualCurrentTime ? manualCurrentTime : current;
 
     return (
-      <Card className={className}>
+      <Card {...others}>
         <PlayTimeSlider
           min={0}
           max={duration}
-          current={manualCurrentTime ? manualCurrentTime : current}
+          current={currentTime}
           onStartChange={this.onSliderStart}
           onChange={this.onSliderChange}
           onFixed={this.onSliderFixed}
         />
         <Buttons>
-          {prevButton}
-          {centerButton}
-          {nextButton}
+          <TrackController
+            state={playerState}
+            hasNext={hasNext}
+            hasPrev={hasPrev}
+            onPlayClick={this.onPlay}
+            onPauseClick={this.onPause}
+            onNextTrackClick={this.onNextClicked}
+            onPrevTrackClick={this.onPrevClicked}
+          />
         </Buttons>
       </Card>
     );

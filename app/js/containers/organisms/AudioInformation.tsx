@@ -4,23 +4,21 @@ import { connect } from "react-redux";
 import { default as styled } from "styled-components";
 import { default as AutoBind } from "autobind-decorator";
 
-import { WithTheme, withTheme } from "@material-ui/core";
 import { Audiotrack as AudiotrackIcon } from "@material-ui/icons";
 
 import { States } from "../../redux/store";
 import Track from "../../redux/model/Track";
 import { select } from "../../redux/modules/audiolist";
-import { toFiles } from "../../helper/FileSystem";
 
-import CdSvg from "../../components/atoms/CdSvg";
-import SelectableButton from "../../components/atoms/SelectableButton";
+import CdCoverImage from "../../components/atoms/CdCoverImage";
+import NoCdCoverImage from "../../components/atoms/NoCdCoverImage";
 import LoadingDialog from "../../components/molecules/LoadingDialog";
+import TrackSelectButton from "../../components/molecules/TrackSelectButton";
 
+import { toFiles } from "../../helper/FileSystem";
 import { sendEvent } from "../../utils";
 
-export interface ComponentProps {
-  className?: string;
-}
+export interface ComponentProps {}
 
 export interface ComponentState {}
 
@@ -36,7 +34,7 @@ const Detail = styled.div`
   text-align: center;
 `;
 
-const CdCover = styled.div`
+const StyledCdCoverImage = styled(CdCoverImage)`
   width: 300px;
   height: 300px;
   @media (max-width: 480px) {
@@ -45,81 +43,60 @@ const CdCover = styled.div`
   }
 `;
 
-const StyledSelectableButton = styled(SelectableButton)`
+const StyledNoCdCoverImage = styled(NoCdCoverImage)`
+  width: 300px;
+  height: 300px;
+  @media (max-width: 480px) {
+    width: 100px;
+    height: 100px;
+  }
+`;
+
+const StyledTrackSelectButton = styled(TrackSelectButton)`
   margin: 10px !important;
 `;
 
-const Image = styled.img`
-  width: 100%;
-  height: 100%;
-`;
-
-const NoImage = styled(CdSvg)`
-  width: 100%;
-  height: 100%;
-`;
+type P = ComponentProps & DispatchProps & StateProps;
+type S = ComponentState;
 
 // TODO rename to.... JacketsArea?
 @AutoBind
-class AudioInformation extends React.Component<
-  ComponentProps & DispatchProps & StateProps & WithTheme,
-  ComponentState
-> {
+class AudioInformation extends React.Component<P, S> {
   public render() {
-    const { className, left, right, loading, theme } = this.props;
+    const { left, right, loading, ...others } = this.props;
 
-    const leftImage = (
-      <CdCover>
-        {left && left.pictureBase64 ? (
-          <Image src={left.pictureBase64} />
-        ) : (
-          <NoImage />
-        )}
-      </CdCover>
-    );
+    const leftImage =
+      left && left.pictureBase64 ? (
+        <StyledCdCoverImage src={left.pictureBase64} />
+      ) : (
+        <StyledNoCdCoverImage />
+      );
 
-    const rightImage = (
-      <CdCover>
-        {right && right.pictureBase64 ? (
-          <Image src={right.pictureBase64} />
-        ) : (
-          <NoImage />
-        )}
-      </CdCover>
-    );
-
-    const leftFileButton = (
-      <StyledSelectableButton
-        accept="audio/*"
-        multiple={true}
-        onSelected={this.onLeftAudioFileSelected}
-      >
-        <AudiotrackIcon style={{ marginRight: theme.spacing.unit }} />
-        <span>Left Track</span>
-      </StyledSelectableButton>
-    );
-
-    const rightFileButton = (
-      <StyledSelectableButton
-        accept="audio/*"
-        multiple={true}
-        onSelected={this.onRightAudioFileSelected}
-      >
-        <span>Right Track</span>
-        <AudiotrackIcon style={{ marginLeft: theme.spacing.unit }} />
-      </StyledSelectableButton>
-    );
+    const rightImage =
+      right && right.pictureBase64 ? (
+        <StyledCdCoverImage src={right.pictureBase64} />
+      ) : (
+        <StyledNoCdCoverImage />
+      );
 
     return (
-      <Root className={className}>
+      <Root {...others}>
         <Detail>
           {leftImage}
-          {leftFileButton}
+          <StyledTrackSelectButton
+            label="Left Track"
+            leftIcon={<AudiotrackIcon />}
+            onFileSelected={this.onLeftAudioFileSelected}
+          />
         </Detail>
 
         <Detail>
           {rightImage}
-          {rightFileButton}
+          <StyledTrackSelectButton
+            label="Right Track"
+            rightIcon={<AudiotrackIcon />}
+            onFileSelected={this.onRightAudioFileSelected}
+          />
         </Detail>
 
         <LoadingDialog open={loading} />
@@ -187,5 +164,5 @@ function mapDispatchToProps(
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTheme()(AudioInformation)
+  AudioInformation
 ) as React.ComponentClass<ComponentProps>;
