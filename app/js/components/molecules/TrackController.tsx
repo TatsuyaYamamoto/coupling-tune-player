@@ -3,6 +3,7 @@ import { Button, IconButton } from "@material-ui/core";
 import { default as styled } from "styled-components";
 
 import PLayTrackIcon from "../../components/atoms/icon/PLayTrackIcon";
+import PauseTrackIcon from "../../components/atoms/icon/PauseTrackIcon";
 import PrevTrackIcon from "../../components/atoms/icon/PrevTrackIcon";
 import NextTrackIcon from "../../components/atoms/icon/NextTrackIcon";
 
@@ -50,16 +51,16 @@ const TrackController: React.SFC<TrackControllerProps> = props => {
 
   const pauseButton = (
     <StyledButton variant="fab" color="primary" onClick={onPauseClick}>
-      <PLayTrackIcon />
+      <PauseTrackIcon />
     </StyledButton>
   );
 
   const centerButton = (() => {
     switch (state) {
       case "playing":
-        return playButton;
-      case "pausing":
         return pauseButton;
+      case "pausing":
+        return playButton;
       case "unavailable":
       default:
         return unavailableButton;
