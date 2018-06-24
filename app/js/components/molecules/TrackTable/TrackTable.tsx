@@ -1,15 +1,63 @@
 import * as React from "react";
-import { Paper, Table } from "@material-ui/core";
+import { Paper, Table, TableBody } from "@material-ui/core";
+
+import TrackTableHead from "./TrackTableHead";
+import NoTrackRow from "./NoTrackRow";
+import TrackRow from "./TrackRow";
+
+import TrackList from "../../../redux/model/TrackList";
+import Index from "../../../redux/model/Index";
 
 export interface ComponentProps {
-  className?: string;
+  list: TrackList;
+  focusIndex: Index | null;
+  onRowClicked: (index: number) => void;
+  playerState: "unavailable" | "playing" | "pausing";
 }
 
 const TrackTable: React.SFC<ComponentProps> = props => {
-  const { children, className } = props;
+  const { list, focusIndex, onRowClicked, playerState, ...others } = props;
+
+  const rows =
+    list.size() === 0 ? (
+      <NoTrackRow />
+    ) : (
+      list.value.map((listItem, index) => {
+        const { left, right } = listItem;
+        const leftTitle = left ? left.title : "---";
+        const leftArtist = left && left.artist ? left.artist : "---";
+        const rightTitle = right ? right.title : "---";
+        const rightArtist = right && right.artist ? right.artist : "---";
+        const trackNumber = index + 1;
+
+        const available = !!left && !!right;
+        const selected = !!focusIndex && focusIndex.equals(index);
+        const key = index + leftTitle + rightTitle;
+        const onClick = () => onRowClicked(index);
+
+        return (
+          <TrackRow
+            key={key}
+            selected={selected}
+            available={available}
+            playerState={playerState}
+            onClick={onClick}
+            trackNumber={trackNumber}
+            leftTitle={leftTitle}
+            leftArtist={leftArtist}
+            rightTitle={rightTitle}
+            rightArtist={rightArtist}
+          />
+        );
+      })
+    );
+
   return (
-    <Paper className={className}>
-      <Table style={{ tableLayout: "fixed" }}>{children}</Table>
+    <Paper {...others}>
+      <Table style={{ tableLayout: "fixed" }}>
+        <TrackTableHead />
+        <TableBody>{rows}</TableBody>
+      </Table>
     </Paper>
   );
 };

@@ -30,17 +30,12 @@ class AudioList extends React.Component<Props, ComponentState> {
     const { audioList, focusIndex, playerState } = this.props;
 
     return (
-      <React.Fragment>
-        <TrackTable>
-          <TrackTableHead />
-          <TrackTableBody
-            onRowClicked={this.onClickRow}
-            list={audioList}
-            playerState={playerState}
-            focusIndex={focusIndex}
-          />
-        </TrackTable>
-      </React.Fragment>
+      <TrackTable
+        onRowClicked={this.onClickRow}
+        list={audioList}
+        playerState={playerState}
+        focusIndex={focusIndex}
+      />
     );
   }
 
