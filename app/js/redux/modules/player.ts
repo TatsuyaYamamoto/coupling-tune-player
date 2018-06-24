@@ -5,11 +5,11 @@ import { States } from "../store";
 
 import { context, loadAsAudioBuffer } from "../../helper/AudioContext";
 
-import Track from "../model/Track";
+import Song from "../model/Song";
 
 import Timer = NodeJS.Timer;
 import { syncPlay, stop as syncStop } from "../../helper/SyncPlayer";
-import { goNextIndex, goPrevIndex } from "./audiolist";
+import { goNextIndex, goPrevIndex } from "./tracklist";
 import { analyzeBpm } from "../../helper/BpmAnalyzer";
 
 export enum PlayerActionTypes {
@@ -25,13 +25,13 @@ let intervalId: Timer | number | null = null;
 /**
  * 音声の再生を開始する。
  *
- * @param {Track} leftAudio
- * @param {Track} rightAudio
+ * @param {Song} leftAudio
+ * @param {Song} rightAudio
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => Promise<void>}
  */
 export function play(
-  leftAudio: Track,
-  rightAudio: Track
+  leftAudio: Song,
+  rightAudio: Song
 ): ThunkAction<void, States, undefined> {
   return async (dispatch, getState) => {
     dispatch({ type: PlayerActionTypes.PLAY_REQUEST });
@@ -55,9 +55,9 @@ export function play(
       }
       intervalId = null;
 
-      const { player, audiolist } = getState();
+      const { player, tracklist } = getState();
 
-      if (player.playing && audiolist.nextIndex !== null) {
+      if (player.playing && tracklist.nextIndex !== null) {
         dispatch(skipNext());
       }
     });
@@ -163,7 +163,7 @@ export const skipPrevious = (): ThunkAction<void, States, undefined> => (
   dispatch(goPrevIndex());
 
   if (stopOnce) {
-    const { list, focusIndex } = getState().audiolist;
+    const { list, focusIndex } = getState().tracklist;
 
     if (!focusIndex) {
       console.error("index is null");
@@ -193,7 +193,7 @@ export const skipNext = (): ThunkAction<void, States, undefined> => (
   dispatch(goNextIndex());
 
   if (stopOnce) {
-    const { list, focusIndex } = getState().audiolist;
+    const { list, focusIndex } = getState().tracklist;
 
     if (!focusIndex) {
       console.error("index is null");

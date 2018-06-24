@@ -1,7 +1,7 @@
 import { readAsArrayBuffer } from "./FileSystem";
 
 /**
- * @fileOverview AudioContext of Web Track API
+ * @fileOverview AudioContext of Web Song API
  * @see https://developer.mozilla.org/ja/docs/Web/API/AudioContext
  */
 

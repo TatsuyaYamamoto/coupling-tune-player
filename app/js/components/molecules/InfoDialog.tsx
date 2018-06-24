@@ -42,12 +42,6 @@ const OkButton = ({ onClick }: any) => (
   </Button>
 );
 
-const sendLinkEvent = (name: string) =>
-  sendEvent("click", {
-    category: "link",
-    value: name
-  });
-
 const Link = (params: { children: string; href: string; name: string }) => {
   const onclick = () => {
     sendEvent("click", {

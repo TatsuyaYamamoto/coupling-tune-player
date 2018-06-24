@@ -4,12 +4,12 @@ import { TableBody } from "@material-ui/core";
 import NoTrackRow from "./NoTrackRow";
 import TrackRow from "./TrackRow";
 
-import Index from "../../../redux/model/Index";
+import TrackListIndex from "../../../redux/model/TrackListIndex";
 import TrackList from "../../../redux/model/TrackList";
 
 export interface ComponentProps {
   list: TrackList;
-  focusIndex: Index | null;
+  focusIndex: TrackListIndex | null;
   onRowClicked: (index: number) => void;
   playerState: "unavailable" | "playing" | "pausing";
 }

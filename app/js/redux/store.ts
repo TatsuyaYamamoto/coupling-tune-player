@@ -9,7 +9,7 @@ import reduxThunk from "redux-thunk";
 import { createLogger } from "redux-logger";
 
 import player, { PlayerState } from "./modules/player";
-import audiolist, { AudioListState } from "./modules/audiolist";
+import tracklist, { TrackListState } from "./modules/tracklist";
 
 const logger = createLogger({
   collapsed: true
@@ -17,7 +17,7 @@ const logger = createLogger({
 
 export interface States {
   player: PlayerState;
-  audiolist: AudioListState;
+  tracklist: TrackListState;
 }
 
 export function createStore(): Store<States> {
@@ -30,7 +30,7 @@ export function createStore(): Store<States> {
   return _createStore(
     combineReducers<States>({
       player,
-      audiolist
+      tracklist
     }),
     applyMiddleware(...middlewares)
   );

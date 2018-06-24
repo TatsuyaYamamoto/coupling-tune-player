@@ -13,7 +13,7 @@ interface Props {
   onFixed: (newValue: number) => void;
 }
 
-const PlayTimeSlider = (props: Props) => {
+const PlayTimeSlider: React.SFC<Props> = props => {
   const { min, max, current, onStartChange, onChange, onFixed } = props;
 
   return (

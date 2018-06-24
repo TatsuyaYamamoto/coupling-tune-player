@@ -7,8 +7,8 @@ import { default as AutoBind } from "autobind-decorator";
 import { Audiotrack as AudiotrackIcon } from "@material-ui/icons";
 
 import { States } from "../../redux/store";
-import Track from "../../redux/model/Track";
-import { select } from "../../redux/modules/audiolist";
+import Song from "../../redux/model/Song";
+import { select } from "../../redux/modules/tracklist";
 
 import CdCoverImage from "../../components/atoms/CdCoverImage";
 import NoCdCoverImage from "../../components/atoms/NoCdCoverImage";
@@ -18,10 +18,6 @@ import TrackSelectButton from "../../components/molecules/TrackSelectButton";
 import { toFiles } from "../../helper/FileSystem";
 import { sendEvent } from "../../utils";
 
-export interface ComponentProps {}
-
-export interface ComponentState {}
-
 const Root = styled.div`
   display: flex;
   justify-content: space-around;
@@ -30,7 +26,11 @@ const Root = styled.div`
   padding: 30px 0;
 `;
 
-const Detail = styled.div`
+const LeftArea = styled.div`
+  text-align: center;
+`;
+
+const RightArea = styled.div`
   text-align: center;
 `;
 
@@ -56,12 +56,15 @@ const StyledTrackSelectButton = styled(TrackSelectButton)`
   margin: 10px !important;
 `;
 
+export interface ComponentProps {}
+
+export interface ComponentState {}
+
 type P = ComponentProps & DispatchProps & StateProps;
 type S = ComponentState;
 
-// TODO rename to.... JacketsArea?
 @AutoBind
-class AudioInformation extends React.Component<P, S> {
+class CurrentTrackView extends React.Component<P, S> {
   public render() {
     const { left, right, loading, ...others } = this.props;
 
@@ -81,23 +84,23 @@ class AudioInformation extends React.Component<P, S> {
 
     return (
       <Root {...others}>
-        <Detail>
+        <LeftArea>
           {leftImage}
           <StyledTrackSelectButton
             label="Left Track"
             leftIcon={<AudiotrackIcon />}
             onFileSelected={this.onLeftAudioFileSelected}
           />
-        </Detail>
+        </LeftArea>
 
-        <Detail>
+        <RightArea>
           {rightImage}
           <StyledTrackSelectButton
             label="Right Track"
             rightIcon={<AudiotrackIcon />}
             onFileSelected={this.onRightAudioFileSelected}
           />
-        </Detail>
+        </RightArea>
 
         <LoadingDialog open={loading} />
       </Root>
@@ -126,14 +129,13 @@ class AudioInformation extends React.Component<P, S> {
 }
 
 interface StateProps {
-  left: Track | null;
-  right: Track | null;
+  left: Song | null;
+  right: Song | null;
   loading: boolean;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
-  const { loading } = state.audiolist;
-  const { list, focusIndex } = state.audiolist;
+  const { list, focusIndex, loading } = state.tracklist;
   const left = focusIndex ? list.get(focusIndex).left : null;
   const right = focusIndex ? list.get(focusIndex).right : null;
 
@@ -163,6 +165,4 @@ function mapDispatchToProps(
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  AudioInformation
-) as React.ComponentClass<ComponentProps>;
+export default connect(mapStateToProps, mapDispatchToProps)(CurrentTrackView);

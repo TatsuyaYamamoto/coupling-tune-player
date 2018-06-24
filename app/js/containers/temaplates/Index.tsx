@@ -3,9 +3,9 @@ import { default as AutoBind } from "autobind-decorator";
 import { default as styled } from "styled-components";
 
 import AppBar from "../organisms/AppBar";
-import AudioInformation from "../organisms/AudioInformation";
+import CurrentTrackView from "../organisms/CurrentTrackView";
 import PlayerController from "../organisms/PlayerController";
-import AudioList from "../organisms/AudioList";
+import TrackTable from "../organisms/TrackTable";
 
 const Controller = styled(PlayerController)`
   position: fixed;
@@ -24,8 +24,8 @@ class Index extends React.Component {
       <React.Fragment>
         <AppBar />
         <MainPanel>
-          <AudioInformation />
-          <AudioList />
+          <CurrentTrackView />
+          <TrackTable />
         </MainPanel>
         <Controller />
       </React.Fragment>

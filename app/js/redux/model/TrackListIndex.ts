@@ -1,4 +1,4 @@
-class Index {
+class TrackListIndex {
   readonly value: number;
 
   constructor(value: number) {
@@ -9,7 +9,7 @@ class Index {
     this.value = value;
   }
 
-  public equals(value: number | Index) {
+  public equals(value: number | TrackListIndex) {
     const target = typeof value === "number" ? value : value.value;
 
     return this.value === value;
@@ -28,4 +28,4 @@ class Index {
   }
 }
 
-export default Index;
+export default TrackListIndex;

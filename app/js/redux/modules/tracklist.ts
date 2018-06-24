@@ -2,8 +2,8 @@ import { AnyAction, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
 
 import { States } from "../store";
-import Track from "../model/Track";
-import Index from "../model/Index";
+import Song from "../model/Song";
+import TrackListIndex from "../model/TrackListIndex";
 import TrackList from "../model/TrackList";
 import { loadTags } from "../../helper/TagLoader";
 import { loadAsAudio, readAsDataURL } from "../../helper/FileSystem";
@@ -35,13 +35,13 @@ export const select = (
     const { title, artist, pictureBase64 } = await loadTags(file);
     console.log("Loaded media tag.", title, artist);
 
-    const track = new Track({
+    const track = new Song({
       file,
       artist,
       pictureBase64,
       title: title || file.name
     });
-    const currentList = getState().audiolist.list;
+    const currentList = getState().tracklist.list;
     const updatedList = currentList.merge(type, track);
 
     dispatch({
@@ -53,11 +53,11 @@ export const select = (
   dispatch({ type: Actions.SELECT_SUCCESS });
 };
 
-export const goIndex = (index: Index) => (
+export const goIndex = (index: TrackListIndex) => (
   dispatch: Dispatch<States>,
   getState: () => States
 ) => {
-  const { list } = getState().audiolist;
+  const { list } = getState().tracklist;
 
   if (!(list.min().value <= index.value || index.value <= list.max().value)) {
     console.error(
@@ -75,25 +75,25 @@ export const goIndex = (index: Index) => (
     return;
   }
 
-  let prevIndex: Index | null = null;
+  let prevIndex: TrackListIndex | null = null;
   if (!list.min().equals(index)) {
     // tslint:disable-next-line:no-increment-decrement
     for (let i = index.value - 1; 0 <= i; i--) {
-      const candidate = list.get(new Index(i));
+      const candidate = list.get(new TrackListIndex(i));
       if (candidate && candidate.left && candidate.right) {
-        prevIndex = new Index(i);
+        prevIndex = new TrackListIndex(i);
         break;
       }
     }
   }
 
-  let nextIndex: Index | null = null;
+  let nextIndex: TrackListIndex | null = null;
   if (!list.max().equals(index)) {
     // tslint:disable-next-line:no-increment-decrement
     for (let i = index.value + 1; i < list.size(); i++) {
-      const candidate = list.get(new Index(i));
+      const candidate = list.get(new TrackListIndex(i));
       if (candidate && candidate.left && candidate.right) {
-        nextIndex = new Index(i);
+        nextIndex = new TrackListIndex(i);
         break;
       }
     }
@@ -109,7 +109,7 @@ export const goPrevIndex = () => (
   dispatch: Dispatch<States>,
   getState: () => States
 ) => {
-  const { prevIndex } = getState().audiolist;
+  const { prevIndex } = getState().tracklist;
 
   if (prevIndex === null) {
     console.error(
@@ -125,7 +125,7 @@ export const goNextIndex = (): ThunkAction<void, States, any> => (
   dispatch,
   getState
 ) => {
-  const { nextIndex } = getState().audiolist;
+  const { nextIndex } = getState().tracklist;
 
   if (nextIndex === null) {
     console.error(
@@ -137,15 +137,15 @@ export const goNextIndex = (): ThunkAction<void, States, any> => (
   dispatch(goIndex(nextIndex));
 };
 
-export interface AudioListState {
+export interface TrackListState {
   list: TrackList;
-  focusIndex: Index | null;
-  prevIndex: Index | null;
-  nextIndex: Index | null;
+  focusIndex: TrackListIndex | null;
+  prevIndex: TrackListIndex | null;
+  nextIndex: TrackListIndex | null;
   loading: boolean;
 }
 
-const initialState: AudioListState = {
+const initialState: TrackListState = {
   list: new TrackList([]),
   focusIndex: null,
   prevIndex: null,
@@ -162,9 +162,9 @@ const initialState: AudioListState = {
  * @returns {AudioListState}
  */
 export default function reducer(
-  state: AudioListState = initialState,
+  state: TrackListState = initialState,
   { type, payload }: AnyAction
-): AudioListState {
+): TrackListState {
   switch (type) {
     case Actions.SELECT_REQUEST:
       return {

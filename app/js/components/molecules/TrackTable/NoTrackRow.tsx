@@ -8,7 +8,7 @@ import AudioWaveIcon from "../../atoms/icon/AudioWaveIcon";
 
 import withHover from "../../../helper/hoc/withHover";
 
-import Index from "../../../redux/model/Index";
+import TrackListIndex from "../../../redux/model/TrackListIndex";
 import TrackList from "../../../redux/model/TrackList";
 
 const NoTrackRow = () => (

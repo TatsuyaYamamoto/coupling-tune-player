@@ -16,7 +16,7 @@ import {
   skipNext
 } from "../../redux/modules/player";
 import { States } from "../../redux/store";
-import Track from "../../redux/model/Track";
+import Song from "../../redux/model/Song";
 
 import { sendEvent } from "../../utils";
 
@@ -166,15 +166,15 @@ interface StateProps {
   playerState: "unavailable" | "playing" | "pausing";
   duration: number;
   current: number;
-  leftAudio: Track | null;
-  rightAudio: Track | null;
+  leftAudio: Song | null;
+  rightAudio: Song | null;
   hasPrev: boolean;
   hasNext: boolean;
 }
 
 function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   const { loading, playing, currentTime, duration } = state.player;
-  const { list, focusIndex, prevIndex, nextIndex } = state.audiolist;
+  const { list, focusIndex, prevIndex, nextIndex } = state.tracklist;
   const leftAudio = focusIndex ? list.get(focusIndex).left : null;
   const rightAudio = focusIndex ? list.get(focusIndex).right : null;
   const ready = !!(leftAudio && rightAudio);
@@ -194,6 +194,4 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   };
 }
 
-export default connect(mapStateToProps)(
-  PlayerController
-) as React.ComponentClass<ComponentProps>;
+export default connect(mapStateToProps)(PlayerController);

@@ -1,15 +1,15 @@
-import TrackListItem from "./TrackListItem";
-import Index from "./Index";
 import Track from "./Track";
+import TrackListIndex from "./TrackListIndex";
+import Song from "./Song";
 
 class TrackList {
-  readonly value: TrackListItem[];
+  readonly value: Track[];
 
-  public constructor(value: TrackListItem[]) {
+  public constructor(value: Track[]) {
     this.value = value;
   }
 
-  public get(index: Index): TrackListItem {
+  public get(index: TrackListIndex): Track {
     const i = index.value;
 
     const item = this.value[i];
@@ -24,22 +24,30 @@ class TrackList {
     return this.value.length;
   }
 
-  public min(): Index {
-    return new Index(0);
+  public min(): TrackListIndex {
+    return new TrackListIndex(0);
   }
 
-  public max(): Index {
-    return new Index(this.value.length);
+  public max(): TrackListIndex {
+    return new TrackListIndex(this.value.length);
+  }
+
+  public getLeft(index: TrackListIndex): Song | null {
+    return this.get(index).left;
+  }
+
+  public getRight(index: TrackListIndex): Song | null {
+    return this.get(index).right;
   }
 
   /**
-   * get updated Track List.
+   * get updated Song List.
    *
    * @param {"left" | "right"} type
-   * @param {Track} provided
+   * @param {Song} provided
    * @returns {TrackList}
    */
-  public merge(type: "left" | "right", provided: Track): TrackList {
+  public merge(type: "left" | "right", provided: Song): TrackList {
     const otherSideType = type === "left" ? "right" : "left";
     let newTrack = true;
 

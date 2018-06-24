@@ -8,33 +8,6 @@ import AudioWaveIcon from "../../atoms/icon/AudioWaveIcon";
 
 import withHover from "../../../helper/hoc/withHover";
 
-import Index from "../../../redux/model/Index";
-import TrackList from "../../../redux/model/TrackList";
-
-export interface ComponentProps {
-  className?: string;
-  list: TrackList;
-  focusIndex: Index | null;
-  onRowClicked: (index: number) => void;
-  playerState: "unavailable" | "playing" | "pausing";
-}
-
-const LeftTrack = ({ title, artist }: any) => (
-  <TableCell padding={"none"} style={{ textAlign: "right" }}>
-    <span>
-      {title} / {artist}
-    </span>
-  </TableCell>
-);
-
-const RightTrack = ({ title, artist }: any) => (
-  <TableCell padding={"none"} style={{ textAlign: "left" }}>
-    <span>
-      {title} / {artist}
-    </span>
-  </TableCell>
-);
-
 interface TrackRowProps {
   trackNumber: number;
   leftTitle: string;
@@ -93,11 +66,21 @@ const TrackRow = withHover<TrackRowProps>(props => {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <LeftTrack title={leftTitle} artist={leftArtist} />
+      <TableCell padding={"none"} style={{ textAlign: "right" }}>
+        <span>
+          {leftTitle} / {leftArtist}
+        </span>
+      </TableCell>
+
       <TableCell padding={"none"} style={{ textAlign: "center" }}>
         {statusIcon}
       </TableCell>
-      <RightTrack title={rightTitle} artist={rightArtist} />
+
+      <TableCell padding={"none"} style={{ textAlign: "left" }}>
+        <span>
+          {rightTitle} / {rightArtist}
+        </span>
+      </TableCell>
     </TableRow>
   );
 });
