@@ -45,8 +45,11 @@ class PlayerController extends React.Component<Props, ComponentState> {
       playerState,
       duration,
       current,
+      leftAudio,
+      rightAudio,
       hasPrev,
       hasNext,
+      dispatch,
       ...others
     } = this.props;
     const { manualCurrentTime } = this.state;
