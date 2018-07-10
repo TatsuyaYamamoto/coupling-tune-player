@@ -86,7 +86,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
       return;
     }
 
-    dispatch(playAudio(leftAudio, rightAudio));
+    dispatch(playAudio(leftAudio, rightAudio) as any);
 
     sendEvent("click", {
       category: "player",
@@ -100,7 +100,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
       return;
     }
 
-    dispatch(pauseAudio());
+    dispatch(pauseAudio() as any);
     sendEvent("click", {
       category: "player",
       label: "pause"
@@ -114,7 +114,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
       return;
     }
 
-    dispatch(skipPrevious());
+    dispatch(skipPrevious() as any);
   }
 
   private onNextClicked() {
@@ -124,7 +124,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
       return;
     }
 
-    dispatch(skipNext());
+    dispatch(skipNext() as any);
   }
 
   private onSliderStart() {
@@ -146,13 +146,13 @@ class PlayerController extends React.Component<Props, ComponentState> {
     const stopOnce = this.props.playerState === "playing";
 
     if (stopOnce) {
-      dispatch(pauseAudio());
+      dispatch(pauseAudio() as any);
     }
 
-    dispatch(updateCurrentTime(newValue));
+    dispatch(updateCurrentTime(newValue) as any);
 
     if (stopOnce) {
-      dispatch(playAudio(leftAudio, rightAudio));
+      dispatch(playAudio(leftAudio, rightAudio) as any);
     }
 
     sendEvent("click", {

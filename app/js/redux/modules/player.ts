@@ -19,6 +19,8 @@ export enum PlayerActionTypes {
   UPDATE_CURRENT = "c_tune/player/update_current"
 }
 
+type ThunkResult<R> = ThunkAction<R, States, undefined, AnyAction>;
+
 let lastCheckTime: number | null = null;
 let intervalId: Timer | number | null = null;
 
@@ -29,10 +31,7 @@ let intervalId: Timer | number | null = null;
  * @param {Song} rightAudio
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => Promise<void>}
  */
-export function play(
-  leftAudio: Song,
-  rightAudio: Song
-): ThunkAction<void, States, undefined> {
+export const play = (leftAudio: Song, rightAudio: Song): ThunkResult<void> => {
   return async (dispatch, getState) => {
     dispatch({ type: PlayerActionTypes.PLAY_REQUEST });
 
@@ -73,7 +72,7 @@ export function play(
       dispatch(updateCurrentTime());
     }, 500);
   };
-}
+};
 
 /**
  *
@@ -98,7 +97,7 @@ async function analyze(file: File, type: "left" | "right") {
  *
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => undefined}
  */
-export function pause() {
+export const pause = (): ThunkResult<void> => {
   return async (dispatch: Dispatch<States>, getState: () => States) => {
     const { playing } = getState().player;
 
@@ -113,15 +112,15 @@ export function pause() {
       type: PlayerActionTypes.PAUSE
     });
   };
-}
+};
 
 /**
  * 現在の再生時間を更新する
  *
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => undefined}
  */
-export function updateCurrentTime(time?: number) {
-  return async (dispatch: Dispatch<States>, getState: () => States) => {
+export const updateCurrentTime = (time?: number): ThunkResult<void> => {
+  return async (dispatch, getState) => {
     const { currentTime } = getState().player;
 
     if (typeof time !== "undefined") {
@@ -148,12 +147,9 @@ export function updateCurrentTime(time?: number) {
       }
     });
   };
-}
+};
 
-export const skipPrevious = (): ThunkAction<void, States, undefined> => (
-  dispatch,
-  getState
-) => {
+export const skipPrevious = (): ThunkResult<void> => (dispatch, getState) => {
   const stopOnce = getState().player.playing;
   if (stopOnce) {
     dispatch(pause());
@@ -180,10 +176,7 @@ export const skipPrevious = (): ThunkAction<void, States, undefined> => (
   }
 };
 
-export const skipNext = (): ThunkAction<void, States, undefined> => (
-  dispatch,
-  getState
-) => {
+export const skipNext = (): ThunkResult<void> => (dispatch, getState) => {
   const stopOnce = getState().player.playing;
   if (stopOnce) {
     dispatch(pause());

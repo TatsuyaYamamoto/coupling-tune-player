@@ -51,11 +51,11 @@ class TrackTable extends React.Component<Props, ComponentState> {
       return;
     }
     if (playerState === "playing") {
-      dispatch(pauseAudio());
+      dispatch(pauseAudio() as any);
     }
-    dispatch(goIndex(i));
-    dispatch(updateCurrentTime(0));
-    dispatch(playAudio(left, right));
+    dispatch(goIndex(i) as any);
+    dispatch(updateCurrentTime(0) as any);
+    dispatch(playAudio(left, right) as any);
   }
 }
 

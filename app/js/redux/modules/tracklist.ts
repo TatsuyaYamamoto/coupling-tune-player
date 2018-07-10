@@ -18,6 +18,8 @@ export enum Actions {
   GO_INDEX = "c_tune/audio-list/go_index"
 }
 
+type ThunkResult<R> = ThunkAction<R, States, undefined, AnyAction>;
+
 /**
  * 音声ファイルを選択する
  *
@@ -28,7 +30,7 @@ export enum Actions {
 export const select = (
   files: File[],
   type: "left" | "right"
-): ThunkAction<Promise<void>, States, any> => async (dispatch, getState) => {
+): ThunkResult<Promise<void>> => async (dispatch, getState) => {
   dispatch({ type: Actions.SELECT_REQUEST });
 
   for (const file of files) {
@@ -53,9 +55,9 @@ export const select = (
   dispatch({ type: Actions.SELECT_SUCCESS });
 };
 
-export const goIndex = (index: TrackListIndex) => (
-  dispatch: Dispatch<States>,
-  getState: () => States
+export const goIndex = (index: TrackListIndex): ThunkResult<void> => (
+  dispatch,
+  getState
 ) => {
   const { list } = getState().tracklist;
 
@@ -105,10 +107,7 @@ export const goIndex = (index: TrackListIndex) => (
   });
 };
 
-export const goPrevIndex = () => (
-  dispatch: Dispatch<States>,
-  getState: () => States
-) => {
+export const goPrevIndex = (): ThunkResult<void> => (dispatch, getState) => {
   const { prevIndex } = getState().tracklist;
 
   if (prevIndex === null) {
@@ -121,7 +120,7 @@ export const goPrevIndex = () => (
   dispatch(goIndex(prevIndex));
 };
 
-export const goNextIndex = (): ThunkAction<void, States, any> => (
+export const goNextIndex = (): ThunkAction<void, States, any, any> => (
   dispatch,
   getState
 ) => {

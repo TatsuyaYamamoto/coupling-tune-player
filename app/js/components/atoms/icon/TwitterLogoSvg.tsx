@@ -14,7 +14,6 @@ const icon = () => (
     x="0px"
     y="0px"
     viewBox="0 0 400 400"
-    style={{ enableBackground: "new 0 0 400 400" }}
     xmlSpace="preserve"
   >
     <g id="Dark_Blue">

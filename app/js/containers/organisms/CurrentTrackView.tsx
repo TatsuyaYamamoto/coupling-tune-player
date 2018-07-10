@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dispatch } from "redux";
+import { Dispatch, Action } from "redux";
 import { connect } from "react-redux";
 import { default as styled } from "styled-components";
 import { default as AutoBind } from "autobind-decorator";
@@ -157,12 +157,15 @@ function mapDispatchToProps(
 ): DispatchProps {
   return {
     selectLeftAudios: (fileList: FileList) => {
-      dispatch(select(toFiles(fileList), "left"));
+      dispatch(select(toFiles(fileList), "left") as any);
     },
     selectRightAudios: (fileList: FileList) => {
-      dispatch(select(toFiles(fileList), "right"));
+      dispatch(select(toFiles(fileList), "right") as any);
     }
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CurrentTrackView);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CurrentTrackView);
