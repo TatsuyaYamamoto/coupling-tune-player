@@ -1,14 +1,14 @@
 import * as React from "react";
-import { Typography } from "material-ui";
+import { Typography } from "@material-ui/core";
 
-const TitleTypography = () => {
+const TitleTypography: React.SFC = props => {
   return (
     <Typography
       variant="title"
       color="inherit"
       style={{ fontFamily: "Nico Moji" }}
     >
-      かぷちゅうプレイヤー/Coupling Tune Player
+      {props.children}
     </Typography>
   );
 };

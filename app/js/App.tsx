@@ -1,13 +1,16 @@
 import * as React from "react";
 import { Provider } from "react-redux";
 
-import { MuiThemeProvider, createMuiTheme } from "material-ui/styles";
-import * as colors from "material-ui/colors";
-import { CssBaseline } from "material-ui";
+import {
+  MuiThemeProvider,
+  createMuiTheme,
+  colors,
+  CssBaseline
+} from "@material-ui/core";
 
-import { store } from "./modules/redux";
+import { createStore } from "./redux/store";
 
-import Index from "./components/pages/Index";
+import Index from "./containers/temaplates/Index";
 
 const muiTheme = createMuiTheme({
   palette: {
@@ -25,6 +28,8 @@ const muiTheme = createMuiTheme({
     }
   }
 });
+
+const store = createStore();
 
 const App = () => (
   <React.Fragment>
