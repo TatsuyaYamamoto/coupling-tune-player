@@ -21,7 +21,7 @@ production && Object.assign(htmlParams, {
 const plugins = [
   new HtmlWebpackPlugin({
     templateParameters: htmlParams,
-    template: "app/index.ejs",
+    template: "src/index.ejs",
     hash: true,
   }),
 ];
@@ -31,7 +31,7 @@ const mode = production ? "production" : "development";
 module.exports = {
   mode,
 
-  entry: resolve(__dirname, "app/js/index.tsx"),
+  entry: resolve(__dirname, "src/index.tsx"),
 
   output: {
     filename: "bundle.js",

@@ -1,0 +1,22 @@
+{
+  "name": "@coupling-tune-player/monorepo",
+  "version": "1.2.0",
+  "description": "Provide the justice audio! Play 2 audio files and analyze BPM and beat to sync.",
+  "main": "index.js",
+  "engines": {
+    "node": "10"
+  },
+  "scripts": {},
+  "author": "TatsuyaYamamoto",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "husky": "^0.14.3",
+    "prettier": "^1.12.1",
+    "pretty-quick": "^1.5.1"
+  }
+}

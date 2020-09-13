@@ -1,6 +1,6 @@
 {
+  "private": true,
   "name": "electron",
-  "productName": "electron",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
@@ -61,6 +61,12 @@
         ]
       ]
     }
+  },
+  "workspaces": {
+    "nohoist": [
+      "electron-squirrel-startup",
+      "electron-squirrel-startup/**"
+    ]
   },
   "devDependencies": {
     "@electron-forge/cli": "6.0.0-beta.53",
