@@ -8,11 +8,16 @@
     "build": "tsc",
     "dev": "  tsc -w"
   },
+  "peerDependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "react": "^16.13.1"
+  },
+  "dependencies": {
+    "@emotion/core": "^10.0.35"
+  },
   "devDependencies": {
     "@types/react": "^16.9.49",
     "typescript": "^4.0.2"
-  },
-  "dependencies": {
-    "react": "^16.13.1"
   }
 }
