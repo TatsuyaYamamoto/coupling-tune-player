@@ -7,7 +7,8 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make",
+    "make:win32": " electron-forge make --arch x64 --platform win32",
+    "make:darwin": "electron-forge make --arch x64 --platform darwin",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts ."
   },
@@ -18,49 +19,7 @@
   },
   "license": "MIT",
   "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "electron"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ],
-      "plugins": [
-        [
-          "@electron-forge/plugin-webpack",
-          {
-            "mainConfig": "./webpack.main.config.js",
-            "renderer": {
-              "config": "./webpack.renderer.config.js",
-              "entryPoints": [
-                {
-                  "html": "./src/index.html",
-                  "js": "./src/renderer.ts",
-                  "name": "main_window"
-                }
-              ]
-            }
-          }
-        ]
-      ]
-    }
+    "forge": "./forge.config.js"
   },
   "workspaces": {
     "nohoist": [
