@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "electron",
+  "name": "@coupling-tune-player/electron",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
@@ -28,6 +28,7 @@
     ]
   },
   "devDependencies": {
+    "@coupling-tune-player/share": "*",
     "@electron-forge/cli": "6.0.0-beta.53",
     "@electron-forge/maker-deb": "6.0.0-beta.53",
     "@electron-forge/maker-rpm": "6.0.0-beta.53",
