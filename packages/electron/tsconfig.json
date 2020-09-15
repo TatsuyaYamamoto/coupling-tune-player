@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowJs": true,
     "jsx": "react",
+    "target": "ESNext",
 
     "module": "commonjs",
     "moduleResolution": "node",
