@@ -1,8 +1,16 @@
 {
-  "private": true,
   "name": "@coupling-tune-player/electron",
   "version": "1.0.0",
   "description": "My Electron application description",
+  "private": true,
+  "workspaces": {
+    "nohoist": [
+      "**/electron",
+      "**/electron/**",
+      "electron-squirrel-startup",
+      "electron-squirrel-startup/**"
+    ]
+  },
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -20,12 +28,6 @@
   "license": "MIT",
   "config": {
     "forge": "./forge.config.js"
-  },
-  "workspaces": {
-    "nohoist": [
-      "electron-squirrel-startup",
-      "electron-squirrel-startup/**"
-    ]
   },
   "devDependencies": {
     "@coupling-tune-player/share": "*",
