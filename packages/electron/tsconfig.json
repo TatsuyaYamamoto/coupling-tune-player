@@ -1,15 +1,21 @@
 {
   "compilerOptions": {
     "allowJs": true,
+    "jsx": "react",
+
     "module": "commonjs",
-    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
     "esModuleInterop": true,
-    "noImplicitAny": true,
+
     "sourceMap": true,
     "baseUrl": ".",
     "outDir": "dist",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
+    "skipLibCheck": true,
+
+    "strict": true,
+    "noImplicitAny": true,
+
     "paths": {
       "*": ["node_modules/*"]
     }
