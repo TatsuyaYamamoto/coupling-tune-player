@@ -1,15 +1,24 @@
 /** @jsx jsx */
 import { jsx, css } from "@emotion/core";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { PlayerController } from "@coupling-tune-player/share";
 
-import useElectronMainProcess from "../components/hooks/useElectronMainProcess";
 import Drawer from "../components/organisms/Drawer";
+import LibraryContent from "../components/organisms/LibraryContent";
+import PlaylistContent from "../components/organisms/PlaylistContent";
+
+type RenderingView = "library" | "playlist";
 
 const IndexPage: FC = () => {
-  const { openFileSelectDialog } = useElectronMainProcess();
+  const [renderingView, setRenderingView] = useState<RenderingView>("library");
 
-  const onClickMenu = () => {};
+  const onClickMenu = (value: "library" | "playlist" | "help") => {
+    if (value === "help") {
+      // do nothing
+    } else {
+      setRenderingView(value);
+    }
+  };
 
   return (
     <div>
@@ -24,9 +33,8 @@ const IndexPage: FC = () => {
             flex-grow: 1;
           `}
         >
-          <h1>React Electron App</h1>
-          <p>Welcome to your Electron application.</p>
-          <button onClick={() => openFileSelectDialog()}>open</button>
+          {renderingView === "library" && <LibraryContent />}
+          {renderingView === "playlist" && <PlaylistContent />}
         </main>
       </div>
       <PlayerController
