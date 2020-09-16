@@ -1,5 +1,7 @@
 import { app, BrowserWindow, ipcMain, dialog } from "electron";
 
+import { readFileRecursively } from "./utils/fs";
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: any;
 
@@ -57,5 +59,18 @@ ipcMain.handle("open-file-select-dialog", () => {
   return dialog.showOpenDialog(mainWindow, {
     filters: [{ name: "Audios", extensions: ["wav", "mp3", "aac", "wma"] }],
     properties: ["openFile", "openDirectory", "multiSelections"]
+  });
+});
+
+ipcMain.handle("read-audio-files", async (_, path: string) => {
+  const filePaths = await readFileRecursively(path);
+  const supportExtensions = [".mp3", ".wav"];
+  return filePaths.filter(path => {
+    for (const s of supportExtensions) {
+      if (path.toLowerCase().endsWith(s)) {
+        return true;
+      }
+    }
+    return false;
   });
 });
