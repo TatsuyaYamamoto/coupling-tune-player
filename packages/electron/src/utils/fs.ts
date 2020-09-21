@@ -24,3 +24,7 @@ export const readFileRecursively = async (
 
   throw new Error(`unsupported file type: ${path}`);
 };
+
+export const readBuffer = (path: string) => {
+  return promisify(fs.readFile)(path).then(f => f.buffer);
+};

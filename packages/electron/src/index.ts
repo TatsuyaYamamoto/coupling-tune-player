@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, dialog } from "electron";
-
-import { readFileRecursively } from "./utils/fs";
+import { parseFile } from "music-metadata";
+import { readBuffer, readFileRecursively } from "./utils/fs";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: any;
@@ -73,4 +73,13 @@ ipcMain.handle("read-audio-files", async (_, path: string) => {
     }
     return false;
   });
+});
+
+ipcMain.handle("read-as-buffer", async (_, path: string) => {
+  return readBuffer(path).then(buf => new Uint8Array(buf));
+});
+
+ipcMain.handle("read-music-metadata", async (_, path: string) => {
+  // @ts-ignore
+  return parseFile(path);
 });
