@@ -33,3 +33,6 @@ import App from "./App";
 import "./index.css";
 
 ReactDom.render(<App />, document.getElementById("app"));
+
+// @ts-ignore
+document.getElementById("loading").style.display = "none";

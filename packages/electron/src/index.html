@@ -1,11 +1,34 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Hello World!</title>
 
+    <style>
+      body {
+        margin: 0;
+      }
+      .loading-window {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
   </head>
   <body>
-  <div id="app"></div>
+    <div id="loading" class="loading-window">
+      <div>
+        <div>
+          <span>かぷちゅうプレイヤー</span>
+          <span>Coupling Tune Player</span>
+        </div>
+        <div style="text-align: center">
+          <span>LOADING...</span>
+        </div>
+      </div>
+    </div>
+    <div id="app"></div>
   </body>
 </html>
