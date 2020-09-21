@@ -7,13 +7,13 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Divider
+  Divider,
 } from "@material-ui/core";
 
 import {
   LibraryMusic as LibraryIcon,
   PlaylistPlay as PlaylistIcon,
-  Help as HelpIcon
+  Help as HelpIcon,
 } from "@material-ui/icons";
 
 const drawerWidth = 240;
@@ -22,30 +22,30 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     drawer: {
       width: drawerWidth,
-      flexShrink: 0
+      flexShrink: 0,
     },
     drawerPaper: {
-      width: drawerWidth
+      width: drawerWidth,
     },
     // necessary for content to be below app bar
-    toolbar: theme.mixins.toolbar
+    toolbar: theme.mixins.toolbar,
   })
 );
 
 const playerMenuItems = [
   { id: "library", label: "ライブラリ", icon: <LibraryIcon /> },
-  { id: "playlist", label: "プレイリスト", icon: <PlaylistIcon /> }
+  { id: "playlist", label: "プレイリスト", icon: <PlaylistIcon /> },
 ] as const;
 
 const appMenuItems = [
-  { id: "help", label: "ヘルプ", icon: <HelpIcon /> }
+  { id: "help", label: "ヘルプ", icon: <HelpIcon /> },
 ] as const;
 
 export interface DrawerProps {
   onClickMenu: (item: "playlist" | "library" | "help") => void;
 }
 
-const Drawer: FC<DrawerProps> = props => {
+const Drawer: FC<DrawerProps> = (props) => {
   const { onClickMenu, children } = props;
   const classes = useStyles();
 
@@ -60,7 +60,7 @@ const Drawer: FC<DrawerProps> = props => {
       className={classes.drawer}
       variant="permanent"
       classes={{
-        paper: classes.drawerPaper
+        paper: classes.drawerPaper,
       }}
       anchor="left"
     >

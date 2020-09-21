@@ -24,5 +24,5 @@ contextBridge.exposeInMainWorld("electron", {
   },
   readMusicMetadata: (path: string) => {
     return ipcRenderer.invoke("read-music-metadata", path);
-  }
+  },
 });

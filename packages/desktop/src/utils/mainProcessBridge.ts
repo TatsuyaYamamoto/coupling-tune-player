@@ -9,7 +9,7 @@ export const openAudioFileSelectDialog = async () => {
   const audioFilePaths: string[] = [];
 
   await Promise.all(
-    filePaths.map(async path => {
+    filePaths.map(async (path) => {
       const audioFiles = await window.electron.readAudioFiles(path);
       audioFilePaths.push(...audioFiles);
     })

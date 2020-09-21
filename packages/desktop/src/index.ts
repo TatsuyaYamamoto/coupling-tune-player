@@ -19,8 +19,8 @@ const createWindow = (): void => {
     width: 800,
     webPreferences: {
       contextIsolation: true,
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
-    }
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+    },
   });
 
   // and load the index.html of the app.
@@ -58,14 +58,14 @@ app.on("activate", () => {
 ipcMain.handle("open-file-select-dialog", () => {
   return dialog.showOpenDialog(mainWindow, {
     filters: [{ name: "Audios", extensions: ["wav", "mp3", "aac", "wma"] }],
-    properties: ["openFile", "openDirectory", "multiSelections"]
+    properties: ["openFile", "openDirectory", "multiSelections"],
   });
 });
 
 ipcMain.handle("read-audio-files", async (_, path: string) => {
   const filePaths = await readFileRecursively(path);
   const supportExtensions = [".mp3", ".wav"];
-  return filePaths.filter(path => {
+  return filePaths.filter((path) => {
     for (const s of supportExtensions) {
       if (path.toLowerCase().endsWith(s)) {
         return true;
@@ -76,7 +76,7 @@ ipcMain.handle("read-audio-files", async (_, path: string) => {
 });
 
 ipcMain.handle("read-as-buffer", async (_, path: string) => {
-  return readBuffer(path).then(buf => new Uint8Array(buf));
+  return readBuffer(path).then((buf) => new Uint8Array(buf));
 });
 
 ipcMain.handle("read-music-metadata", async (_, path: string) => {

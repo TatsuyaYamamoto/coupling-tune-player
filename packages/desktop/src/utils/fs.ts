@@ -13,10 +13,10 @@ export const readFileRecursively = async (
 
   if (stats.isDirectory()) {
     const relativePaths = await promisify(fs.readdir)(fileOrDirPath);
-    const absolutePaths = relativePaths.map(p => path.join(fileOrDirPath, p));
+    const absolutePaths = relativePaths.map((p) => path.join(fileOrDirPath, p));
 
     const pathsList = await Promise.all(
-      absolutePaths.map(path => readFileRecursively(path))
+      absolutePaths.map((path) => readFileRecursively(path))
     );
 
     return pathsList.flat();
@@ -26,5 +26,5 @@ export const readFileRecursively = async (
 };
 
 export const readBuffer = (path: string) => {
-  return promisify(fs.readFile)(path).then(f => f.buffer);
+  return promisify(fs.readFile)(path).then((f) => f.buffer);
 };

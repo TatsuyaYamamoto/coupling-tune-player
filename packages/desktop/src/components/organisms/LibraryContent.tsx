@@ -3,7 +3,7 @@ import { jsx } from "@emotion/core";
 import {
   openAudioFileSelectDialog,
   readAsArrayBuffer,
-  readMusicMetadata
+  readMusicMetadata,
 } from "../../utils/mainProcessBridge";
 
 const LibraryContent: FC = () => {

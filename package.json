@@ -7,9 +7,9 @@
     "node": "10"
   },
   "scripts": {
-    "dev:electron": "run-p dev:electron:*",
-    "dev:electron:electron": "yarn workspace @coupling-tune-player/electron start",
-    "dev:electron:share": "   yarn workspace @coupling-tune-player/share    dev"
+    "dev:desktop": "run-p dev:desktop:*",
+    "dev:desktop:desktop": "yarn workspace @coupling-tune-player/desktop start",
+    "dev:desktop:share": "  yarn workspace @coupling-tune-player/share    dev"
   },
   "author": "TatsuyaYamamoto",
   "license": "MIT",
