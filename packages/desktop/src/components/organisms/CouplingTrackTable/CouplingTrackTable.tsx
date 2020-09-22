@@ -23,7 +23,8 @@ import { getComparator, stableSort } from "../../../utils/calc";
 type OrderType = "asc" | "desc";
 
 type TableFieldId =
-  | keyof Pick<CouplingTrack, "title" | "durationString" | "playCount">
+  | keyof Pick<CouplingTrack, "title" | "playCount">
+  | "durationString"
   | "vocals";
 
 interface HeadCell {
@@ -32,6 +33,15 @@ interface HeadCell {
   align: TableCellProps["align"];
   sortable: boolean;
 }
+
+// TODO: cache
+const durationSecondsToString = (seconds: number) => {
+  const minutesPart = Math.floor(seconds / 60);
+  const secondsPart = Math.floor(seconds % 60);
+  const secondsPartZeroPadding = ("00" + secondsPart).slice(-2);
+
+  return `${minutesPart}:${secondsPartZeroPadding}`;
+};
 
 const headCells: HeadCell[] = [
   {
@@ -83,17 +93,23 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface TrackTableProps extends HTMLAttributes<HTMLDivElement> {
   tracks: CouplingTrack[];
+  selectedTracks: { title: string; artist: string }[];
+  onSelectTrack: (
+    tracks: {
+      title: string;
+      artist: string;
+    }[]
+  ) => void;
 }
 
 const CouplingTrackTable: FC<TrackTableProps> = (props) => {
-  const { tracks, className } = props;
+  const { tracks, selectedTracks, onSelectTrack, className } = props;
 
   const classes = useStyles();
   const [order, setOrder] = useState<{ type: OrderType; field: TableFieldId }>({
     type: "asc",
     field: "title",
   });
-  const [selectedTrackKeys, setSelectedTrackKeys] = useState<string[]>([]);
 
   const handleRequestSort = (property: TableFieldId) => (
     event: MouseEvent<unknown>
@@ -112,26 +128,29 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
     const key = `${params.title}__${params.artist}`;
 
     // 未選択
-    if (selectedTrackKeys.length === 0) {
-      setSelectedTrackKeys([key]);
+    if (selectedTracks.length === 0) {
+      onSelectTrack([params]);
       return;
     }
 
     // 選択済みの曲と異なる曲を選択した
-    if (!selectedTrackKeys[0].startsWith(params.title)) {
-      setSelectedTrackKeys([key]);
+    if (!selectedTracks[0].title.startsWith(params.title)) {
+      onSelectTrack([params]);
       return;
     }
 
-    const selectedIndex = selectedTrackKeys.indexOf(key);
+    const selectedIndex = selectedTracks.findIndex(
+      (selected) =>
+        selected.title === params.title && selected.artist === params.artist
+    );
 
     // 選択した曲が未選択状態
     if (selectedIndex === -1) {
       // 2曲以上選択されていたら、1曲押し出す
-      if (2 <= selectedTrackKeys.length) {
-        setSelectedTrackKeys((prev) => [...prev.slice(1), key]);
+      if (2 <= selectedTracks.length) {
+        onSelectTrack([...selectedTracks.slice(1), params]);
       } else {
-        setSelectedTrackKeys((prev) => [...prev, key]);
+        onSelectTrack([...selectedTracks, params]);
       }
       return;
     }
@@ -140,25 +159,25 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
 
     // 先頭
     if (selectedIndex === 0) {
-      setSelectedTrackKeys(selectedTrackKeys.slice(1));
+      onSelectTrack(selectedTracks.slice(1));
       return;
     }
 
     // 最後
-    if (selectedIndex === selectedTrackKeys.length - 1) {
-      setSelectedTrackKeys(selectedTrackKeys.slice(0, -1));
+    if (selectedIndex === selectedTracks.length - 1) {
+      onSelectTrack(selectedTracks.slice(0, -1));
       return;
     }
 
     // 途中
-    setSelectedTrackKeys((prev) => {
-      return prev.filter((selectedKey) => selectedKey !== key);
-    });
+    onSelectTrack(selectedTracks.filter((track) => track !== params));
   };
 
   const isTrackSelected = (params: { title: string; artist: string }) => {
-    const key = `${params.title}__${params.artist}`;
-    return selectedTrackKeys.indexOf(key) !== -1;
+    return !!selectedTracks.find(
+      (selected) =>
+        selected.title === params.title && selected.artist === params.artist
+    );
   };
 
   // @ts-ignore
@@ -222,7 +241,9 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
               </MuiTableRow>
             )}
             {sortedTracks.map(
-              ({ title, durationString, tracks, playCount }) => {
+              ({ title, durationSeconds, tracks, playCount }) => {
+                const durationString = durationSecondsToString(durationSeconds);
+
                 return (
                   <MuiTableRow hover tabIndex={-1} key={title}>
                     <MuiTableCell align="left">{title}</MuiTableCell>

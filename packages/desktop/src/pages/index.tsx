@@ -1,8 +1,9 @@
 /** @jsx jsx */
 import { jsx, css } from "@emotion/core";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import { PlayerController } from "@coupling-tune-player/share";
 
+import usePlayer from "../components/hooks/usePlayer";
 import Drawer from "../components/organisms/Drawer";
 import LibraryContent from "../components/organisms/LibraryContent/LibraryContent";
 import PlaylistContent from "../components/organisms/PlaylistContent";
@@ -10,6 +11,11 @@ import PlaylistContent from "../components/organisms/PlaylistContent";
 type RenderingView = "library" | "playlist";
 
 const IndexPage: FC = () => {
+  const {
+    play: startPlayer,
+    pause: pausePlayer,
+    state: playerState,
+  } = usePlayer();
   const [renderingView, setRenderingView] = useState<RenderingView>("library");
 
   const onClickMenu = (value: "library" | "playlist" | "help") => {
@@ -18,6 +24,14 @@ const IndexPage: FC = () => {
     } else {
       setRenderingView(value);
     }
+  };
+
+  const onPlay = () => {
+    startPlayer();
+  };
+
+  const onPause = () => {
+    pausePlayer();
   };
 
   return (
@@ -46,13 +60,13 @@ const IndexPage: FC = () => {
           width: 100%;
           z-index: 9999;
         `}
-        playerState={"playing"}
+        playerState={playerState}
         duration={3}
         current={3}
         hasPrev={true}
         hasNext={true}
-        onPlay={() => {}}
-        onPause={() => {}}
+        onPlay={onPlay}
+        onPause={onPause}
         onNextTrack={() => {}}
         onPrevTrack={() => {}}
         onSlide={() => {}}

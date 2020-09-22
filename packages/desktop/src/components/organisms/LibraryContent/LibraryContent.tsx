@@ -5,91 +5,50 @@ import { jsx, css } from "@emotion/core";
 import CouplingTrackTable from "../CouplingTrackTable/CouplingTrackTable";
 import LibraryHeader from "./LibraryHeader";
 
-import { CouplingTrack } from "../../../models/CouplingTrack";
 import {
   openAudioFileSelectDialog,
-  readMusicMetadata,
+  readAsArrayBuffer,
 } from "../../../utils/mainProcessBridge";
+import useLibrary from "../../hooks/useLibrary";
+import usePlayer from "../../hooks/usePlayer";
 
 const LibraryContent: FC = () => {
-  const [tracks, setTracks] = useState<CouplingTrack[]>([]);
+  const [selectedTracks, setSelectedTracks] = useState<
+    {
+      title: string;
+      artist: string;
+    }[]
+  >([]);
+  const { tracks, loadTracks } = useLibrary();
+  const { setTracks } = usePlayer();
 
   const onLoadRequest = async () => {
     const audioFilePaths = await openAudioFileSelectDialog();
+
     if (audioFilePaths) {
-      Promise.all(
-        audioFilePaths.map(async (path) => {
-          const metadata = await readMusicMetadata(path);
-          return { metadata, path };
-        })
-      ).then((values) => {
-        const couplingTracks: CouplingTrack[] = [];
-
-        for (const { metadata, path } of values) {
-          const {
-            title,
-            artist,
-            album,
-            picture: artworkData,
-          } = metadata.common;
-          const { duration } = metadata.format;
-
-          if (!title || !artist) {
-            // タイトル、アーティスト名が分からないと、カップリングもクソもない。
-            // TODO filepathから解決できるかも？
-            // TODO 同じフォルダ、で推測出来るかも？
-            continue;
-          }
-
-          let artwork;
-          if (artworkData) {
-            const base64 = btoa(
-              String.fromCharCode(
-                // @ts-ignore
-                ...new Uint8Array(artworkData[0].data)
-              )
-            );
-            artwork = `data:${artworkData[0].format};base64,${base64}`;
-          }
-
-          const couplingableTrack = couplingTracks.find(
-            (t) => t.title === title
-          );
-
-          if (couplingableTrack) {
-            couplingableTrack.tracks.push({
-              title,
-              album: album || "unknown",
-              artist,
-              durationSeconds: duration || 0,
-              artworkBase64: artwork,
-              audioFilePath: path,
-            });
-            continue;
-          }
-
-          const t = new CouplingTrack(
-            title,
-            duration || 0,
-            [
-              {
-                title,
-                album: album || "unknown",
-                artist,
-                durationSeconds: duration || 0,
-                artworkBase64: artwork,
-                audioFilePath: path,
-              },
-            ],
-            0
-          );
-
-          couplingTracks.push(t);
-        }
-
-        setTracks(couplingTracks);
-      });
+      loadTracks(audioFilePaths);
     }
+  };
+
+  const onSelectTrack = async (
+    params: {
+      title: string;
+      artist: string;
+    }[]
+  ) => {
+    setSelectedTracks(params);
+
+    const title = params[0].title;
+    const couplingTrack = tracks.find((track) => track.title === title);
+    if (!couplingTrack) {
+      return;
+    }
+
+    const audioFilePaths = couplingTrack.tracks
+      .filter((t) => !!params.find((p) => p.artist === t.artist))
+      .map((track) => track.audioFilePath);
+
+    setTracks(audioFilePaths);
   };
 
   return (
@@ -106,6 +65,8 @@ const LibraryContent: FC = () => {
           margin: 0 50px;
         `}
         tracks={tracks}
+        selectedTracks={selectedTracks}
+        onSelectTrack={onSelectTrack}
       />
     </div>
   );

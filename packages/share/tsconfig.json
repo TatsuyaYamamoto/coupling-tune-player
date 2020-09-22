@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "jsx": "react",
-
+    "target": "ESNext",
     "esModuleInterop": true,
-
+    "moduleResolution": "Node",
     "outDir": "dist",
     "declaration": true,
     "skipLibCheck": true,
