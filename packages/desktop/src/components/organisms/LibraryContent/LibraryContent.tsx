@@ -2,7 +2,7 @@
 import React, { FC, useState } from "react";
 import { jsx, css } from "@emotion/core";
 
-import CouplingTrackTable from "../CouplingTrackTable";
+import CouplingTrackTable from "../CouplingTrackTable/CouplingTrackTable";
 import LibraryHeader from "./LibraryHeader";
 
 import { CouplingTrack } from "../../../models/CouplingTrack";

@@ -14,9 +14,11 @@ import {
 } from "@material-ui/core";
 import { TableCellProps } from "@material-ui/core/TableCell/TableCell";
 
-import { CouplingTrack } from "../../models/CouplingTrack";
-import { getComparator, stableSort } from "../../utils/calc";
-import NoArtwork from "../atoms/NoArtwork";
+import Artwork from "./Artwork";
+import NoArtwork from "../../atoms/NoArtwork";
+
+import { CouplingTrack } from "../../../models/CouplingTrack";
+import { getComparator, stableSort } from "../../../utils/calc";
 
 type OrderType = "asc" | "desc";
 
@@ -91,7 +93,7 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
     type: "asc",
     field: "title",
   });
-  const [selectedTrackTitles, setSelectedTrackTitles] = useState<string[]>([]);
+  const [selectedTrackKeys, setSelectedTrackKeys] = useState<string[]>([]);
 
   const handleRequestSort = (property: TableFieldId) => (
     event: MouseEvent<unknown>
@@ -103,30 +105,61 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
     });
   };
 
-  const handleClickBodyRow = (title: string) => (
-    event: MouseEvent<unknown>
-  ) => {
-    const selectedIndex = selectedTrackTitles.indexOf(title);
-    let newSelected: string[] = [];
+  const handleSelectTrack = (params: {
+    title: string;
+    artist: string;
+  }) => () => {
+    const key = `${params.title}__${params.artist}`;
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selectedTrackTitles, title);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selectedTrackTitles.slice(1));
-    } else if (selectedIndex === selectedTrackTitles.length - 1) {
-      newSelected = newSelected.concat(selectedTrackTitles.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selectedTrackTitles.slice(0, selectedIndex),
-        selectedTrackTitles.slice(selectedIndex + 1)
-      );
+    // 未選択
+    if (selectedTrackKeys.length === 0) {
+      setSelectedTrackKeys([key]);
+      return;
     }
 
-    setSelectedTrackTitles(newSelected);
+    // 選択済みの曲と異なる曲を選択した
+    if (!selectedTrackKeys[0].startsWith(params.title)) {
+      setSelectedTrackKeys([key]);
+      return;
+    }
+
+    const selectedIndex = selectedTrackKeys.indexOf(key);
+
+    // 選択した曲が未選択状態
+    if (selectedIndex === -1) {
+      // 2曲以上選択されていたら、1曲押し出す
+      if (2 <= selectedTrackKeys.length) {
+        setSelectedTrackKeys((prev) => [...prev.slice(1), key]);
+      } else {
+        setSelectedTrackKeys((prev) => [...prev, key]);
+      }
+      return;
+    }
+
+    // 入力曲選択済み
+
+    // 先頭
+    if (selectedIndex === 0) {
+      setSelectedTrackKeys(selectedTrackKeys.slice(1));
+      return;
+    }
+
+    // 最後
+    if (selectedIndex === selectedTrackKeys.length - 1) {
+      setSelectedTrackKeys(selectedTrackKeys.slice(0, -1));
+      return;
+    }
+
+    // 途中
+    setSelectedTrackKeys((prev) => {
+      return prev.filter((selectedKey) => selectedKey !== key);
+    });
   };
 
-  const isRowSelected = (title: string) =>
-    selectedTrackTitles.indexOf(title) !== -1;
+  const isTrackSelected = (params: { title: string; artist: string }) => {
+    const key = `${params.title}__${params.artist}`;
+    return selectedTrackKeys.indexOf(key) !== -1;
+  };
 
   // @ts-ignore
   const sortedTracks = stableSort<CouplingTrack>(
@@ -190,18 +223,8 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
             )}
             {sortedTracks.map(
               ({ title, durationString, tracks, playCount }) => {
-                const isItemSelected = isRowSelected(title);
-
                 return (
-                  <MuiTableRow
-                    hover
-                    onClick={handleClickBodyRow(title)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={title}
-                    selected={isItemSelected}
-                  >
+                  <MuiTableRow hover tabIndex={-1} key={title}>
                     <MuiTableCell align="left">{title}</MuiTableCell>
                     <MuiTableCell align="right">{durationString}</MuiTableCell>
                     <MuiTableCell align="left">
@@ -212,13 +235,31 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
                       >
                         {tracks.map((track, index) =>
                           track.artworkBase64 ? (
-                            <img
+                            <Artwork
                               key={index}
                               src={track.artworkBase64}
-                              width={50}
+                              selected={isTrackSelected({
+                                title: track.title,
+                                artist: track.artist,
+                              })}
+                              onClick={handleSelectTrack({
+                                title: track.title,
+                                artist: track.artist,
+                              })}
                             />
                           ) : (
-                            <NoArtwork key={index} label={track.artist} />
+                            <NoArtwork
+                              key={index}
+                              label={track.artist}
+                              selected={isTrackSelected({
+                                title: track.title,
+                                artist: track.artist,
+                              })}
+                              onClick={handleSelectTrack({
+                                title: track.title,
+                                artist: track.artist,
+                              })}
+                            />
                           )
                         )}
                       </div>
