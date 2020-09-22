@@ -4,7 +4,7 @@ import React, { FC, useEffect, useState } from "react";
 import { PlayerController } from "@coupling-tune-player/share";
 
 import Drawer from "../components/organisms/Drawer";
-import LibraryContent from "../components/organisms/LibraryContent";
+import LibraryContent from "../components/organisms/LibraryContent/LibraryContent";
 import PlaylistContent from "../components/organisms/PlaylistContent";
 
 type RenderingView = "library" | "playlist";
@@ -31,6 +31,8 @@ const IndexPage: FC = () => {
         <main
           css={css`
             flex-grow: 1;
+            height: calc(100vh - 149px);
+            overflow-x: auto;
           `}
         >
           {renderingView === "library" && <LibraryContent />}

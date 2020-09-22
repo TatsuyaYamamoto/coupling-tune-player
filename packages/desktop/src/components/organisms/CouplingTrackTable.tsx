@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { FC, useState, MouseEvent } from "react";
+import React, { FC, useState, MouseEvent, HTMLAttributes } from "react";
 import { jsx, css } from "@emotion/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 
@@ -56,10 +56,10 @@ const headCells: HeadCell[] = [
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: "100%",
+      // width: "100%",
     },
     paper: {
-      width: "100%",
+      // width: "100%",
       marginBottom: theme.spacing(2),
     },
     table: {
@@ -79,12 +79,12 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export interface TrackTableProps {
+export interface TrackTableProps extends HTMLAttributes<HTMLDivElement> {
   tracks: CouplingTrack[];
 }
 
 const CouplingTrackTable: FC<TrackTableProps> = (props) => {
-  const { tracks } = props;
+  const { tracks, className } = props;
 
   const classes = useStyles();
   const [order, setOrder] = useState<{ type: OrderType; field: TableFieldId }>({
@@ -136,13 +136,14 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
   );
 
   return (
-    <div className={classes.root}>
+    <div className={[classes.root, className].join(" ")}>
       <Paper className={classes.paper}>
         <MuiTable
           className={classes.table}
           aria-labelledby="tableTitle"
           size={"small"}
           aria-label="enhanced table"
+          stickyHeader={true}
         >
           <MuiTableHead>
             <MuiTableRow>
@@ -182,6 +183,11 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
           </MuiTableHead>
 
           <MuiTableBody>
+            {sortedTracks.length === 0 && (
+              <MuiTableRow hover>
+                <MuiTableCell align="left">{`NO ITEM`}</MuiTableCell>
+              </MuiTableRow>
+            )}
             {sortedTracks.map(
               ({ title, durationString, tracks, playCount }) => {
                 const isItemSelected = isRowSelected(title);

@@ -1,17 +1,20 @@
+/** @jsx jsx */
 import React, { FC, useState } from "react";
-import { jsx } from "@emotion/core";
+import { jsx, css } from "@emotion/core";
+
+import CouplingTrackTable from "../CouplingTrackTable";
+import LibraryHeader from "./LibraryHeader";
+
+import { CouplingTrack } from "../../../models/CouplingTrack";
 import {
   openAudioFileSelectDialog,
-  readAsArrayBuffer,
   readMusicMetadata,
-} from "../../utils/mainProcessBridge";
-import CouplingTrackTable from "./CouplingTrackTable";
-import { CouplingTrack } from "../../models/CouplingTrack";
+} from "../../../utils/mainProcessBridge";
 
 const LibraryContent: FC = () => {
   const [tracks, setTracks] = useState<CouplingTrack[]>([]);
 
-  const loadAudio = async () => {
+  const onLoadRequest = async () => {
     const audioFilePaths = await openAudioFileSelectDialog();
     if (audioFilePaths) {
       Promise.all(
@@ -91,9 +94,19 @@ const LibraryContent: FC = () => {
 
   return (
     <div>
-      <h1>Library</h1>
-      <button onClick={loadAudio}>LOAD</button>
-      <CouplingTrackTable tracks={tracks} />
+      <LibraryHeader
+        css={css`
+          min-width: 700px;
+          margin: 30px 50px;
+        `}
+        onLoadRequest={onLoadRequest}
+      />
+      <CouplingTrackTable
+        css={css`
+          margin: 0 50px;
+        `}
+        tracks={tracks}
+      />
     </div>
   );
 };
