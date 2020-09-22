@@ -35,6 +35,10 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
   public async play(arrayBuffers: ArrayBuffer[]) {
     console.log("CouplingPlayer#play");
 
+    if (this.playing) {
+      this.stopSyncPlay();
+    }
+
     this.emit("play-request");
     this._loading = true;
 
@@ -133,6 +137,8 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
     sources: { audioBuffer: AudioBuffer; startPosition: number }[],
     offset: number = 0
   ): Promise<void> {
+    console.log("CouplingPlayer#startSyncPlay");
+
     // TODO: Check to arrange gain is required?
     const gainNode = context.createGain();
     gainNode.gain.value = 0.8;
@@ -192,6 +198,8 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
    * Stop audio source.
    */
   private stopSyncPlay(): void {
+    console.log("CouplingPlayer#stopSyncPlay");
+
     this.audioBufferSourceNodes.forEach((node) => {
       node.stop(0);
     });
