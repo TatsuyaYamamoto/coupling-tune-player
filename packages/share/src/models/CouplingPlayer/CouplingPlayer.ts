@@ -141,24 +141,28 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
     sources: { audioBuffer: AudioBuffer; startPosition: number }[],
     offset: number = 0
   ): Promise<void> {
-    console.log("CouplingPlayer#startSyncPlay");
+    console.log(`CouplingPlayer#startSyncPlay, offset: ${offset}`);
 
-    // TODO: Check to arrange gain is required?
+    // 音量は入力の数に合わせて下げる
     const gainNode = context.createGain();
-    gainNode.gain.value = 0.8;
+    gainNode.gain.value = 0.5 + 0.5 / sources.length;
 
-    this.audioBufferSourceNodes = sources
-      .map((source) => {
-        const audioSource = context.createBufferSource();
-        audioSource.buffer = source.audioBuffer;
+    // 定位は左端(-1.0)から右端(+1.0)までに等間隔に配置する
+    const space = 2.0 / (sources.length + 1);
+    const pannerNodes = sources.map((_, index) => {
+      const pannerNode = context.createStereoPanner();
+      pannerNode.pan.value = -1.0 + space * (index + 1);
+      pannerNode.connect(gainNode);
+      return pannerNode;
+    });
 
-        return audioSource;
-      })
-      .map((source) => {
-        source.connect(gainNode);
-
-        return source;
-      });
+    this.audioBufferSourceNodes = sources.map((source, index) => {
+      const pannerNode = pannerNodes[index];
+      const audioSource = context.createBufferSource();
+      audioSource.buffer = source.audioBuffer;
+      audioSource.connect(pannerNode);
+      return audioSource;
+    });
 
     gainNode.connect(context.destination);
 
@@ -170,28 +174,20 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
       });
     });
 
-    let leftAudioOffset = offset;
-    let rightAudioOffset = offset;
-    const [
-      { startPosition: leftStartPosition },
-      { startPosition: rightStartPosition },
-    ] = sources;
-    const [leftAudioSource, rightAudioSource] = this.audioBufferSourceNodes;
+    const minStartPosition = Math.min(...sources.map((s) => s.startPosition));
 
-    const diff = leftStartPosition - rightStartPosition;
+    const offsets = sources.map(({ startPosition }) => {
+      const diff = startPosition - minStartPosition;
+      console.log(minStartPosition, startPosition, diff);
 
-    if (0 < diff) {
-      leftAudioOffset += diff;
-    } else {
-      rightAudioOffset += -1 * diff;
-    }
+      return offset + diff;
+    });
 
     // Start sync play!
-    leftAudioSource.start(0, leftAudioOffset);
-    rightAudioSource.start(0, rightAudioOffset);
-    console.log(
-      `Start sync play. Left offset: ${leftAudioOffset}, right offset ${rightAudioOffset}.`
-    );
+    this.audioBufferSourceNodes.forEach((node, index) => {
+      node.start(0, offsets[index]);
+    });
+    console.log(`Start sync play.`);
 
     return Promise.race(endPromises).then(() => {
       this.audioBufferSourceNodes = [];
