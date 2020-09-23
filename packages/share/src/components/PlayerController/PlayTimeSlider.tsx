@@ -4,15 +4,14 @@ import React, { ChangeEvent, FC } from "react";
 import { Slider } from "@material-ui/core";
 
 interface Props {
-  min: number;
-  max: number;
+  duration: number;
   current: number;
   onSlide: (newValue: number) => void;
   onSlideFixed: (newValue: number) => void;
 }
 
-const PlayTimeSlider: FC<Props> = props => {
-  const { min, max, current, onSlide, onSlideFixed } = props;
+const PlayTimeSlider: FC<Props> = (props) => {
+  const { duration, current, onSlide, onSlideFixed } = props;
 
   const onChange = (event: ChangeEvent<{}>, newValue: number | number[]) => {
     onSlide(newValue as number);
@@ -28,8 +27,8 @@ const PlayTimeSlider: FC<Props> = props => {
   return (
     <Slider
       css={css``}
-      min={min}
-      max={max}
+      min={0}
+      max={duration}
       value={current}
       onChange={onChange}
       onChangeCommitted={onChangeCommitted}

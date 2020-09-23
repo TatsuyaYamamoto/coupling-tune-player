@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, css } from "@emotion/core";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { Card, CardContent } from "@material-ui/core";
 
 import PlayTimeSlider from "./PlayTimeSlider";
@@ -16,11 +16,10 @@ export interface PlayerControllerProps {
   onPause: () => void;
   onNextTrack: () => void;
   onPrevTrack: () => void;
-  onSlide: (newValue: number) => void;
-  onSlideFixed: (newValue: number) => void;
+  onSlided: (newValue: number) => void;
 }
 
-export const PlayerController: FC<PlayerControllerProps> = props => {
+export const PlayerController: FC<PlayerControllerProps> = (props) => {
   const {
     playerState,
     duration,
@@ -31,19 +30,30 @@ export const PlayerController: FC<PlayerControllerProps> = props => {
     onPause,
     onNextTrack,
     onPrevTrack,
-    onSlide,
-    onSlideFixed,
+    onSlided,
     ...others
   } = props;
+  const [manualCurrentTime, setManualCurrentTime] = useState<number | null>(
+    null
+  );
+  const currentTime = manualCurrentTime !== null ? manualCurrentTime : current;
+
+  const handleSlide = (newValue: number) => {
+    setManualCurrentTime(newValue);
+  };
+
+  const handleSlideFixed = (newValue: number) => {
+    setManualCurrentTime(null);
+    onSlided(newValue);
+  };
 
   return (
     <Card {...others}>
       <PlayTimeSlider
-        min={0}
-        max={duration}
-        current={current}
-        onSlide={onSlide}
-        onSlideFixed={onSlideFixed}
+        duration={duration}
+        current={currentTime}
+        onSlide={handleSlide}
+        onSlideFixed={handleSlideFixed}
       />
       <CardContent
         css={css`

@@ -13,8 +13,8 @@ export type CouplingPlayerEventTypes =
 export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
   private _playing = false;
   private _loading = false;
+  private _currentTime = 0;
   readonly duration = 0;
-  readonly currentTime = 0;
 
   private lastCheckTime: number | null = null;
   private intervalId: NodeJS.Timer | number | null = null;
@@ -26,6 +26,10 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
 
   public get loading(): boolean {
     return this._loading;
+  }
+
+  public get currentTime(): number {
+    return this._currentTime;
   }
 
   public constructor() {
@@ -108,7 +112,8 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
   }
   public updateCurrentTime(time?: number) {
     if (typeof time !== "undefined") {
-      this.emit("update", { currentTime: time });
+      this._currentTime = time;
+      this.emit("update", { currentTime: this.currentTime });
       return;
     }
 
@@ -120,10 +125,9 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
 
     const add = now - this.lastCheckTime;
     this.lastCheckTime = now;
+    this._currentTime = this._currentTime + add;
 
-    this.emit("update", {
-      currentTime: this.currentTime + add,
-    });
+    this.emit("update", { currentTime: this.currentTime });
   }
 
   /**

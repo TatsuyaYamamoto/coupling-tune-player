@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const playerMenuItems = [
   { id: "library", label: "ライブラリ", icon: <LibraryIcon /> },
-  { id: "playlist", label: "プレイリスト", icon: <PlaylistIcon /> },
+  // { id: "playlist", label: "プレイリスト", icon: <PlaylistIcon /> },
 ] as const;
 
 const appMenuItems = [

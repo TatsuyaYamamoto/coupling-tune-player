@@ -38,17 +38,18 @@ const LibraryContent: FC = () => {
   ) => {
     setSelectedTracks(params);
 
-    const title = params[0].title;
+    const { title } = params[0];
     const couplingTrack = tracks.find((track) => track.title === title);
     if (!couplingTrack) {
       return;
     }
 
-    const audioFilePaths = couplingTrack.tracks
-      .filter((t) => !!params.find((p) => p.artist === t.artist))
-      .map((track) => track.audioFilePath);
+    const trackList = couplingTrack.tracks.filter(
+      (t) => !!params.find((p) => p.artist === t.artist)
+    );
 
-    setTracks(audioFilePaths);
+    const audioFilePaths = trackList.map((track) => track.audioFilePath);
+    setTracks(audioFilePaths, trackList[0].durationSeconds);
   };
 
   return (

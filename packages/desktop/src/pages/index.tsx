@@ -15,6 +15,9 @@ const IndexPage: FC = () => {
     play: startPlayer,
     pause: pausePlayer,
     state: playerState,
+    updateCurrentTime,
+    duration,
+    current,
   } = usePlayer();
   const [renderingView, setRenderingView] = useState<RenderingView>("library");
 
@@ -32,6 +35,10 @@ const IndexPage: FC = () => {
 
   const onPause = () => {
     pausePlayer();
+  };
+
+  const onSlided = (newCurrentTime: number) => {
+    updateCurrentTime(newCurrentTime);
   };
 
   return (
@@ -61,16 +68,15 @@ const IndexPage: FC = () => {
           z-index: 9999;
         `}
         playerState={playerState}
-        duration={3}
-        current={3}
-        hasPrev={true}
-        hasNext={true}
+        duration={duration}
+        current={current}
+        hasPrev={false}
+        hasNext={false}
         onPlay={onPlay}
         onPause={onPause}
         onNextTrack={() => {}}
         onPrevTrack={() => {}}
-        onSlide={() => {}}
-        onSlideFixed={() => {}}
+        onSlided={onSlided}
       />
     </div>
   );
