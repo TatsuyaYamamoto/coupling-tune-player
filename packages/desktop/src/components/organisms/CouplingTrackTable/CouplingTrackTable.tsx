@@ -14,8 +14,7 @@ import {
 } from "@material-ui/core";
 import { TableCellProps } from "@material-ui/core/TableCell/TableCell";
 
-import Artwork from "./Artwork";
-import NoArtwork from "../../atoms/NoArtwork";
+import VocalList from "./VocalList";
 
 import { CouplingTrack } from "../../../models/CouplingTrack";
 import { getComparator, stableSort } from "../../../utils/calc";
@@ -115,12 +114,7 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
     });
   };
 
-  const handleSelectTrack = (params: {
-    title: string;
-    artist: string;
-  }) => () => {
-    const key = `${params.title}__${params.artist}`;
-
+  const handleSelectTrack = (params: { title: string; artist: string }) => {
     // 未選択
     if (selectedTracks.length === 0) {
       onSelectTrack([params]);
@@ -230,47 +224,34 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
             )}
             {sortedTracks.map(({ title, durationSeconds, tracks }) => {
               const durationString = durationSecondsToString(durationSeconds);
+              const vocalItems = tracks.map((t) => ({
+                title: t.title,
+                artist: t.artist,
+                artworkBase64: t.artworkBase64 || null,
+                selected: isTrackSelected({
+                  title: t.title,
+                  artist: t.artist,
+                }),
+              }));
+              const isRowSelected =
+                2 <= selectedTracks.length && selectedTracks[0].title === title;
 
               return (
-                <MuiTableRow hover tabIndex={-1} key={title}>
+                <MuiTableRow
+                  hover={!isRowSelected}
+                  tabIndex={-1}
+                  key={title}
+                  css={css`
+                    ${isRowSelected &&
+                    css`
+                      background-color: rgba(245, 0, 87, 0.08);
+                    `}
+                  `}
+                >
                   <MuiTableCell align="left">{title}</MuiTableCell>
                   <MuiTableCell align="right">{durationString}</MuiTableCell>
                   <MuiTableCell align="left">
-                    <div
-                      css={css`
-                        display: flex;
-                      `}
-                    >
-                      {tracks.map((track, index) =>
-                        track.artworkBase64 ? (
-                          <Artwork
-                            key={index}
-                            src={track.artworkBase64}
-                            selected={isTrackSelected({
-                              title: track.title,
-                              artist: track.artist,
-                            })}
-                            onClick={handleSelectTrack({
-                              title: track.title,
-                              artist: track.artist,
-                            })}
-                          />
-                        ) : (
-                          <NoArtwork
-                            key={index}
-                            label={track.artist}
-                            selected={isTrackSelected({
-                              title: track.title,
-                              artist: track.artist,
-                            })}
-                            onClick={handleSelectTrack({
-                              title: track.title,
-                              artist: track.artist,
-                            })}
-                          />
-                        )
-                      )}
-                    </div>
+                    <VocalList items={vocalItems} onClick={handleSelectTrack} />
                   </MuiTableCell>
                 </MuiTableRow>
               );
