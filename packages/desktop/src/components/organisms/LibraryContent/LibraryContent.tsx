@@ -38,6 +38,11 @@ const LibraryContent: FC = () => {
   ) => {
     setSelectedTracks(params);
 
+    if (params.length === 0) {
+      // select no item.
+      return;
+    }
+
     const { title } = params[0];
     const couplingTrack = tracks.find((track) => track.title === title);
     if (!couplingTrack) {
