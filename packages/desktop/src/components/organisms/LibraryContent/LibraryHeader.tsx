@@ -2,7 +2,7 @@
 import React, { FC, HTMLAttributes, useState } from "react";
 import { jsx, css } from "@emotion/core";
 
-import { Fab } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 
 interface LibraryHeaderProps extends HTMLAttributes<HTMLDivElement> {
@@ -28,9 +28,7 @@ const LibraryHeader: FC<LibraryHeaderProps> = (props) => {
       >
         Library
       </div>
-      <Fab onClick={onLoadRequest}>
-        <AddIcon />
-      </Fab>
+      <Button onClick={onLoadRequest}>{`インポート`}</Button>
     </div>
   );
 };

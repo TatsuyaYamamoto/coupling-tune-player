@@ -57,12 +57,6 @@ const headCells: HeadCell[] = [
     sortable: false,
   },
   { id: "vocals", label: "Vocals", align: "left", sortable: false },
-  {
-    id: "playCount",
-    label: "Play Count",
-    align: "left",
-    sortable: false,
-  },
 ];
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -190,13 +184,7 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
   return (
     <div className={[classes.root, className].join(" ")}>
       <Paper className={classes.paper}>
-        <MuiTable
-          className={classes.table}
-          aria-labelledby="tableTitle"
-          size={"small"}
-          aria-label="enhanced table"
-          stickyHeader={true}
-        >
+        <MuiTable className={classes.table} size={"small"}>
           <MuiTableHead>
             <MuiTableRow>
               {headCells.map((headCell) =>
@@ -240,56 +228,53 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
                 <MuiTableCell align="left">{`NO ITEM`}</MuiTableCell>
               </MuiTableRow>
             )}
-            {sortedTracks.map(
-              ({ title, durationSeconds, tracks, playCount }) => {
-                const durationString = durationSecondsToString(durationSeconds);
+            {sortedTracks.map(({ title, durationSeconds, tracks }) => {
+              const durationString = durationSecondsToString(durationSeconds);
 
-                return (
-                  <MuiTableRow hover tabIndex={-1} key={title}>
-                    <MuiTableCell align="left">{title}</MuiTableCell>
-                    <MuiTableCell align="right">{durationString}</MuiTableCell>
-                    <MuiTableCell align="left">
-                      <div
-                        css={css`
-                          display: flex;
-                        `}
-                      >
-                        {tracks.map((track, index) =>
-                          track.artworkBase64 ? (
-                            <Artwork
-                              key={index}
-                              src={track.artworkBase64}
-                              selected={isTrackSelected({
-                                title: track.title,
-                                artist: track.artist,
-                              })}
-                              onClick={handleSelectTrack({
-                                title: track.title,
-                                artist: track.artist,
-                              })}
-                            />
-                          ) : (
-                            <NoArtwork
-                              key={index}
-                              label={track.artist}
-                              selected={isTrackSelected({
-                                title: track.title,
-                                artist: track.artist,
-                              })}
-                              onClick={handleSelectTrack({
-                                title: track.title,
-                                artist: track.artist,
-                              })}
-                            />
-                          )
-                        )}
-                      </div>
-                    </MuiTableCell>
-                    <MuiTableCell align="left">{playCount}</MuiTableCell>
-                  </MuiTableRow>
-                );
-              }
-            )}
+              return (
+                <MuiTableRow hover tabIndex={-1} key={title}>
+                  <MuiTableCell align="left">{title}</MuiTableCell>
+                  <MuiTableCell align="right">{durationString}</MuiTableCell>
+                  <MuiTableCell align="left">
+                    <div
+                      css={css`
+                        display: flex;
+                      `}
+                    >
+                      {tracks.map((track, index) =>
+                        track.artworkBase64 ? (
+                          <Artwork
+                            key={index}
+                            src={track.artworkBase64}
+                            selected={isTrackSelected({
+                              title: track.title,
+                              artist: track.artist,
+                            })}
+                            onClick={handleSelectTrack({
+                              title: track.title,
+                              artist: track.artist,
+                            })}
+                          />
+                        ) : (
+                          <NoArtwork
+                            key={index}
+                            label={track.artist}
+                            selected={isTrackSelected({
+                              title: track.title,
+                              artist: track.artist,
+                            })}
+                            onClick={handleSelectTrack({
+                              title: track.title,
+                              artist: track.artist,
+                            })}
+                          />
+                        )
+                      )}
+                    </div>
+                  </MuiTableCell>
+                </MuiTableRow>
+              );
+            })}
           </MuiTableBody>
         </MuiTable>
       </Paper>

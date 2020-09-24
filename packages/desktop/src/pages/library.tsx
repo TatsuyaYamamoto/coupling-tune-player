@@ -4,13 +4,11 @@ import React, { FC, useState } from "react";
 import { PlayerController } from "@coupling-tune-player/share";
 
 import usePlayer from "../components/hooks/usePlayer";
-import Drawer from "../components/organisms/Drawer";
 import LibraryContent from "../components/organisms/LibraryContent/LibraryContent";
-import PlaylistContent from "../components/organisms/PlaylistContent";
 
 type RenderingView = "library" | "playlist";
 
-const IndexPage: FC = () => {
+const LibraryPage: FC = () => {
   const {
     play: startPlayer,
     pause: pausePlayer,
@@ -48,7 +46,6 @@ const IndexPage: FC = () => {
           display: flex;
         `}
       >
-        <Drawer onClickMenu={onClickMenu} />
         <main
           css={css`
             flex-grow: 1;
@@ -56,8 +53,7 @@ const IndexPage: FC = () => {
             overflow-x: auto;
           `}
         >
-          {renderingView === "library" && <LibraryContent />}
-          {renderingView === "playlist" && <PlaylistContent />}
+          <LibraryContent />
         </main>
       </div>
       <PlayerController
@@ -82,4 +78,4 @@ const IndexPage: FC = () => {
   );
 };
 
-export default IndexPage;
+export default LibraryPage;
