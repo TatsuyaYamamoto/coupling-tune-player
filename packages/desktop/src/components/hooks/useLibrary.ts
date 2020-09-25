@@ -32,12 +32,16 @@ const useLibrary = () => {
 
         let artwork;
         if (artworkData) {
-          const base64 = btoa(
-            String.fromCharCode(
-              // @ts-ignore
-              ...new Uint8Array(artworkData[0].data)
-            )
-          );
+          // Uint8Array
+          const bytes = artworkData[0].data;
+
+          // https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string/9458996#9458996
+          let binary = "";
+          for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+          }
+          const base64 = btoa(binary);
+
           artwork = `data:${artworkData[0].format};base64,${base64}`;
         }
 
