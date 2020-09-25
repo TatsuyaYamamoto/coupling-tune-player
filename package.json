@@ -9,7 +9,9 @@
   "scripts": {
     "dev:desktop": "run-p --print-label dev:desktop:*",
     "dev:desktop:desktop": "yarn workspace @coupling-tune-player/desktop start",
-    "dev:desktop:share": "  yarn workspace @coupling-tune-player/share    dev"
+    "dev:desktop:share": "  yarn workspace @coupling-tune-player/share    dev",
+    "build:desktop:win32": " yarn workspace @coupling-tune-player/desktop make:win32",
+    "build:desktop:darwin": "yarn workspace @coupling-tune-player/desktop make:darwin"
   },
   "author": "TatsuyaYamamoto",
   "license": "MIT",
