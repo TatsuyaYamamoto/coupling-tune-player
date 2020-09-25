@@ -134,12 +134,7 @@ const CouplingTrackTable: FC<TrackTableProps> = (props) => {
 
     // 選択した曲が未選択状態
     if (selectedIndex === -1) {
-      // 2曲以上選択されていたら、1曲押し出す
-      if (2 <= selectedTracks.length) {
-        onSelectTrack([...selectedTracks.slice(1), params]);
-      } else {
-        onSelectTrack([...selectedTracks, params]);
-      }
+      onSelectTrack([...selectedTracks, params]);
       return;
     }
 

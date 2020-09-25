@@ -97,7 +97,7 @@ export const PlayerRoot: FC = (props) => {
       pause();
     }
 
-    if (trackFilePaths.length === 2) {
+    if (2 <= trackFilePaths.length) {
       setState("pausing");
     } else {
       setState("unavailable");
