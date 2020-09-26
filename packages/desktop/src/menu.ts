@@ -1,52 +1,62 @@
-import { app, Menu, MenuItem, MenuItemConstructorOptions } from "electron";
+import {
+  app,
+  dialog,
+  Menu,
+  MenuItem,
+  MenuItemConstructorOptions,
+} from "electron";
 import { shell } from "electron";
 
-/**
- * 開発用メニューアイテム
- * packageされていない状態のときに展開される
- */
-const devMenuItem: Array<MenuItemConstructorOptions | MenuItem> = app.isPackaged
-  ? []
-  : [
-      {
-        label: "開発",
-        submenu: [
-          {
-            label: "Dev Tool",
-            role: "toggleDevTools",
-          },
-          {
-            label: "Reload",
-            accelerator: "CmdOrCtrl+R",
-            click(item, focusedWindow) {
-              if (focusedWindow) focusedWindow.reload();
-            },
-          },
-        ],
-      },
-    ];
+const isMac = process.platform === "darwin";
+const isWin = process.platform === "win32";
+
+const onClickAboutMenu = () => {
+  dialog.showMessageBoxSync({
+    type: "info",
+    message: app.name,
+    detail: `version: ${app.getVersion()}
+commit: ${process.env.COMMIT}
+Electron: ${process.versions.electron}
+Chrome: ${process.versions.chrome}
+Node.js: ${process.versions.node}
+V8: ${process.versions.v8}
+OS: ${process.platform} ${process.arch} ${process.getSystemVersion()}
+`,
+  });
+};
+
+const macosAppMenu: MenuItem | MenuItemConstructorOptions = {
+  role: "appMenu",
+  submenu: [
+    {
+      label: `${app.getName()}について`,
+      click: onClickAboutMenu,
+    },
+    {
+      type: "separator",
+    },
+    {
+      label: `${app.getName()}を終了`,
+      role: "quit",
+    },
+  ],
+};
 
 /**
  * ElectronのMenuの設定
  */
-const templateMenu: Array<MenuItemConstructorOptions | MenuItem> = [
+const templateMenu: Array<MenuItem | MenuItemConstructorOptions> = [
+  ...(isMac ? [macosAppMenu] : []),
   {
-    role: "appMenu",
+    role: "fileMenu",
+    label: "ファイル",
     submenu: [
-      {
-        label: `${app.getName()}について`,
-        role: "about",
-      },
-      {
-        type: "separator",
-      },
-      {
-        label: `${app.getName()}を終了`,
-        role: "quit",
-      },
+      { label: "読み込む", accelerator: "CmdOrCtrl+O" },
+      ...(isWin
+        ? ([{ type: "separator" }, { label: "終了", role: "quit" }] as const)
+        : []),
     ],
   },
-  ...devMenuItem,
   {
     label: "ヘルプ",
     role: "help",
@@ -57,6 +67,27 @@ const templateMenu: Array<MenuItemConstructorOptions | MenuItem> = [
           await shell.openExternal("https://electronjs.org");
         },
       },
+      { type: "separator" },
+      {
+        label: "開発ツール",
+        role: "toggleDevTools",
+      },
+      {
+        label: "リロード",
+        accelerator: "CmdOrCtrl+R",
+        click(item, focusedWindow) {
+          if (focusedWindow) focusedWindow.reload();
+        },
+      },
+      ...(isWin
+        ? ([
+            { type: "separator" },
+            {
+              label: `${app.getName()}について`,
+              role: "about",
+            },
+          ] as const)
+        : []),
     ],
   },
 ];

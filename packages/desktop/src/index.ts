@@ -12,6 +12,9 @@ console.log(`
 app#name: ${app.name}
 app#isPackaged: ${app.isPackaged}
 userData: ${app.getPath("userData")}
+
+platform: ${process.platform}
+system version: ${process.getSystemVersion()}
 ===================================
 `);
 
