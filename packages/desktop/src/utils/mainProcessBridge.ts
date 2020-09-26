@@ -1,3 +1,5 @@
+import { IpcRendererEvent } from "electron";
+
 export const openAudioFileSelectDialog = async () => {
   const { canceled, filePaths } = await window.electron.openFileSelectDialog();
 
@@ -25,4 +27,18 @@ export const readAsArrayBuffer = async (path: string) => {
 
 export const readMusicMetadata = (path: string) => {
   return window.electron.readMusicMetadata(path);
+};
+
+export const ipcRendererOn = (
+  channel: string,
+  listener: (event: IpcRendererEvent, ...args: any[]) => void
+) => {
+  return window.electron.ipcRendererOn(channel, listener);
+};
+
+export const ipcRendererOff = (
+  event: string | symbol,
+  listener: (...args: any[]) => void
+) => {
+  return window.electron.ipcRendererOff(event, listener);
 };

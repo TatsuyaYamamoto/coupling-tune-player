@@ -1,12 +1,16 @@
 /** @jsx jsx */
 import { jsx, css } from "@emotion/core";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { PlayerController } from "@coupling-tune-player/share";
 
 import usePlayer from "../components/hooks/usePlayer";
-import LibraryContent from "../components/organisms/LibraryContent/LibraryContent";
+import useLibrary from "../components/hooks/useLibrary";
+import CouplingTrackTable from "../components/organisms/CouplingTrackTable/CouplingTrackTable";
 
-type RenderingView = "library" | "playlist";
+import {
+  ipcRendererOn,
+  openAudioFileSelectDialog,
+} from "../utils/mainProcessBridge";
 
 const LibraryPage: FC = () => {
   const {
@@ -16,16 +20,16 @@ const LibraryPage: FC = () => {
     updateCurrentTime,
     duration,
     current,
+    setTracks,
   } = usePlayer();
-  const [renderingView, setRenderingView] = useState<RenderingView>("library");
+  const { tracks, loadTracks } = useLibrary();
 
-  const onClickMenu = (value: "library" | "playlist" | "help") => {
-    if (value === "help") {
-      // do nothing
-    } else {
-      setRenderingView(value);
-    }
-  };
+  const [selectedTracks, setSelectedTracks] = useState<
+    {
+      title: string;
+      artist: string;
+    }[]
+  >([]);
 
   const onPlay = () => {
     startPlayer();
@@ -38,6 +42,47 @@ const LibraryPage: FC = () => {
   const onSlided = (newCurrentTime: number) => {
     updateCurrentTime(newCurrentTime);
   };
+
+  const onLoadRequest = async () => {
+    const audioFilePaths = await openAudioFileSelectDialog();
+
+    if (audioFilePaths) {
+      loadTracks(audioFilePaths);
+    }
+  };
+
+  const onSelectTrack = async (
+    params: {
+      title: string;
+      artist: string;
+    }[]
+  ) => {
+    setSelectedTracks(params);
+
+    if (params.length === 0) {
+      // select no item.
+      return;
+    }
+
+    const { title } = params[0];
+    const couplingTrack = tracks.find((track) => track.title === title);
+    if (!couplingTrack) {
+      return;
+    }
+
+    const trackList = couplingTrack.tracks.filter(
+      (t) => !!params.find((p) => p.artist === t.artist)
+    );
+
+    const audioFilePaths = trackList.map((track) => track.audioFilePath);
+    setTracks(audioFilePaths, trackList[0].durationSeconds);
+  };
+
+  useEffect(() => {
+    ipcRendererOn("on-click-menu-file-import", () => {
+      onLoadRequest();
+    });
+  }, []);
 
   return (
     <div>
@@ -53,7 +98,14 @@ const LibraryPage: FC = () => {
             overflow-x: auto;
           `}
         >
-          <LibraryContent />
+          <CouplingTrackTable
+            css={css`
+              margin: 50px 50px 0;
+            `}
+            tracks={tracks}
+            selectedTracks={selectedTracks}
+            onSelectTrack={onSelectTrack}
+          />
         </main>
       </div>
       <PlayerController

@@ -1,6 +1,7 @@
 import {
   app,
   dialog,
+  ipcMain,
   Menu,
   MenuItem,
   MenuItemConstructorOptions,
@@ -51,7 +52,15 @@ const templateMenu: Array<MenuItem | MenuItemConstructorOptions> = [
     role: "fileMenu",
     label: "ファイル",
     submenu: [
-      { label: "読み込む", accelerator: "CmdOrCtrl+O" },
+      {
+        label: "読み込む",
+        accelerator: "CmdOrCtrl+O",
+        click(_, browserWindow) {
+          if (browserWindow && browserWindow.webContents) {
+            browserWindow.webContents.send("on-click-menu-file-import");
+          }
+        },
+      },
       ...(isWin
         ? ([{ type: "separator" }, { label: "終了", role: "quit" }] as const)
         : []),
