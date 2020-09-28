@@ -8,8 +8,11 @@
   },
   "scripts": {
     "dev:desktop": "run-p --print-label dev:desktop:*",
-    "dev:desktop:desktop": "yarn workspace @coupling-tune-player/desktop start",
-    "dev:desktop:share": "  yarn workspace @coupling-tune-player/share    dev",
+    "dev:desktop:desktop": " yarn workspace @coupling-tune-player/desktop start",
+    "dev:desktop:share": "   yarn workspace @coupling-tune-player/share    dev",
+    "dev:web": "    run-p --print-label dev:web:*",
+    "dev:web:web": "         yarn workspace @coupling-tune-player/web   start",
+    "dev:web:share": "       yarn workspace @coupling-tune-player/share dev",
     "build:desktop:win32": " yarn workspace @coupling-tune-player/desktop make:win32",
     "build:desktop:darwin": "yarn workspace @coupling-tune-player/desktop make:darwin"
   },
