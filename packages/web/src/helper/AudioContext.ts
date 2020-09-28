@@ -8,14 +8,15 @@ import { readAsArrayBuffer } from "./FileSystem";
 /**
  * AudioContext class.
  */
-const AudioContext =
-  (window as any).AudioContext || (window as any).webkitAudioContext;
+// TODO
+// const AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
 
 /**
  * AudioContext instance.
  * Should use as singleton.
  */
-const context: AudioContext = new AudioContext();
+// TODO
+const context = null;
 
 /**
  * Load provided {@code File} as AudioBuffer with AudioContext.
@@ -28,10 +29,10 @@ async function loadAsAudioBuffer(file: File): Promise<AudioBuffer> {
   return new Promise<AudioBuffer>((resolve, reject) => {
     context.decodeAudioData(
       arrayBuffer,
-      decodedData => {
+      (decodedData) => {
         resolve(decodedData);
       },
-      error => {
+      (error) => {
         reject(error);
       }
     );

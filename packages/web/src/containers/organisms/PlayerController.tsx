@@ -1,7 +1,6 @@
 import * as React from "react";
 import { connect, DispatchProp } from "react-redux";
-import { default as AutoBind } from "autobind-decorator";
-import { default as styled } from "styled-components";
+import styled from "styled-components";
 
 import { Card, CardContent } from "@material-ui/core";
 
@@ -13,7 +12,7 @@ import {
   pause as pauseAudio,
   updateCurrentTime,
   skipPrevious,
-  skipNext
+  skipNext,
 } from "../../redux/modules/player";
 import { States } from "../../redux/store";
 import Song from "../../redux/model/Song";
@@ -34,10 +33,9 @@ const Buttons = styled(CardContent)`
   align-items: center;
 `;
 
-@AutoBind
 class PlayerController extends React.Component<Props, ComponentState> {
   public state = {
-    manualCurrentTime: null
+    manualCurrentTime: null,
   };
 
   public render() {
@@ -90,7 +88,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
 
     sendEvent("click", {
       category: "player",
-      label: "play"
+      label: "play",
     });
   }
 
@@ -103,7 +101,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
     dispatch(pauseAudio() as any);
     sendEvent("click", {
       category: "player",
-      label: "pause"
+      label: "pause",
     });
   }
 
@@ -157,7 +155,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
 
     sendEvent("click", {
       category: "player",
-      label: "slider"
+      label: "slider",
     });
   }
 }
@@ -190,7 +188,7 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
     hasPrev,
     hasNext,
     duration,
-    current: currentTime || 0
+    current: currentTime || 0,
   };
 }
 

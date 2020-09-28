@@ -7,7 +7,6 @@ import { context, loadAsAudioBuffer } from "../../helper/AudioContext";
 
 import Song from "../model/Song";
 
-import Timer = NodeJS.Timer;
 import { syncPlay, stop as syncStop } from "../../helper/SyncPlayer";
 import { goNextIndex, goPrevIndex } from "./tracklist";
 import { analyzeBpm } from "../../helper/BpmAnalyzer";
@@ -16,13 +15,13 @@ export enum PlayerActionTypes {
   PLAY_REQUEST = "c_tune/player/play_request",
   PLAY_SUCCESS = "c_tune/player/play_success",
   PAUSE = "c_tune/player/pause",
-  UPDATE_CURRENT = "c_tune/player/update_current"
+  UPDATE_CURRENT = "c_tune/player/update_current",
 }
 
 type ThunkResult<R> = ThunkAction<R, States, undefined, AnyAction>;
 
 let lastCheckTime: number | null = null;
-let intervalId: Timer | number | null = null;
+let intervalId: NodeJS.Timer | number | null = null;
 
 /**
  * 音声の再生を開始する。
@@ -37,7 +36,7 @@ export const play = (leftAudio: Song, rightAudio: Song): ThunkResult<void> => {
 
     const [left, right] = await Promise.all([
       analyze(leftAudio.file, "left"),
-      analyze(rightAudio.file, "right")
+      analyze(rightAudio.file, "right"),
     ]);
 
     const { currentTime } = getState().player;
@@ -64,8 +63,8 @@ export const play = (leftAudio: Song, rightAudio: Song): ThunkResult<void> => {
     dispatch({
       type: PlayerActionTypes.PLAY_SUCCESS,
       payload: {
-        duration: left.audioBuffer.duration
-      }
+        duration: left.audioBuffer.duration,
+      },
     });
 
     intervalId = setInterval(() => {
@@ -109,7 +108,7 @@ export const pause = (): ThunkResult<void> => {
     syncStop();
 
     dispatch({
-      type: PlayerActionTypes.PAUSE
+      type: PlayerActionTypes.PAUSE,
     });
   };
 };
@@ -126,7 +125,7 @@ export const updateCurrentTime = (time?: number): ThunkResult<void> => {
     if (typeof time !== "undefined") {
       dispatch({
         type: PlayerActionTypes.UPDATE_CURRENT,
-        payload: { currentTime: time }
+        payload: { currentTime: time },
       });
       return;
     }
@@ -143,8 +142,8 @@ export const updateCurrentTime = (time?: number): ThunkResult<void> => {
     dispatch({
       type: PlayerActionTypes.UPDATE_CURRENT,
       payload: {
-        currentTime: currentTime + add
-      }
+        currentTime: currentTime + add,
+      },
     });
   };
 };
@@ -214,7 +213,7 @@ const initialState: PlayerState = {
   loading: false,
   playing: false,
   duration: 0,
-  currentTime: 0
+  currentTime: 0,
 };
 
 export default function reducer(
@@ -227,7 +226,7 @@ export default function reducer(
     case PlayerActionTypes.PLAY_REQUEST:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
 
     case PlayerActionTypes.PLAY_SUCCESS:
@@ -235,19 +234,19 @@ export default function reducer(
         ...state,
         loading: false,
         playing: true,
-        duration: payload.duration
+        duration: payload.duration,
       };
 
     case PlayerActionTypes.PAUSE:
       return {
         ...state,
-        playing: false
+        playing: false,
       };
 
     case PlayerActionTypes.UPDATE_CURRENT:
       return {
         ...state,
-        currentTime: payload.currentTime
+        currentTime: payload.currentTime,
       };
 
     default:

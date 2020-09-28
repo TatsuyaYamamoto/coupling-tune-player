@@ -1,8 +1,7 @@
 import * as React from "react";
-import { Dispatch, Action } from "redux";
+import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { default as styled } from "styled-components";
-import { default as AutoBind } from "autobind-decorator";
 
 import { Audiotrack as AudiotrackIcon } from "@material-ui/icons";
 
@@ -63,7 +62,6 @@ export interface ComponentState {}
 type P = ComponentProps & DispatchProps & StateProps;
 type S = ComponentState;
 
-@AutoBind
 class CurrentTrackView extends React.Component<P, S> {
   public render() {
     const { left, right, loading, ...others } = this.props;

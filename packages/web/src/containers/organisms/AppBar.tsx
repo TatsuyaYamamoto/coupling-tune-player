@@ -1,8 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 
-import { default as styled } from "styled-components";
-import { default as AutoBind } from "autobind-decorator";
+import styled from "styled-components";
 
 import { AppBar as MuiAppBar, IconButton, Toolbar } from "@material-ui/core";
 
@@ -14,7 +13,7 @@ import InfoIcon from "../../components/atoms/icon/InfoIcon";
 import {
   getLongestCommonSubstring,
   sendEvent,
-  tweetByWebIntent
+  tweetByWebIntent,
 } from "../../utils";
 import { URL } from "../../constants";
 import Song from "../../redux/model/Song";
@@ -39,10 +38,9 @@ interface ComponentState {
 type P = ComponentProps & StateProps;
 type S = ComponentState;
 
-@AutoBind
 class AppBar extends React.Component<P, S> {
   public state = {
-    isInfoDialogOpen: false
+    isInfoDialogOpen: false,
   };
 
   public render() {
@@ -89,7 +87,7 @@ class AppBar extends React.Component<P, S> {
     this.setState({ isInfoDialogOpen: true });
     sendEvent("click", {
       category: "info",
-      value: "show_about_app"
+      value: "show_about_app",
     });
   }
 
@@ -124,12 +122,12 @@ class AppBar extends React.Component<P, S> {
     tweetByWebIntent({
       text,
       url: URL.COUPLING_TUNE_PLAYER,
-      hashtags: ["かぷちゅうプレイヤー", "そこんところ工房"]
+      hashtags: ["かぷちゅうプレイヤー", "そこんところ工房"],
     });
 
     sendEvent("click", {
       category: "info",
-      value: "go_twitter_intent"
+      value: "go_twitter_intent",
     });
   }
 }
@@ -146,7 +144,7 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
 
   return {
     left,
-    right
+    right,
   };
 }
 

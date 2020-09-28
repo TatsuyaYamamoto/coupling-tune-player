@@ -1,5 +1,3 @@
-import { default as AutoBind } from "autobind-decorator";
-
 export interface SongConstructor {
   file: File;
   title: string;
@@ -7,7 +5,6 @@ export interface SongConstructor {
   pictureBase64: string | null;
 }
 
-@AutoBind
 class Song {
   private _file: File;
   private _title: string;

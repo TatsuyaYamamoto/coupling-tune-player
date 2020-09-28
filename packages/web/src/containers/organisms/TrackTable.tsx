@@ -1,6 +1,5 @@
 import * as React from "react";
 import { connect, DispatchProp } from "react-redux";
-import { default as AutoBind } from "autobind-decorator";
 
 import { default as _TrackTable } from "../../components/molecules/TrackTable";
 
@@ -22,7 +21,6 @@ export interface ComponentProps {
 
 type Props = ComponentProps & StateProps & DispatchProp<States>;
 
-@AutoBind
 class TrackTable extends React.Component<Props, ComponentState> {
   public render() {
     const { trackList, focusIndex, playerState } = this.props;

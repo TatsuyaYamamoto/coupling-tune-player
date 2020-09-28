@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { FC } from "react";
 import { default as styled } from "styled-components";
 import { WithTheme, withTheme } from "@material-ui/core";
 
@@ -13,7 +13,7 @@ interface TrackSelectButtonProps {
 
 type P = TrackSelectButtonProps & WithTheme;
 
-const TrackSelectButton: React.SFC<P> = props => {
+const TrackSelectButton: FC<P> = (props) => {
   const {
     label,
     leftIcon,
@@ -24,7 +24,7 @@ const TrackSelectButton: React.SFC<P> = props => {
   } = props;
 
   const StyledLabel = styled.span`
-    margin: ${theme.spacing.unit};
+    margin: ${theme.spacing(1)};
   `;
 
   return (
@@ -41,4 +41,4 @@ const TrackSelectButton: React.SFC<P> = props => {
   );
 };
 
-export default withTheme()(TrackSelectButton);
+export default withTheme(TrackSelectButton);

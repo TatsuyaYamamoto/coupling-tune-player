@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, IconButton } from "@material-ui/core";
+import { Fab, IconButton } from "@material-ui/core";
 import { default as styled } from "styled-components";
 
 import PLayTrackIcon from "../../components/atoms/icon/PLayTrackIcon";
@@ -9,7 +9,7 @@ import NextTrackIcon from "../../components/atoms/icon/NextTrackIcon";
 
 const Root = styled.div``;
 
-const StyledButton = styled(Button)`
+const StyledFab = styled(Fab)`
   && {
     margin: 10px;
   }
@@ -25,7 +25,7 @@ interface TrackControllerProps {
   onPrevTrackClick: () => void;
 }
 
-const TrackController: React.SFC<TrackControllerProps> = props => {
+const TrackController: React.SFC<TrackControllerProps> = (props) => {
   const {
     state,
     hasNext,
@@ -38,21 +38,21 @@ const TrackController: React.SFC<TrackControllerProps> = props => {
   } = props;
 
   const playButton = (
-    <StyledButton variant="fab" color="primary" onClick={onPlayClick}>
+    <StyledFab color="primary" onClick={onPlayClick}>
       <PLayTrackIcon />
-    </StyledButton>
+    </StyledFab>
   );
 
   const unavailableButton = (
-    <StyledButton variant="fab" color="primary" disabled={true}>
+    <StyledFab color="primary" disabled={true}>
       <PLayTrackIcon />
-    </StyledButton>
+    </StyledFab>
   );
 
   const pauseButton = (
-    <StyledButton variant="fab" color="primary" onClick={onPauseClick}>
+    <StyledFab color="primary" onClick={onPauseClick}>
       <PauseTrackIcon />
-    </StyledButton>
+    </StyledFab>
   );
 
   const centerButton = (() => {
