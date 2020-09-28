@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { TableRow, TableCell } from "@material-ui/core";
 
 import PLayTrackIcon from "../../atoms/icon/PLayTrackIcon";

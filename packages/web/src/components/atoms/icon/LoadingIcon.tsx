@@ -1,5 +1,5 @@
-import * as React from "react";
-import styled from "styled-components"; // tslint:disable-line:import-name
+import React, { FC } from "react";
+import styled from "@emotion/styled";
 
 import { Refresh } from "@material-ui/icons";
 
@@ -19,7 +19,7 @@ const AnimatedIcon = styled(Refresh)`
   }
 `;
 
-const LoadingIcon: React.SFC<Props> = props => {
+const LoadingIcon: FC<Props> = props => {
   const { animation } = props;
 
   return animation ? <AnimatedIcon /> : <Refresh />;

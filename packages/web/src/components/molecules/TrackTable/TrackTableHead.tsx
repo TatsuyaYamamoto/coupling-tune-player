@@ -1,15 +1,5 @@
-import * as React from "react";
-import {
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  IconButton,
-  CircularProgress,
-  Typography
-} from "@material-ui/core";
+import React, { FC } from "react";
+import { TableHead, TableRow, TableCell } from "@material-ui/core";
 
 export interface ComponentProps {
   className?: string;
@@ -33,7 +23,7 @@ const RightCell = () => (
   </TableCell>
 );
 
-const TrackTableHead: React.SFC<ComponentProps> = props => {
+const TrackTableHead: FC<ComponentProps> = (props) => {
   return (
     <TableHead>
       <TableRow style={{ verticalAlign: "middle" }}>

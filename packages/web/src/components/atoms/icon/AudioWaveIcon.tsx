@@ -1,5 +1,6 @@
-import * as React from "react";
-import styled, { keyframes } from "styled-components"; // tslint:disable-line:import-name
+import React, { FC } from "react";
+import { keyframes } from "@emotion/core";
+import styled from "@emotion/styled";
 
 const MIN_HEIGHT = `20%`;
 const MAX_HEIGHT = `100%`;
@@ -31,15 +32,15 @@ const Bar = styled.div`
       : ""};
 `;
 
-const BottomBar = Bar.extend`
+const BottomBar = styled(Bar)`
   left: 2px;
   animation-duration: 474ms;
 `;
-const MiddleBar = Bar.extend`
+const MiddleBar = styled(Bar)`
   left: 9px;
   animation-duration: 333ms;
 `;
-const HighBar = Bar.extend`
+const HighBar = styled(Bar)`
   left: 16px;
   animation-duration: 407ms;
 `;
@@ -48,7 +49,7 @@ export interface PlayingIconProps {
   animation: boolean;
 }
 
-const PlayingIcon: React.SFC<PlayingIconProps> = props => {
+const PlayingIcon: FC<PlayingIconProps> = (props) => {
   const { animation } = props;
 
   return (

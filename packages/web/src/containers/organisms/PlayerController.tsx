@@ -1,6 +1,6 @@
-import * as React from "react";
+import React from "react";
 import { connect, DispatchProp } from "react-redux";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 
 import { Card, CardContent } from "@material-ui/core";
 

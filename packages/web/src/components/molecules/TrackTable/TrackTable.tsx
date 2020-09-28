@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { FC } from "react";
 import { Paper, Table, TableBody } from "@material-ui/core";
 
 import TrackTableHead from "./TrackTableHead";
@@ -15,7 +15,7 @@ export interface ComponentProps {
   playerState: "unavailable" | "playing" | "pausing";
 }
 
-const TrackTable: React.SFC<ComponentProps> = props => {
+const TrackTable: FC<ComponentProps> = props => {
   const { list, focusIndex, onRowClicked, playerState, ...others } = props;
 
   const rows =

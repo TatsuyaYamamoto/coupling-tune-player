@@ -1,19 +1,17 @@
-import * as React from "react";
+import React, { FC } from "react";
 import { connect, DispatchProp } from "react-redux";
 
-import { default as _TrackTable } from "../../components/molecules/TrackTable";
+import _TrackTable from "../../components/molecules/TrackTable";
 
 import { States } from "../../redux/store";
 import { goIndex } from "../../redux/modules/tracklist";
 import {
   play as playAudio,
   pause as pauseAudio,
-  updateCurrentTime
+  updateCurrentTime,
 } from "../../redux/modules/player";
 import TrackListIndex from "../../redux/model/TrackListIndex";
 import TrackList from "../../redux/model/TrackList";
-
-export interface ComponentState {}
 
 export interface ComponentProps {
   className?: string;
@@ -21,23 +19,12 @@ export interface ComponentProps {
 
 type Props = ComponentProps & StateProps & DispatchProp<States>;
 
-class TrackTable extends React.Component<Props, ComponentState> {
-  public render() {
-    const { trackList, focusIndex, playerState } = this.props;
+const TrackTable: FC<Props> = (props) => {
+  const { trackList, focusIndex, playerState } = props;
 
-    return (
-      <_TrackTable
-        onRowClicked={this.onClickRow}
-        list={trackList}
-        playerState={playerState}
-        focusIndex={focusIndex}
-      />
-    );
-  }
-
-  private onClickRow(index: number) {
+  const onClickRow = (index: number) => {
     console.log(`on row clicked. index: ${index}.`);
-    const { dispatch, trackList, playerState } = this.props;
+    const { dispatch, trackList, playerState } = props;
     if (!dispatch) {
       return;
     }
@@ -54,8 +41,17 @@ class TrackTable extends React.Component<Props, ComponentState> {
     dispatch(goIndex(i) as any);
     dispatch(updateCurrentTime(0) as any);
     dispatch(playAudio(left, right) as any);
-  }
-}
+  };
+
+  return (
+    <_TrackTable
+      onRowClicked={onClickRow}
+      list={trackList}
+      playerState={playerState}
+      focusIndex={focusIndex}
+    />
+  );
+};
 
 interface StateProps {
   playerState: "unavailable" | "playing" | "pausing";
@@ -75,7 +71,7 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   return {
     playerState,
     focusIndex,
-    trackList: list
+    trackList: list,
   };
 }
 

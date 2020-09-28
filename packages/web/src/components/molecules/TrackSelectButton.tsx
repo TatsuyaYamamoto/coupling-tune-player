@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { default as styled } from "styled-components";
+import styled from "@emotion/styled";
 import { WithTheme, withTheme } from "@material-ui/core";
 
 import SelectableButton from "../atoms/SelectableButton";

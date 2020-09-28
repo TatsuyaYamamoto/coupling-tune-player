@@ -1,6 +1,6 @@
-import * as React from "react";
+import React, { FC } from "react";
 
-import { default as Slider } from "rc-slider";
+import Slider from "rc-slider";
 
 interface Props {
   min: number;
@@ -11,7 +11,7 @@ interface Props {
   onFixed: (newValue: number) => void;
 }
 
-const PlayTimeSlider: React.SFC<Props> = props => {
+const PlayTimeSlider: FC<Props> = props => {
   const { min, max, current, onStartChange, onChange, onFixed } = props;
 
   return (

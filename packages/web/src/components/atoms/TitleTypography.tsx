@@ -1,10 +1,10 @@
-import * as React from "react";
+import React, { FC } from "react";
 import { Typography } from "@material-ui/core";
 
-const TitleTypography: React.SFC = props => {
+const TitleTypography: FC = props => {
   return (
     <Typography
-      variant="title"
+      variant="h4"
       color="inherit"
       style={{ fontFamily: "Nico Moji" }}
     >

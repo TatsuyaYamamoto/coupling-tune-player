@@ -1,7 +1,7 @@
-import * as React from "react";
+import React, { FC } from "react";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { default as styled } from "styled-components";
+import styled from "@emotion/styled";
 
 import { Audiotrack as AudiotrackIcon } from "@material-ui/icons";
 
@@ -62,69 +62,74 @@ export interface ComponentState {}
 type P = ComponentProps & DispatchProps & StateProps;
 type S = ComponentState;
 
-class CurrentTrackView extends React.Component<P, S> {
-  public render() {
-    const { left, right, loading, ...others } = this.props;
+const CurrentTrackView: FC<P> = (props) => {
+  const {
+    left,
+    right,
+    loading,
+    selectLeftAudios,
+    selectRightAudios,
+    ...others
+  } = props;
 
-    const leftImage =
-      left && left.pictureBase64 ? (
-        <StyledCdCoverImage src={left.pictureBase64} />
-      ) : (
-        <StyledNoCdCoverImage />
-      );
+  const onLeftAudioFileSelected = (fileList: FileList) => {
+    selectLeftAudios(fileList);
 
-    const rightImage =
-      right && right.pictureBase64 ? (
-        <StyledCdCoverImage src={right.pictureBase64} />
-      ) : (
-        <StyledNoCdCoverImage />
-      );
+    sendEvent("click", {
+      category: "player",
+      label: "select_audio",
+      value: "left",
+    });
+  };
 
-    return (
-      <Root {...others}>
-        <LeftArea>
-          {leftImage}
-          <StyledTrackSelectButton
-            label="Left Track"
-            leftIcon={<AudiotrackIcon />}
-            onFileSelected={this.onLeftAudioFileSelected}
-          />
-        </LeftArea>
+  const onRightAudioFileSelected = (fileList: FileList) => {
+    selectRightAudios(fileList);
 
-        <RightArea>
-          {rightImage}
-          <StyledTrackSelectButton
-            label="Right Track"
-            rightIcon={<AudiotrackIcon />}
-            onFileSelected={this.onRightAudioFileSelected}
-          />
-        </RightArea>
+    sendEvent("click", {
+      category: "player",
+      label: "select_audio",
+      value: "right",
+    });
+  };
 
-        <LoadingDialog open={loading} />
-      </Root>
+  const leftImage =
+    left && left.pictureBase64 ? (
+      <StyledCdCoverImage src={left.pictureBase64} />
+    ) : (
+      <StyledNoCdCoverImage />
     );
-  }
 
-  private onLeftAudioFileSelected(fileList: FileList) {
-    this.props.selectLeftAudios(fileList);
+  const rightImage =
+    right && right.pictureBase64 ? (
+      <StyledCdCoverImage src={right.pictureBase64} />
+    ) : (
+      <StyledNoCdCoverImage />
+    );
 
-    sendEvent("click", {
-      category: "player",
-      label: "select_audio",
-      value: "left"
-    });
-  }
+  return (
+    <Root {...others}>
+      <LeftArea>
+        {leftImage}
+        <StyledTrackSelectButton
+          label="Left Track"
+          leftIcon={<AudiotrackIcon />}
+          onFileSelected={onLeftAudioFileSelected}
+        />
+      </LeftArea>
 
-  private onRightAudioFileSelected(fileList: FileList) {
-    this.props.selectRightAudios(fileList);
+      <RightArea>
+        {rightImage}
+        <StyledTrackSelectButton
+          label="Right Track"
+          rightIcon={<AudiotrackIcon />}
+          onFileSelected={onRightAudioFileSelected}
+        />
+      </RightArea>
 
-    sendEvent("click", {
-      category: "player",
-      label: "select_audio",
-      value: "right"
-    });
-  }
-}
+      <LoadingDialog open={loading} />
+    </Root>
+  );
+};
 
 interface StateProps {
   left: Song | null;
@@ -140,7 +145,7 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
   return {
     loading,
     left,
-    right
+    right,
   };
 }
 
@@ -159,11 +164,8 @@ function mapDispatchToProps(
     },
     selectRightAudios: (fileList: FileList) => {
       dispatch(select(toFiles(fileList), "right") as any);
-    }
+    },
   };
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CurrentTrackView);
+export default connect(mapStateToProps, mapDispatchToProps)(CurrentTrackView);

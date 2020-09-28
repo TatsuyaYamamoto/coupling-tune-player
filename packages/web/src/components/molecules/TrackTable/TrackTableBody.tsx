@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { FC } from "react";
 import { TableBody } from "@material-ui/core";
 
 import NoTrackRow from "./NoTrackRow";
@@ -14,7 +14,7 @@ export interface ComponentProps {
   playerState: "unavailable" | "playing" | "pausing";
 }
 
-const TrackTable: React.SFC<ComponentProps> = props => {
+const TrackTable: FC<ComponentProps> = props => {
   const { list, focusIndex, onRowClicked, playerState } = props;
 
   if (list.size() === 0) {

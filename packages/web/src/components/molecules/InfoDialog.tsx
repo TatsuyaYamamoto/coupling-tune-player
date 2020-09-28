@@ -1,5 +1,5 @@
-import * as React from "react";
-import { default as styled } from "styled-components";
+import React from "react";
+import styled from "@emotion/styled";
 
 import Button from "@material-ui/core/Button";
 import { Dialog, DialogActions, DialogContent } from "@material-ui/core";

@@ -1,7 +1,7 @@
-import * as React from "react";
-import styled from "styled-components";
+import React, { FC, useRef } from "react";
+import styled from "@emotion/styled";
 
-import { default as Button, ButtonProps } from "@material-ui/core/Button";
+import Button, { ButtonProps } from "@material-ui/core/Button";
 
 export interface ComponentProps extends ButtonProps {
   onSelected?: (fileList: FileList) => void;
@@ -13,41 +13,14 @@ const Input = styled.input`
   display: none;
 `;
 
-class SelectableButton extends React.Component<ComponentProps, {}> {
-  private inputRef: HTMLInputElement | null = null;
+const SelectableButton: FC<ComponentProps> = (props) => {
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  public render() {
-    const { children, accept, multiple, onSelected, ...others } = this.props;
-    return (
-      <React.Fragment>
-        <Button color="primary" onClick={this.onClick} {...others}>
-          {children}
-        </Button>
-
-        <Input
-          type="file"
-          accept={accept}
-          multiple={multiple}
-          innerRef={this.setInnerRef}
-          onChange={this.onInputChanged}
-        />
-      </React.Fragment>
-    );
-  }
-
-  private onClick = (event: any): void => {
-    if (!this.inputRef) {
-      return;
-    }
-
-    this.inputRef.click();
+  const onClick = (event: any): void => {
+    inputRef.current.click();
   };
 
-  private setInnerRef = (ref: HTMLInputElement) => {
-    this.inputRef = ref;
-  };
-
-  private onInputChanged(e: React.FormEvent<HTMLInputElement>) {
+  const onInputChanged = (e: React.FormEvent<HTMLInputElement>) => {
     // TODO: Check support FileAPI.
     const fileList = e.currentTarget.files;
 
@@ -55,10 +28,27 @@ class SelectableButton extends React.Component<ComponentProps, {}> {
       return;
     }
 
-    if (this.props.onSelected) {
-      this.props.onSelected(fileList);
+    if (onSelected) {
+      onSelected(fileList);
     }
-  }
-}
+  };
+
+  const { children, accept, multiple, onSelected, ...others } = props;
+  return (
+    <React.Fragment>
+      <Button color="primary" onClick={onClick} {...others}>
+        {children}
+      </Button>
+
+      <Input
+        type="file"
+        accept={accept}
+        multiple={multiple}
+        ref={inputRef}
+        onChange={onInputChanged}
+      />
+    </React.Fragment>
+  );
+};
 
 export default SelectableButton;

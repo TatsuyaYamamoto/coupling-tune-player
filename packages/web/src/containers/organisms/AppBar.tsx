@@ -1,7 +1,7 @@
-import * as React from "react";
+import React, { FC, useState } from "react";
 import { connect } from "react-redux";
 
-import styled from "styled-components";
+import styled from "@emotion/styled";
 
 import { AppBar as MuiAppBar, IconButton, Toolbar } from "@material-ui/core";
 
@@ -38,66 +38,25 @@ interface ComponentState {
 type P = ComponentProps & StateProps;
 type S = ComponentState;
 
-class AppBar extends React.Component<P, S> {
-  public state = {
-    isInfoDialogOpen: false,
-  };
+const AppBar: FC<P> = (props) => {
+  const { left, right } = props;
 
-  public render() {
-    const { isInfoDialogOpen } = this.state;
+  const [isInfoDialogOpen, setInfoDialogOpen] = useState(false);
 
-    const title = (
-      <TitleTypography>
-        かぷちゅうプレイヤー/Coupling Tune Player
-      </TitleTypography>
-    );
+  const onOpenInfoDialog = () => {
+    setInfoDialogOpen(true);
 
-    const tweetButton = (
-      <IconButton onClick={this.onShowTweet}>
-        <TwitterLogoSvg />
-      </IconButton>
-    );
-
-    const infoButton = (
-      <IconButton onClick={this.onOpenInfoDialog} color="inherit">
-        <InfoIcon />
-      </IconButton>
-    );
-
-    return (
-      <Root>
-        <MuiAppBar position="fixed">
-          <Toolbar>
-            {title}
-            <CenterSpace />
-            {tweetButton}
-            {infoButton}
-          </Toolbar>
-        </MuiAppBar>
-
-        <InfoDialog
-          open={isInfoDialogOpen}
-          handleClose={this.onCloseInfoDialog}
-        />
-      </Root>
-    );
-  }
-
-  private onOpenInfoDialog() {
-    this.setState({ isInfoDialogOpen: true });
     sendEvent("click", {
       category: "info",
       value: "show_about_app",
     });
-  }
+  };
 
-  private onCloseInfoDialog() {
-    this.setState({ isInfoDialogOpen: false });
-  }
+  const onCloseInfoDialog = () => {
+    setInfoDialogOpen(false);
+  };
 
-  private onShowTweet() {
-    const { left, right } = this.props;
-
+  const onShowTweet = () => {
     let text = "かぷちゅうプレイヤー/Coupling Tune Player\n\n";
 
     if (left && right) {
@@ -129,8 +88,39 @@ class AppBar extends React.Component<P, S> {
       category: "info",
       value: "go_twitter_intent",
     });
-  }
-}
+  };
+
+  const title = (
+    <TitleTypography>かぷちゅうプレイヤー/Coupling Tune Player</TitleTypography>
+  );
+
+  const tweetButton = (
+    <IconButton onClick={onShowTweet}>
+      <TwitterLogoSvg />
+    </IconButton>
+  );
+
+  const infoButton = (
+    <IconButton onClick={onOpenInfoDialog} color="inherit">
+      <InfoIcon />
+    </IconButton>
+  );
+
+  return (
+    <Root>
+      <MuiAppBar position="fixed">
+        <Toolbar>
+          {title}
+          <CenterSpace />
+          {tweetButton}
+          {infoButton}
+        </Toolbar>
+      </MuiAppBar>
+
+      <InfoDialog open={isInfoDialogOpen} handleClose={onCloseInfoDialog} />
+    </Root>
+  );
+};
 
 interface StateProps {
   left: Song | null;

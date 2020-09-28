@@ -1,6 +1,6 @@
-import * as React from "react";
+import React, { FC } from "react";
 import { Fab, IconButton } from "@material-ui/core";
-import { default as styled } from "styled-components";
+import styled from "@emotion/styled";
 
 import PLayTrackIcon from "../../components/atoms/icon/PLayTrackIcon";
 import PauseTrackIcon from "../../components/atoms/icon/PauseTrackIcon";
@@ -25,7 +25,7 @@ interface TrackControllerProps {
   onPrevTrackClick: () => void;
 }
 
-const TrackController: React.SFC<TrackControllerProps> = (props) => {
+const TrackController: FC<TrackControllerProps> = (props) => {
   const {
     state,
     hasNext,
