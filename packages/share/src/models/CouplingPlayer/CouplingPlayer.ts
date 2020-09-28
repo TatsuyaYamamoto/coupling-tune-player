@@ -46,39 +46,30 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
     this.emit("play-request");
     this._loading = true;
 
-    const [left, right] = await Promise.all(
+    const sources = await Promise.all(
       arrayBuffers.map(
         (arrayBuffer) =>
           new Promise<{
             audioBuffer: AudioBuffer;
-            analyzeResult: AnalyzeResult;
+            startPosition: number;
           }>((resolve, reject) => {
             context.decodeAudioData(
               arrayBuffer,
-              (audioBuffer) =>
+              (audioBuffer) => {
                 resolve({
                   audioBuffer,
-                  analyzeResult: analyzeBpm(audioBuffer),
-                }),
-              (e) => reject(e)
+                  startPosition: analyzeBpm(audioBuffer).startPosition,
+                });
+              },
+              (e) => {
+                reject(e);
+              }
             );
           })
       )
     );
 
-    this.startSyncPlay(
-      [
-        {
-          audioBuffer: left.audioBuffer,
-          startPosition: left.analyzeResult.startPosition,
-        },
-        {
-          audioBuffer: right.audioBuffer,
-          startPosition: right.analyzeResult.startPosition,
-        },
-      ],
-      this.currentTime
-    ).then(() => {
+    this.startSyncPlay(sources, this.currentTime).then(() => {
       this.lastCheckTime = null;
       if (this.intervalId !== null) {
         clearInterval(this.intervalId as number);
@@ -178,8 +169,6 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
 
     const offsets = sources.map(({ startPosition }) => {
       const diff = startPosition - minStartPosition;
-      console.log(minStartPosition, startPosition, diff);
-
       return offset + diff;
     });
 
