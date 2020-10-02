@@ -1,6 +1,8 @@
 import { atom, useRecoilState } from "recoil";
+
 import { CouplingTrack } from "../../models/CouplingTrack";
 import { readMusicMetadata } from "../../utils/mainProcessBridge";
+import { encodeBase64ImageFromArray } from "../../utils/calc";
 
 const trackState = atom<CouplingTrack[]>({
   key: "trackState",
@@ -10,16 +12,18 @@ const trackState = atom<CouplingTrack[]>({
 const useLibrary = () => {
   const [tracks, setTracks] = useRecoilState(trackState);
 
-  const loadTracks = (audioFilePaths: string[]) => {
-    Promise.all(
+  const loadTracks = async (audioFilePaths: string[]) => {
+    const metadataAndPathList = await Promise.all(
       audioFilePaths.map(async (path) => {
         const metadata = await readMusicMetadata(path);
         return { metadata, path };
       })
-    ).then((values) => {
-      const couplingTracks: CouplingTrack[] = [];
+    );
 
-      for (const { metadata, path } of values) {
+    setTracks((prev) => {
+      const couplingTracks: CouplingTrack[] = [...prev];
+
+      for (const { metadata, path } of metadataAndPathList) {
         const { title, artist, album, picture: artworkData } = metadata.common;
         const { duration } = metadata.format;
 
@@ -32,51 +36,51 @@ const useLibrary = () => {
 
         let artwork;
         if (artworkData) {
-          // Uint8Array
           const bytes = artworkData[0].data;
-
-          // https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string/9458996#9458996
-          let binary = "";
-          for (let i = 0; i < bytes.byteLength; i++) {
-            binary += String.fromCharCode(bytes[i]);
-          }
-          const base64 = btoa(binary);
-
-          artwork = `data:${artworkData[0].format};base64,${base64}`;
+          artwork = encodeBase64ImageFromArray(bytes, artworkData[0].format);
         }
 
-        const couplingableTrack = couplingTracks.find((t) => t.title === title);
+        const newTrack = {
+          title,
+          album: album || "unknown",
+          artist,
+          durationSeconds: duration || 0,
+          artworkBase64: artwork,
+          audioFilePath: path,
+        };
 
-        if (couplingableTrack) {
-          couplingableTrack.tracks.push({
+        const couplableTrackIndex = couplingTracks.findIndex((t) => {
+          return t.title === title;
+        });
+        const couplableTrack = couplingTracks[couplableTrackIndex];
+
+        if (!couplableTrack) {
+          couplingTracks.push({
             title,
-            album: album || "unknown",
-            artist,
             durationSeconds: duration || 0,
-            artworkBase64: artwork,
-            audioFilePath: path,
+            tracks: [newTrack],
+            playCount: 0,
           });
           continue;
         }
 
-        couplingTracks.push({
-          title,
-          durationSeconds: duration || 0,
-          tracks: [
-            {
-              title,
-              album: album || "unknown",
-              artist,
-              durationSeconds: duration || 0,
-              artworkBase64: artwork,
-              audioFilePath: path,
-            },
-          ],
-          playCount: 0,
-        });
+        const coupledArtistTrack = couplableTrack.tracks.find(
+          (t) => t.artist === artist
+        );
+
+        if (!coupledArtistTrack) {
+          couplingTracks[couplableTrackIndex] = {
+            ...couplableTrack,
+            tracks: [...couplableTrack.tracks, newTrack],
+          };
+          continue;
+        }
+
+        // ignore
+        console.log("provided artist's track is duplicated.", title, artist);
       }
 
-      setTracks(couplingTracks);
+      return couplingTracks;
     });
   };
 

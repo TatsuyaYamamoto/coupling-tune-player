@@ -21,6 +21,10 @@ export const openAudioFileSelectDialog = async () => {
   return audioFilePaths;
 };
 
+export const readAudioFiles = async (path: string) => {
+  return window.electron.readAudioFiles(path);
+};
+
 export const readAsArrayBuffer = async (path: string) => {
   return window.electron.readAsBuffer(path).then((array) => array.buffer);
 };

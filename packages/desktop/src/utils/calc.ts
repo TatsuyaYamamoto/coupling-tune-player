@@ -1,3 +1,22 @@
+/**
+ *
+ * @param bytes
+ * @param format
+ * @see https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string/9458996#9458996
+ */
+export const encodeBase64ImageFromArray = (
+  bytes: Uint8Array,
+  format: string
+): string => {
+  let binary = "";
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  const base64 = btoa(binary);
+
+  return `data:${format};base64,${base64}`;
+};
+
 export function descendingComparator<T>(a: T, b: T, orderField: keyof T) {
   if (b[orderField] < a[orderField]) {
     return -1;

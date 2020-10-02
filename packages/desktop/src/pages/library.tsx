@@ -9,6 +9,7 @@ import CouplingTrackTable from "../components/organisms/CouplingTrackTable/Coupl
 
 import {
   ipcRendererOn,
+  readAudioFiles,
   openAudioFileSelectDialog,
 } from "../utils/mainProcessBridge";
 import DragImportOverlay from "../components/organisms/DragImportOverlay";
@@ -86,22 +87,37 @@ const LibraryPage: FC = () => {
     handleSelectGuide(false);
   };
 
-  const onFileDropped = (files: FileList) => {
+  const onFileDropped = async (files: FileList) => {
     console.log(`files are dropped`, files);
 
-    const audioFileOrDirPath: string[] = [];
+    const dirPaths: string[] = [];
+    const audioFilePaths: string[] = [];
+
     Array.from(files).forEach((file) => {
-      if (file.type === "" || file.type.startsWith("audio/")) {
-        audioFileOrDirPath.push(file.path);
+      if (file.type === "" /* dir */) {
+        dirPaths.push(file.path);
+      }
+      if (file.type.startsWith("audio/")) {
+        audioFilePaths.push(file.path);
       }
     });
 
-    if (audioFileOrDirPath.length === 0) {
+    const paths = (
+      await Promise.all(
+        dirPaths.map((dirPath) => {
+          return readAudioFiles(dirPath);
+        })
+      )
+    ).flat();
+
+    audioFilePaths.push(...paths);
+
+    if (audioFilePaths.length === 0) {
       handleSelectGuide(true);
       return;
     }
 
-    loadTracks(audioFileOrDirPath);
+    loadTracks(audioFilePaths);
   };
 
   useEffect(() => {
