@@ -1,124 +1,139 @@
 import { EventEmitter } from "eventemitter3";
 
-import { context } from "./AudioContext";
 import { analyzeBpm, AnalyzeResult } from "./BpmAnalyzer";
 
-export type CouplingPlayerEventTypes =
-  | "play-request"
-  | "play"
-  | "pause"
-  | "update"
-  | "end";
+export type CouplingPlayerEventTypes = "play" | "pause" | "update";
+
+const log = (message: string, ...data: any[]) => {
+  console.log(`[CouplingPlayer] ${message}`, ...data);
+};
 
 export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
-  private _playing = false;
-  private _loading = false;
-  private _currentTime = 0;
-  readonly duration = 0;
+  public static INTERNAL_LOOPER_INTERVAL = 500;
 
-  private lastCheckTime: number | null = null;
+  /**
+   * AudioContext instance.
+   * @see https://developer.mozilla.org/ja/docs/Web/API/AudioContext
+   */
+  private context: AudioContext = new (AudioContext ||
+    (window as any).webkitAudioContext)();
+  private _playing = false;
+  private _currentTime = 0;
+  private _duration = 0;
+
+  private arrayBuffers: ArrayBuffer[];
+
+  private lastCheckedContextTime: number | null = null;
   private intervalId: NodeJS.Timer | number | null = null;
-  private audioBufferSourceNodes: AudioBufferSourceNode[] = [];
+  private audioBufferSourceNodes: AudioBufferSourceNode[] | null = null;
+  private sources:
+    | {
+        audioBuffer: AudioBuffer;
+        analyzedData: AnalyzeResult;
+      }[]
+    | null = null;
 
   public get playing(): boolean {
     return this._playing;
-  }
-
-  public get loading(): boolean {
-    return this._loading;
   }
 
   public get currentTime(): number {
     return this._currentTime;
   }
 
-  public constructor() {
-    super();
+  public set currentTime(time: number) {
+    if (this.duration < time) {
+      console.error(
+        `provided time (${time}s) is over duration (${this.duration}s).`
+      );
+      return;
+    }
+    log("update current time", time);
+
+    (async () => {
+      const stopOnce = this.playing;
+      if (stopOnce) {
+        log("stop once");
+        await this.internalStop();
+      }
+
+      this._currentTime = time;
+
+      if (stopOnce) {
+        log("re-play");
+        await this.internalPlay();
+      }
+
+      this.emit("update", { currentTime: this.currentTime });
+    })();
   }
 
-  public async play(arrayBuffers: ArrayBuffer[]) {
-    console.log("CouplingPlayer#play");
+  public get duration(): number {
+    return this._duration;
+  }
+
+  public constructor(arrayBuffers: ArrayBuffer[]) {
+    super();
+
+    this.arrayBuffers = arrayBuffers;
+  }
+
+  public async play() {
+    log(`try to start player, currentTime: ${this.currentTime}`);
 
     if (this.playing) {
-      this.stopSyncPlay();
+      log("stop sync-play first.");
+      await this.internalStop();
     }
 
-    this.emit("play-request");
-    this._loading = true;
+    if (!this.sources) {
+      this.sources = await this.decodeAudioSources(this.arrayBuffers);
+      this._duration = this.sources[0].audioBuffer.duration;
+      log("player sources are decoded.");
+    }
 
-    const sources = await Promise.all(
-      arrayBuffers.map(
-        (arrayBuffer) =>
-          new Promise<{
-            audioBuffer: AudioBuffer;
-            startPosition: number;
-          }>((resolve, reject) => {
-            context.decodeAudioData(
-              arrayBuffer,
-              (audioBuffer) => {
-                resolve({
-                  audioBuffer,
-                  startPosition: analyzeBpm(audioBuffer).startPosition,
-                });
-              },
-              (e) => {
-                reject(e);
-              }
-            );
-          })
-      )
-    );
+    await this.internalPlay();
 
-    this.startSyncPlay(sources, this.currentTime).then(() => {
-      this.lastCheckTime = null;
-      if (this.intervalId !== null) {
-        clearInterval(this.intervalId as number);
-      }
-      this.intervalId = null;
-
-      this.emit("end");
-      this._playing = false;
-    });
-
+    log(`success to start player. duration: ${this.duration}sec`);
     this.emit("play");
-    this._loading = false;
-    this._playing = true;
-
-    this.intervalId = setInterval(() => {
-      this.updateCurrentTime();
-    }, 500);
   }
-  public pause() {
-    console.log("CouplingPlayer#pause");
+
+  public async pause() {
+    log(`pause`);
 
     if (!this.playing) {
-      console.error("Player is not running.");
+      console.error(`player is not running.`);
       return;
     }
 
-    this.stopSyncPlay();
+    await this.internalStop();
 
     this.emit("pause");
-    this._playing = false;
   }
-  public updateCurrentTime(time?: number) {
-    if (typeof time !== "undefined") {
-      this._currentTime = time;
-      this.emit("update", { currentTime: this.currentTime });
+
+  private async internalPlay() {
+    if (!this.sources) {
+      log("audio source is empty.");
       return;
     }
 
-    const now = context.currentTime;
-    if (this.lastCheckTime == null) {
-      this.lastCheckTime = now;
-      return;
+    this.startSyncPlay(this.sources, this.currentTime);
+    this.intervalId = setInterval(() => {
+      this.onPlayerUpdated();
+    }, CouplingPlayer.INTERNAL_LOOPER_INTERVAL);
+    log("start internal looper.", this.intervalId);
+    this._playing = true;
+  }
+
+  private async internalStop() {
+    await this.stopSyncPlay();
+    if (this.intervalId !== null) {
+      log("stop internal looper.", this.intervalId);
+      clearInterval(this.intervalId as number);
     }
-
-    const add = now - this.lastCheckTime;
-    this.lastCheckTime = now;
-    this._currentTime = this._currentTime + add;
-
-    this.emit("update", { currentTime: this.currentTime });
+    this.lastCheckedContextTime = null;
+    this.intervalId = null;
+    this._playing = false;
   }
 
   /**
@@ -129,19 +144,19 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
    * @private
    */
   private startSyncPlay(
-    sources: { audioBuffer: AudioBuffer; startPosition: number }[],
+    sources: { audioBuffer: AudioBuffer; analyzedData: AnalyzeResult }[],
     offset: number = 0
-  ): Promise<void> {
-    console.log(`CouplingPlayer#startSyncPlay, offset: ${offset}`);
+  ): void {
+    log(`startSyncPlay offset: ${offset}`);
 
     // 音量は入力の数に合わせて下げる
-    const gainNode = context.createGain();
+    const gainNode = this.context.createGain();
     gainNode.gain.value = 0.5 + 0.5 / sources.length;
 
     // 定位は左端(-1.0)から右端(+1.0)までに等間隔に配置する
     const space = 2.0 / (sources.length + 1);
     const pannerNodes = sources.map((_, index) => {
-      const pannerNode = context.createStereoPanner();
+      const pannerNode = this.context.createStereoPanner();
       pannerNode.pan.value = -1.0 + space * (index + 1);
       pannerNode.connect(gainNode);
       return pannerNode;
@@ -149,26 +164,20 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
 
     this.audioBufferSourceNodes = sources.map((source, index) => {
       const pannerNode = pannerNodes[index];
-      const audioSource = context.createBufferSource();
+      const audioSource = this.context.createBufferSource();
       audioSource.buffer = source.audioBuffer;
       audioSource.connect(pannerNode);
       return audioSource;
     });
 
-    gainNode.connect(context.destination);
+    gainNode.connect(this.context.destination);
 
-    const endPromises = this.audioBufferSourceNodes.map((source) => {
-      return new Promise((resolve) => {
-        source.onended = () => {
-          resolve();
-        };
-      });
-    });
+    const minStartPosition = Math.min(
+      ...sources.map((s) => s.analyzedData.startPosition)
+    );
 
-    const minStartPosition = Math.min(...sources.map((s) => s.startPosition));
-
-    const offsets = sources.map(({ startPosition }) => {
-      const diff = startPosition - minStartPosition;
+    const offsets = sources.map((s) => {
+      const diff = s.analyzedData.startPosition - minStartPosition;
       return offset + diff;
     });
 
@@ -176,23 +185,56 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
     this.audioBufferSourceNodes.forEach((node, index) => {
       node.start(0, offsets[index]);
     });
-    console.log(`Start sync play.`);
-
-    return Promise.race(endPromises).then(() => {
-      this.audioBufferSourceNodes = [];
-    });
   }
 
   /**
    * Stop audio source.
    */
-  private stopSyncPlay(): void {
-    console.log("CouplingPlayer#stopSyncPlay");
+  private async stopSyncPlay(): Promise<void> {
+    log("stopSyncPlay");
+
+    if (!this.audioBufferSourceNodes) {
+      console.error("player has no nodes.");
+      return;
+    }
+
+    const endPromises = this.audioBufferSourceNodes.map((source) => {
+      return new Promise((resolve) => {
+        source.onended = () => resolve();
+      });
+    });
 
     this.audioBufferSourceNodes.forEach((node) => {
       node.stop(0);
     });
 
-    this.audioBufferSourceNodes = [];
+    await Promise.race(endPromises);
+  }
+
+  private onPlayerUpdated() {
+    const currentContextTime = this.context.currentTime;
+    if (this.lastCheckedContextTime === null) {
+      this.lastCheckedContextTime = currentContextTime;
+      return;
+    }
+
+    const diff = currentContextTime - this.lastCheckedContextTime;
+    this.lastCheckedContextTime = currentContextTime;
+
+    this._currentTime = this._currentTime + diff;
+
+    this.emit("update", { currentTime: this.currentTime });
+  }
+
+  private decodeAudioSources(arrayBuffers: ArrayBuffer[]) {
+    return Promise.all(
+      arrayBuffers.map(async (buffer) => {
+        const audioBuffer = await this.context.decodeAudioData(buffer);
+        return {
+          audioBuffer,
+          analyzedData: analyzeBpm(audioBuffer),
+        };
+      })
+    );
   }
 }

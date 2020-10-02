@@ -22,7 +22,7 @@ export const openAudioFileSelectDialog = async () => {
 };
 
 export const readAsArrayBuffer = async (path: string) => {
-  return window.electron.readAsBuffer(path);
+  return window.electron.readAsBuffer(path).then((array) => array.buffer);
 };
 
 export const readMusicMetadata = (path: string) => {

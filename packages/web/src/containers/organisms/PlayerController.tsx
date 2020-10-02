@@ -78,7 +78,7 @@ class PlayerController extends React.Component<Props, ComponentState> {
     );
   }
 
-  private onPlay() {
+  private onPlay = () => {
     const { leftAudio, rightAudio, dispatch } = this.props;
     if (!leftAudio || !rightAudio || !dispatch) {
       return;
@@ -90,9 +90,9 @@ class PlayerController extends React.Component<Props, ComponentState> {
       category: "player",
       label: "play",
     });
-  }
+  };
 
-  private onPause() {
+  private onPause = () => {
     const { dispatch } = this.props;
     if (!dispatch) {
       return;
@@ -103,9 +103,9 @@ class PlayerController extends React.Component<Props, ComponentState> {
       category: "player",
       label: "pause",
     });
-  }
+  };
 
-  private onPrevClicked() {
+  private onPrevClicked = () => {
     console.log("on prev skip button clicked.");
     const { dispatch } = this.props;
     if (!dispatch) {
@@ -113,9 +113,9 @@ class PlayerController extends React.Component<Props, ComponentState> {
     }
 
     dispatch(skipPrevious() as any);
-  }
+  };
 
-  private onNextClicked() {
+  private onNextClicked = () => {
     console.log("on next skip button clicked.");
     const { dispatch } = this.props;
     if (!dispatch) {
@@ -123,41 +123,31 @@ class PlayerController extends React.Component<Props, ComponentState> {
     }
 
     dispatch(skipNext() as any);
-  }
+  };
 
-  private onSliderStart() {
+  private onSliderStart = () => {
     const { current } = this.props;
     this.setState({ manualCurrentTime: current });
-  }
+  };
 
-  private onSliderChange(newValue: number) {
+  private onSliderChange = (newValue: number) => {
     this.setState({ manualCurrentTime: newValue });
-  }
+  };
 
-  private async onSliderFixed(newValue: number) {
+  private onSliderFixed = (newValue: number) => {
     const { leftAudio, rightAudio, dispatch } = this.props;
     if (!leftAudio || !rightAudio || !dispatch) {
       return;
     }
 
     this.setState({ manualCurrentTime: null });
-    const stopOnce = this.props.playerState === "playing";
-
-    if (stopOnce) {
-      dispatch(pauseAudio() as any);
-    }
-
     dispatch(updateCurrentTime(newValue) as any);
-
-    if (stopOnce) {
-      dispatch(playAudio(leftAudio, rightAudio) as any);
-    }
 
     sendEvent("click", {
       category: "player",
       label: "slider",
     });
-  }
+  };
 }
 
 interface StateProps {

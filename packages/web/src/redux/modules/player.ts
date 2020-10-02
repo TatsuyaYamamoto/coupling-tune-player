@@ -1,15 +1,13 @@
 import { AnyAction, Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
 
-import { States } from "../store";
+import { CouplingPlayer } from "@coupling-tune-player/share";
 
-import { context, loadAsAudioBuffer } from "../../helper/AudioContext";
+import { States } from "../store";
 
 import Song from "../model/Song";
 
-import { syncPlay, stop as syncStop } from "../../helper/SyncPlayer";
 import { goNextIndex, goPrevIndex } from "./tracklist";
-import { analyzeBpm } from "../../helper/BpmAnalyzer";
 
 export enum PlayerActionTypes {
   PLAY_REQUEST = "c_tune/player/play_request",
@@ -20,8 +18,8 @@ export enum PlayerActionTypes {
 
 type ThunkResult<R> = ThunkAction<R, States, undefined, AnyAction>;
 
-let lastCheckTime: number | null = null;
-let intervalId: NodeJS.Timer | number | null = null;
+let couplingPlayer: CouplingPlayer | null = null;
+let playingTitle: string | null = null;
 
 /**
  * 音声の再生を開始する。
@@ -34,62 +32,46 @@ export const play = (leftAudio: Song, rightAudio: Song): ThunkResult<void> => {
   return async (dispatch, getState) => {
     dispatch({ type: PlayerActionTypes.PLAY_REQUEST });
 
-    const [left, right] = await Promise.all([
-      analyze(leftAudio.file, "left"),
-      analyze(rightAudio.file, "right"),
-    ]);
-
-    const { currentTime } = getState().player;
-    syncPlay(
-      left.audioBuffer,
-      left.startPosition,
-      right.audioBuffer,
-      right.startPosition,
-      currentTime
-    ).then(() => {
-      lastCheckTime = null;
-      if (intervalId !== null) {
-        clearInterval(intervalId as number);
+    if (playingTitle !== leftAudio.title) {
+      if (couplingPlayer) {
+        couplingPlayer.off("play");
+        couplingPlayer.off("pause");
+        couplingPlayer.off("update");
       }
-      intervalId = null;
 
-      const { player, tracklist } = getState();
+      couplingPlayer = new CouplingPlayer(
+        await Promise.all([
+          leftAudio.file.arrayBuffer(),
+          rightAudio.file.arrayBuffer(),
+        ])
+      );
+      couplingPlayer.on("play", () => {
+        dispatch({
+          type: PlayerActionTypes.PLAY_SUCCESS,
+          payload: {
+            duration: couplingPlayer.duration,
+          },
+        });
+      });
+      couplingPlayer.on("pause", (args: any) => {
+        dispatch({
+          type: PlayerActionTypes.PAUSE,
+        });
+      });
+      couplingPlayer.on("update", (args: any) => {
+        dispatch({
+          type: PlayerActionTypes.UPDATE_CURRENT,
+          payload: { currentTime: args.currentTime },
+        });
+      });
+    }
 
-      if (player.playing && tracklist.nextIndex !== null) {
-        dispatch(skipNext());
-      }
-    });
+    await couplingPlayer.play();
 
-    dispatch({
-      type: PlayerActionTypes.PLAY_SUCCESS,
-      payload: {
-        duration: left.audioBuffer.duration,
-      },
-    });
-
-    intervalId = setInterval(() => {
-      dispatch(updateCurrentTime());
-    }, 500);
+    playingTitle = leftAudio.title;
+    couplingPlayer.currentTime = getState().player.currentTime;
   };
 };
-
-/**
- *
- * @param {File} file
- * @param {"left" | "right"} type
- * @returns {Promise<{audioBuffer: AudioBuffer; startPosition: number}>}
- */
-async function analyze(file: File, type: "left" | "right") {
-  const audioBuffer = await loadAsAudioBuffer(file);
-  console.log(
-    `Loaded as audio buffer. type: ${type}, length: ${audioBuffer.length}`
-  );
-
-  const { bpm, startPosition } = analyzeBpm(audioBuffer);
-  console.log(`Analyzed. type: ${type}, BPM: ${bpm}`);
-
-  return { audioBuffer, startPosition };
-}
 
 /**
  * 音声の再生を停止する。
@@ -97,19 +79,13 @@ async function analyze(file: File, type: "left" | "right") {
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => undefined}
  */
 export const pause = (): ThunkResult<void> => {
-  return async (dispatch: Dispatch<States>, getState: () => States) => {
-    const { playing } = getState().player;
-
-    if (!playing) {
-      console.error("Player is not running.");
+  return async () => {
+    if (!couplingPlayer) {
+      console.error("coupling-player is not initialized.");
       return;
     }
 
-    syncStop();
-
-    dispatch({
-      type: PlayerActionTypes.PAUSE,
-    });
+    couplingPlayer.pause();
   };
 };
 
@@ -119,32 +95,13 @@ export const pause = (): ThunkResult<void> => {
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => undefined}
  */
 export const updateCurrentTime = (time?: number): ThunkResult<void> => {
-  return async (dispatch, getState) => {
-    const { currentTime } = getState().player;
-
-    if (typeof time !== "undefined") {
-      dispatch({
-        type: PlayerActionTypes.UPDATE_CURRENT,
-        payload: { currentTime: time },
-      });
+  return async () => {
+    if (!couplingPlayer) {
+      console.error("coupling-player is not initialized.");
       return;
     }
 
-    const now = context.currentTime;
-    if (lastCheckTime == null) {
-      lastCheckTime = now;
-      return;
-    }
-
-    const add = now - lastCheckTime;
-    lastCheckTime = now;
-
-    dispatch({
-      type: PlayerActionTypes.UPDATE_CURRENT,
-      payload: {
-        currentTime: currentTime + add,
-      },
-    });
+    couplingPlayer.currentTime = time;
   };
 };
 

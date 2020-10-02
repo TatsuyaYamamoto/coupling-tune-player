@@ -39,7 +39,7 @@ const TrackTable: FC<Props> = (props) => {
       dispatch(pauseAudio() as any);
     }
     dispatch(goIndex(i) as any);
-    dispatch(updateCurrentTime(0) as any);
+    // dispatch(updateCurrentTime(0) as any);
     dispatch(playAudio(left, right) as any);
   };
 

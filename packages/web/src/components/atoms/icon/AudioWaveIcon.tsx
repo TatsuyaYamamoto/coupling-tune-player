@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { keyframes } from "@emotion/core";
+import { keyframes, css } from "@emotion/core";
 import styled from "@emotion/styled";
 
 const MIN_HEIGHT = `20%`;
@@ -28,7 +28,9 @@ const Bar = styled.div`
   height: ${MIN_HEIGHT};
   animation: ${(props: { animation: boolean }) =>
     props.animation
-      ? `${SoundAnimation} 0ms -800ms linear infinite alternate;`
+      ? css`
+          ${SoundAnimation} 0ms -800ms linear infinite alternate;
+        `
       : ""};
 `;
 

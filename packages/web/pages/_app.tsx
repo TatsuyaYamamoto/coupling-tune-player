@@ -1,5 +1,7 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { AppProps } from "next/app";
+import Head from "next/head";
+
 import { Provider } from "react-redux";
 
 import {
@@ -34,8 +36,32 @@ const store = createStore();
 const MyApp: FC<AppProps> = (props) => {
   const { Component, pageProps } = props;
 
+  useEffect(() => {
+    // @ts-ignore
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      // @ts-ignore
+      window.dataLayer.push(arguments);
+    }
+    // @ts-ignore
+    window.gtag = gtag;
+
+    // @ts-ignore
+    gtag("js", new Date());
+    // @ts-ignore
+    gtag("config", "<%= trackingCode %>");
+  }, []);
+
   return (
     <>
+      <Head>
+        {/* Global site tag (gtag.js) - Google Analytics */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=<%= trackingCode %>"
+        ></script>
+      </Head>
       <CssBaseline />
       <Provider store={store}>
         <MuiThemeProvider theme={muiTheme}>

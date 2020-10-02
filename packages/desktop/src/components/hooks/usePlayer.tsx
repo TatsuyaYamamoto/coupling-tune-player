@@ -3,14 +3,13 @@ import React, {
   FC,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
 import { CouplingPlayer } from "@coupling-tune-player/share";
 
 import { readAsArrayBuffer } from "../../utils/mainProcessBridge";
-
-const couplingPlayer = new CouplingPlayer();
 
 type PlayerState = "playing" | "pausing" | "unavailable";
 
@@ -40,41 +39,53 @@ export const PlayerRoot: FC = (props) => {
   const [duration, setDuration] = useState<number>(0);
   const [current, setCurrent] = useState<number>(0);
   const [trackFilePaths, setTrackFilePaths] = useState<string[]>([]);
+  const player = useRef<CouplingPlayer | null>(null);
 
-  const play = async (resetCurrentTime = false) => {
+  const play = async () => {
     console.log("usePlayer#play", trackFilePaths);
-    const buffers = await Promise.all(
-      trackFilePaths.map((path) => readAsArrayBuffer(path))
-    );
-    return couplingPlayer.play(buffers.map((b) => b.buffer));
+    if (!player.current) {
+      console.error("coupling-player is not initialized.");
+      return;
+    }
+
+    await player.current.play();
+    setDuration(player.current.duration);
   };
 
   const pause = () => {
-    couplingPlayer.pause();
+    if (!player.current) {
+      console.error("coupling-player is not initialized.");
+      return;
+    }
+
+    player.current.pause();
   };
 
-  const setTracks = (filePaths: string[], duration: number) => {
+  const setTracks = (filePaths: string[]) => {
+    if (!player.current) {
+      console.error("coupling-player is not initialized.");
+      return;
+    }
+
     setTrackFilePaths(filePaths);
-    setDuration(duration);
-    couplingPlayer.updateCurrentTime(0);
   };
 
   const updateCurrentTime = (newCurrentValue: number) => {
-    const stopOnce = couplingPlayer.playing;
-    if (stopOnce) {
-      pause();
+    if (!player.current) {
+      console.error("coupling-player is not initialized.");
+      return;
     }
-    couplingPlayer.updateCurrentTime(newCurrentValue);
-    if (stopOnce) {
-      play();
-    }
+
+    player.current.currentTime = newCurrentValue;
   };
 
   useEffect(() => {
     const handlePlay = () => {
+      console.log("on play");
       setState("playing");
     };
     const handlePause = () => {
+      console.log("on pause");
       setState("pausing");
     };
 
@@ -82,26 +93,33 @@ export const PlayerRoot: FC = (props) => {
       setCurrent(args.currentTime);
     };
 
-    couplingPlayer.on("play", handlePlay);
-    couplingPlayer.on("pause", handlePause);
-    couplingPlayer.on("update", handleUpdate);
+    (async () => {
+      const buffers = await Promise.all(
+        trackFilePaths.map((path) => readAsArrayBuffer(path))
+      );
+      player.current = new CouplingPlayer(buffers);
+      player.current.on("play", handlePlay);
+      player.current.on("pause", handlePause);
+      player.current.on("update", handleUpdate);
+
+      if (2 <= trackFilePaths.length) {
+        setState("pausing");
+      } else {
+        setState("unavailable");
+      }
+    })();
+
     return () => {
-      couplingPlayer.off("play", handlePlay);
-      couplingPlayer.off("pause", handlePause);
-      couplingPlayer.off("update", handleUpdate);
+      if (player.current) {
+        if (player.current.playing) {
+          player.current.pause();
+        }
+
+        player.current.off("play");
+        player.current.off("pause");
+        player.current.off("update");
+      }
     };
-  }, []);
-
-  useEffect(() => {
-    if (couplingPlayer.playing) {
-      pause();
-    }
-
-    if (2 <= trackFilePaths.length) {
-      setState("pausing");
-    } else {
-      setState("unavailable");
-    }
   }, [trackFilePaths]);
 
   return (
