@@ -1,6 +1,7 @@
 module.exports = {
   packagerConfig: {
     name: "coupling-tune-player-desktop",
+    "icon": "./icon.icns"
   },
   makers: [
     {
