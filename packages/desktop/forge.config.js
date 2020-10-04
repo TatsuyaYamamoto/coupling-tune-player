@@ -1,13 +1,15 @@
 module.exports = {
   packagerConfig: {
     name: "coupling-tune-player-desktop",
-    "icon": "./icon.icns"
+    // The extension is automatically added for each platform.
+    // https://stackoverflow.com/questions/48790003/setting-platform-dependant-icon-via-electron-forge-electronpackagerconfig
+    icon: "./icon",
   },
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
       config: {
-        name: "electron",
+        name: "coupling-tune-player-desktop",
       },
     },
     {
