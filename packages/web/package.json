@@ -10,6 +10,8 @@
     "build:static-export": "next export -o dist",
     "build-dev": "cross-env NODE_ENV=development npm-run-all --print-label build:*",
     "build-pro": "cross-env NODE_ENV=production  npm-run-all --print-label build:*",
+    "deploy-dev": "firebase deploy --only hosting:dev --project coupling-tune-player",
+    "deploy-pro": "firebase deploy --only hosting:pro --project coupling-tune-player",
     "test": "jest",
     "lint": "tslint --format stylish --project .",
     "format": "prettier --write 'app/**/*.{ts,tsx}'",
