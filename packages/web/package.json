@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "next dev",
-    "build": "next build",
-    "build:pro": "NODE_ENV=production npm run build",
+    "build:clean": "        rm -rf dist",
+    "build:build": "        next build",
+    "build:static-export": "next export -o dist",
+    "build-dev": "cross-env NODE_ENV=development npm-run-all --print-label build:*",
+    "build-pro": "cross-env NODE_ENV=production  npm-run-all --print-label build:*",
     "test": "jest",
     "lint": "tslint --format stylish --project .",
     "format": "prettier --write 'app/**/*.{ts,tsx}'",

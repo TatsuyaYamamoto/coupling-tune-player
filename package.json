@@ -14,7 +14,9 @@
     "dev:web:web": "         yarn workspace @coupling-tune-player/web   start",
     "dev:web:share": "       yarn workspace @coupling-tune-player/share dev",
     "build:desktop:win32": " yarn workspace @coupling-tune-player/desktop make:win32",
-    "build:desktop:darwin": "yarn workspace @coupling-tune-player/desktop make:darwin"
+    "build:desktop:darwin": "yarn workspace @coupling-tune-player/desktop make:darwin",
+    "build:web:dev": "           yarn workspace @coupling-tune-player/web build-dev",
+    "build:web:pro": "           yarn workspace @coupling-tune-player/web build-pro"
   },
   "author": "TatsuyaYamamoto",
   "license": "MIT",
@@ -32,6 +34,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "cross-env": "^7.0.2",
     "husky": "^4.3.0",
     "lint-staged": "^10.4.0",
     "npm-run-all": "^4.1.5",
