@@ -46,12 +46,12 @@ const Link = (params: { children: string; href: string; name: string }) => {
   const onclick = () => {
     sendEvent("click", {
       category: "link",
-      value: params.name
+      value: params.name,
     });
   };
 
   return (
-    <a onClick={onclick} href={params.href}>
+    <a onClick={onclick} href={params.href} target="_blank">
       {params.children}
     </a>
   );
@@ -111,15 +111,18 @@ const InfoDialog = (props: Props) => {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogContent>
-        <AppTitle>Coupling Tune Player</AppTitle>
+        <AppTitle>Coupling Tune Player Web</AppTitle>
         <Version>v {version}</Version>
 
         <AppDescription>
           このアプリは2つの音声ファイルのBPMを解析して同時に再生するだけの、音楽プレイヤーです。
           音声ファイルをサーバーに送信、保存はしておらず、ブラウザのみで動作しています。
-          PCでの使用を前提としていますが、ファイル選択ができればスマートフォンでも動く、、、はず。<br />
+          PCでの使用を前提としていますが、ファイル選択ができればスマートフォンでも動く、、、はず。
           <br />
-          作成者が{SoloLiveWithLink}で{KotohonoWithLink}するために作成したものですが、組み合わせはあなた次第！<br />
+          <br />
+          作成者が{SoloLiveWithLink}で{KotohonoWithLink}
+          するために作成したものですが、組み合わせはあなた次第！
+          <br />
           <br />
           ご意見・ご要望・ご感想は{T28WithLink}まで！
         </AppDescription>
