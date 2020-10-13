@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import { FC, useEffect } from "react";
 import { AppProps } from "next/app";
 import Head from "next/head";
 
@@ -15,6 +15,14 @@ import { createStore } from "../src/redux/store";
 import "rc-slider/assets/index.css";
 
 const muiTheme = createMuiTheme({
+  typography: {
+    fontFamily: [
+      '"Rounded Mplus 1c"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+    ].join(","),
+  },
   palette: {
     primary: {
       light: colors.orange[100],
@@ -56,15 +64,35 @@ const MyApp: FC<AppProps> = (props) => {
   return (
     <>
       <Head>
+        <title>かぷちゅうプレイヤー / Coupling Tune Player</title>
+        <link rel="shortcut icon" href="/images/favicon.ico" />
+
         {/* Global site tag (gtag.js) - Google Analytics */}
         <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=<%= trackingCode %>"
         ></script>
+
+        {/* Fonts */}
+        <link
+          href="https://fonts.googleapis.com/earlyaccess/nicomoji.css"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css"
+          rel="stylesheet"
+        />
+
+        <link
+          rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.15.1/css/all.css"
+          integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp"
+          crossOrigin="anonymous"
+        />
       </Head>
-      <CssBaseline />
       <Provider store={store}>
         <MuiThemeProvider theme={muiTheme}>
+          <CssBaseline />
           <Component {...pageProps} />
         </MuiThemeProvider>
       </Provider>
