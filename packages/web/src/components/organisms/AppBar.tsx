@@ -1,14 +1,16 @@
 import React, { FC, useState } from "react";
 import { connect } from "react-redux";
-
+import Link from "next/link";
 import styled from "@emotion/styled";
 
 import { AppBar as MuiAppBar, IconButton, Toolbar } from "@material-ui/core";
 
-import TitleTypography from "../atoms/TitleTypography";
 import InfoDialog from "../molecules/InfoDialog";
 import TwitterLogoSvg from "../atoms/icon/TwitterLogoSvg";
-import InfoIcon from "../atoms/icon/InfoIcon";
+import {
+  InfoOutlined as InfoIcon,
+  NavigateBefore as BackIcon,
+} from "@material-ui/icons";
 
 import {
   getLongestCommonSubstring,
@@ -90,10 +92,6 @@ const AppBar: FC<P> = (props) => {
     });
   };
 
-  const title = (
-    <TitleTypography>かぷちゅうプレイヤー/Coupling Tune Player</TitleTypography>
-  );
-
   const tweetButton = (
     <IconButton onClick={onShowTweet}>
       <TwitterLogoSvg />
@@ -110,10 +108,18 @@ const AppBar: FC<P> = (props) => {
     <Root>
       <MuiAppBar position="fixed">
         <Toolbar>
-          {title}
+          <Link href={`/`} passHref>
+            <IconButton>
+              <BackIcon />
+            </IconButton>
+          </Link>
           <CenterSpace />
-          {tweetButton}
-          {infoButton}
+          <IconButton onClick={onShowTweet}>
+            <TwitterLogoSvg />
+          </IconButton>
+          <IconButton onClick={onOpenInfoDialog} color="inherit">
+            <InfoIcon />
+          </IconButton>
         </Toolbar>
       </MuiAppBar>
 

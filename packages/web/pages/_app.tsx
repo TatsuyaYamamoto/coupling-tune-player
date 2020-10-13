@@ -23,6 +23,13 @@ const muiTheme = createMuiTheme({
       "Arial",
     ].join(","),
   },
+  overrides: {
+    MuiAppBar: {
+      colorPrimary: {
+        backgroundColor: "#FAFAFA"
+      },
+    },
+  },
   palette: {
     primary: {
       light: colors.orange[100],
