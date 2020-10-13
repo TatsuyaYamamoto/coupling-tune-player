@@ -2,7 +2,7 @@ import { EventEmitter } from "eventemitter3";
 
 import { analyzeBpm, AnalyzeResult } from "./BpmAnalyzer";
 
-export type CouplingPlayerEventTypes = "play" | "pause" | "update";
+export type CouplingPlayerEventTypes = "play" | "pause" | "update" | "end";
 
 const log = (message: string, ...data: any[]) => {
   console.log(`[CouplingPlayer] ${message}`, ...data);
@@ -95,6 +95,8 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
     await this.internalPlay();
 
     log(`success to start player. duration: ${this.duration}sec`);
+
+    log("event - play");
     this.emit("play");
   }
 
@@ -108,6 +110,7 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
 
     await this.internalStop();
 
+    log("event - pause");
     this.emit("pause");
   }
 
@@ -126,7 +129,6 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
   }
 
   private async internalStop() {
-    await this.stopSyncPlay();
     if (this.intervalId !== null) {
       log("stop internal looper.", this.intervalId);
       clearInterval(this.intervalId as number);
@@ -134,6 +136,8 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
     this.lastCheckedContextTime = null;
     this.intervalId = null;
     this._playing = false;
+
+    await this.stopSyncPlay();
   }
 
   /**
@@ -185,13 +189,34 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
     this.audioBufferSourceNodes.forEach((node, index) => {
       node.start(0, offsets[index]);
     });
+
+    Promise.race(
+      this.audioBufferSourceNodes.map((node) => {
+        return new Promise((resolve) => {
+          node.addEventListener("ended", () => resolve());
+        });
+      })
+    ).then(() => {
+      if (this.playing) {
+        if (this.intervalId !== null) {
+          log("stop internal looper.", this.intervalId);
+          clearInterval(this.intervalId as number);
+        }
+        this.lastCheckedContextTime = null;
+        this.intervalId = null;
+        this._playing = false;
+
+        log("event - end");
+        this.emit("end");
+      }
+    });
   }
 
   /**
    * Stop audio source.
    */
   private async stopSyncPlay(): Promise<void> {
-    log("stopSyncPlay");
+    log("try to stop sync-play");
 
     if (!this.audioBufferSourceNodes) {
       console.error("player has no nodes.");
@@ -200,7 +225,7 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
 
     const endPromises = this.audioBufferSourceNodes.map((source) => {
       return new Promise((resolve) => {
-        source.onended = () => resolve();
+        source.addEventListener("ended", () => resolve());
       });
     });
 
@@ -208,7 +233,9 @@ export class CouplingPlayer extends EventEmitter<CouplingPlayerEventTypes> {
       node.stop(0);
     });
 
-    await Promise.race(endPromises);
+    await Promise.race(endPromises).then(() => {
+      log("sync-play is stop");
+    });
   }
 
   private onPlayerUpdated() {

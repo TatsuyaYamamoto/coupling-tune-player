@@ -11,8 +11,6 @@ import {
   play as playAudio,
   pause as pauseAudio,
   updateCurrentTime,
-  skipPrevious,
-  skipNext,
 } from "../../redux/modules/player";
 import { States } from "../../redux/store";
 import Song from "../../redux/model/Song";
@@ -70,8 +68,6 @@ class PlayerController extends React.Component<Props, ComponentState> {
             hasPrev={hasPrev}
             onPlayClick={this.onPlay}
             onPauseClick={this.onPause}
-            onNextTrackClick={this.onNextClicked}
-            onPrevTrackClick={this.onPrevClicked}
           />
         </Buttons>
       </Card>
@@ -105,26 +101,6 @@ class PlayerController extends React.Component<Props, ComponentState> {
     });
   };
 
-  private onPrevClicked = () => {
-    console.log("on prev skip button clicked.");
-    const { dispatch } = this.props;
-    if (!dispatch) {
-      return;
-    }
-
-    dispatch(skipPrevious() as any);
-  };
-
-  private onNextClicked = () => {
-    console.log("on next skip button clicked.");
-    const { dispatch } = this.props;
-    if (!dispatch) {
-      return;
-    }
-
-    dispatch(skipNext() as any);
-  };
-
   private onSliderStart = () => {
     const { current } = this.props;
     this.setState({ manualCurrentTime: current });
@@ -135,13 +111,13 @@ class PlayerController extends React.Component<Props, ComponentState> {
   };
 
   private onSliderFixed = (newValue: number) => {
-    const { leftAudio, rightAudio, dispatch } = this.props;
-    if (!leftAudio || !rightAudio || !dispatch) {
+    const { leftAudio, rightAudio } = this.props;
+    if (!leftAudio || !rightAudio) {
       return;
     }
 
     this.setState({ manualCurrentTime: null });
-    dispatch(updateCurrentTime(newValue) as any);
+    updateCurrentTime(newValue);
 
     sendEvent("click", {
       category: "player",

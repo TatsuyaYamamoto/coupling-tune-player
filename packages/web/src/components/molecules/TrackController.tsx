@@ -21,8 +21,8 @@ interface TrackControllerProps {
   hasNext: boolean;
   onPlayClick: () => void;
   onPauseClick: () => void;
-  onNextTrackClick: () => void;
-  onPrevTrackClick: () => void;
+  onNextTrackClick?: () => void;
+  onPrevTrackClick?: () => void;
 }
 
 const TrackController: FC<TrackControllerProps> = (props) => {
@@ -67,17 +67,17 @@ const TrackController: FC<TrackControllerProps> = (props) => {
     }
   })();
 
-  const prevButton = (
+  const prevButton = onPrevTrackClick ? (
     <IconButton color="primary" disabled={!hasPrev} onClick={onPrevTrackClick}>
       <PrevTrackIcon />
     </IconButton>
-  );
+  ) : null;
 
-  const nextButton = (
+  const nextButton = onNextTrackClick ? (
     <IconButton color="primary" disabled={!hasNext} onClick={onNextTrackClick}>
       <NextTrackIcon />
     </IconButton>
-  );
+  ) : null;
 
   return (
     <Root>

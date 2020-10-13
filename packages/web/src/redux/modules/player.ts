@@ -45,6 +45,11 @@ export const play = (leftAudio: Song, rightAudio: Song): ThunkResult<void> => {
           rightAudio.file.arrayBuffer(),
         ])
       );
+      dispatch({
+        type: PlayerActionTypes.UPDATE_CURRENT,
+        payload: { currentTime: 0 },
+      });
+
       couplingPlayer.on("play", () => {
         dispatch({
           type: PlayerActionTypes.PLAY_SUCCESS,
@@ -62,6 +67,15 @@ export const play = (leftAudio: Song, rightAudio: Song): ThunkResult<void> => {
         dispatch({
           type: PlayerActionTypes.UPDATE_CURRENT,
           payload: { currentTime: args.currentTime },
+        });
+      });
+      couplingPlayer.on("end", () => {
+        dispatch({
+          type: PlayerActionTypes.UPDATE_CURRENT,
+          payload: { currentTime: 0 },
+        });
+        dispatch({
+          type: PlayerActionTypes.PAUSE,
         });
       });
     }
@@ -94,69 +108,13 @@ export const pause = (): ThunkResult<void> => {
  *
  * @returns {(dispatch: Dispatch<States>, getState: () => States) => undefined}
  */
-export const updateCurrentTime = (time?: number): ThunkResult<void> => {
-  return async () => {
-    if (!couplingPlayer) {
-      console.error("coupling-player is not initialized.");
-      return;
-    }
-
-    couplingPlayer.currentTime = time;
-  };
-};
-
-export const skipPrevious = (): ThunkResult<void> => (dispatch, getState) => {
-  const stopOnce = getState().player.playing;
-  if (stopOnce) {
-    dispatch(pause());
+export const updateCurrentTime = async (time?: number) => {
+  if (!couplingPlayer) {
+    console.error("coupling-player is not initialized.");
+    return;
   }
 
-  dispatch(updateCurrentTime(0));
-  dispatch(goPrevIndex());
-
-  if (stopOnce) {
-    const { list, focusIndex } = getState().tracklist;
-
-    if (!focusIndex) {
-      console.error("index is null");
-      return;
-    }
-    const { left, right } = list.get(focusIndex);
-
-    if (!left || !right) {
-      console.error("left or right audio is null");
-      return;
-    }
-
-    dispatch(play(left, right));
-  }
-};
-
-export const skipNext = (): ThunkResult<void> => (dispatch, getState) => {
-  const stopOnce = getState().player.playing;
-  if (stopOnce) {
-    dispatch(pause());
-  }
-
-  dispatch(updateCurrentTime(0));
-  dispatch(goNextIndex());
-
-  if (stopOnce) {
-    const { list, focusIndex } = getState().tracklist;
-
-    if (!focusIndex) {
-      console.error("index is null");
-      return;
-    }
-    const { left, right } = list.get(focusIndex);
-
-    if (!left || !right) {
-      console.error("left or right audio is null");
-      return;
-    }
-
-    dispatch(play(left, right));
-  }
+  couplingPlayer.currentTime = time;
 };
 
 export interface PlayerState {
