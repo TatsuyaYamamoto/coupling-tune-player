@@ -5,10 +5,10 @@ import styled from "@emotion/styled";
 
 import { AppBar as MuiAppBar, IconButton, Toolbar } from "@material-ui/core";
 
-import TitleTypography from "../../components/atoms/TitleTypography";
-import InfoDialog from "../../components/molecules/InfoDialog";
-import TwitterLogoSvg from "../../components/atoms/icon/TwitterLogoSvg";
-import InfoIcon from "../../components/atoms/icon/InfoIcon";
+import TitleTypography from "../atoms/TitleTypography";
+import InfoDialog from "../molecules/InfoDialog";
+import TwitterLogoSvg from "../atoms/icon/TwitterLogoSvg";
+import InfoIcon from "../atoms/icon/InfoIcon";
 
 import {
   getLongestCommonSubstring,

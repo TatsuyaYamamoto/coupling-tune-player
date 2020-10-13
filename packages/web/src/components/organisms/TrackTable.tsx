@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { connect, DispatchProp } from "react-redux";
 
-import _TrackTable from "../../components/molecules/TrackTable";
+import _TrackTable from "../molecules/TrackTable";
 
 import { States } from "../../redux/store";
 import { goIndex } from "../../redux/modules/tracklist";

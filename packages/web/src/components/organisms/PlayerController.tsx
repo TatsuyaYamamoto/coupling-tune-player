@@ -4,8 +4,8 @@ import styled from "@emotion/styled";
 
 import { Card, CardContent } from "@material-ui/core";
 
-import PlayTimeSlider from "../../components/molecules/PlayTimeSlider";
-import TrackController from "../../components/molecules/TrackController";
+import PlayTimeSlider from "../molecules/PlayTimeSlider";
+import TrackController from "../molecules/TrackController";
 
 import {
   play as playAudio,

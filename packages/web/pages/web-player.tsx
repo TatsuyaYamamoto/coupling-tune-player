@@ -2,10 +2,10 @@ import React from "react";
 import { NextPage } from "next";
 import styled from "@emotion/styled";
 
-import AppBar from "../src/containers/organisms/AppBar";
-import CurrentTrackView from "../src/containers/organisms/CurrentTrackView";
-import TrackTable from "../src/containers/organisms/TrackTable";
-import PlayerController from "../src/containers/organisms/PlayerController";
+import AppBar from "../src/components/organisms/AppBar";
+import CurrentTrackView from "../src/components/organisms/CurrentTrackView";
+import TrackTable from "../src/components/organisms/TrackTable";
+import PlayerController from "../src/components/organisms/PlayerController";
 
 const Controller = styled(PlayerController)`
   position: fixed;

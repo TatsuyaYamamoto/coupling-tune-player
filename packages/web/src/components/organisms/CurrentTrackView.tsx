@@ -9,10 +9,10 @@ import { States } from "../../redux/store";
 import Song from "../../redux/model/Song";
 import { select } from "../../redux/modules/tracklist";
 
-import CdCoverImage from "../../components/atoms/CdCoverImage";
-import NoCdCoverImage from "../../components/atoms/NoCdCoverImage";
-import LoadingDialog from "../../components/molecules/LoadingDialog";
-import TrackSelectButton from "../../components/molecules/TrackSelectButton";
+import CdCoverImage from "../atoms/CdCoverImage";
+import NoCdCoverImage from "../atoms/NoCdCoverImage";
+import LoadingDialog from "../molecules/LoadingDialog";
+import TrackSelectButton from "../molecules/TrackSelectButton";
 
 import { toFiles } from "../../helper/FileSystem";
 import { sendEvent } from "../../utils";
