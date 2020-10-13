@@ -25,11 +25,7 @@ const Root = styled.div`
   padding: 30px 0;
 `;
 
-const LeftArea = styled.div`
-  text-align: center;
-`;
-
-const RightArea = styled.div`
+const TrackArea = styled.div`
   text-align: center;
 `;
 
@@ -92,39 +88,41 @@ const CurrentTrackView: FC<P> = (props) => {
     });
   };
 
-  const leftImage =
-    left && left.pictureBase64 ? (
-      <StyledCdCoverImage src={left.pictureBase64} />
-    ) : (
-      <StyledNoCdCoverImage />
-    );
-
-  const rightImage =
-    right && right.pictureBase64 ? (
-      <StyledCdCoverImage src={right.pictureBase64} />
-    ) : (
-      <StyledNoCdCoverImage />
-    );
-
   return (
     <Root {...others}>
-      <LeftArea>
-        {leftImage}
-        <StyledTrackSelectButton
-          label="Left Track"
-          leftIcon={<AudiotrackIcon />}
-          onFileSelected={onLeftAudioFileSelected}
-        />
-      </LeftArea>
+      <TrackArea>
+        <div>
+          {left?.pictureBase64 ? (
+            <StyledCdCoverImage src={left.pictureBase64} />
+          ) : (
+            <StyledNoCdCoverImage />
+          )}
+        </div>
+        <div>
+          <StyledTrackSelectButton
+            label="Left Track"
+            leftIcon={<AudiotrackIcon />}
+            onFileSelected={onLeftAudioFileSelected}
+          />
+        </div>
+      </TrackArea>
 
-      <RightArea>
-        {rightImage}
-        <StyledTrackSelectButton
-          label="Right Track"
-          rightIcon={<AudiotrackIcon />}
-          onFileSelected={onRightAudioFileSelected}
-        />
-      </RightArea>
+      <TrackArea>
+        <div>
+          {right?.pictureBase64 ? (
+            <StyledCdCoverImage src={right.pictureBase64} />
+          ) : (
+            <StyledNoCdCoverImage />
+          )}
+        </div>
+        <div>
+          <StyledTrackSelectButton
+            label="Right Track"
+            rightIcon={<AudiotrackIcon />}
+            onFileSelected={onRightAudioFileSelected}
+          />
+        </div>
+      </TrackArea>
 
       <LoadingDialog open={loading} />
     </Root>
