@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "coupling-tune-player"
+  },
+  "targets": {
+    "coupling-tune-player": {
+      "hosting": {
+        "dev": [
+          "coupling-tune-player-dev"
+        ],
+        "pro": [
+          "coupling-tune-player"
+        ]
+      }
+    }
+  }
+}
