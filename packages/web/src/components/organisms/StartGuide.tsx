@@ -124,10 +124,14 @@ const StartGuide: FC = () => {
           css={css`
             flex: 1;
             text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 250px;
           `}
         >
           <img
-            src="/images/screenshot_macos.png"
+            src={`/images/platform_screenshot_${activePlatform}.jpg`}
             css={css`
               width: 300px;
               box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.4);
