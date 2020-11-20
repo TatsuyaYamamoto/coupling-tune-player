@@ -5,6 +5,8 @@ import Link from "next/link";
 import { css, jsx } from "@emotion/core";
 import { Button } from "@material-ui/core";
 
+import config from "../../config";
+
 const active = css`
   color: orange;
 `;
@@ -107,9 +109,14 @@ const StartGuide: FC = () => {
             </div>
 
             <div>
-              {(activePlatform === "macos" || activePlatform === "windows") && (
-                <Link href={`/`} passHref>
-                  <Button disabled>アプリをダウンロード</Button>
+              {activePlatform === "macos" && (
+                <Link href={config.env.MACOS_BINARY_URL} passHref>
+                  <Button>アプリをダウンロード</Button>
+                </Link>
+              )}
+              {activePlatform === "windows" && (
+                <Link href={config.env.WINDOWS_BINARY_URL} passHref>
+                  <Button>アプリをダウンロード</Button>
                 </Link>
               )}
               {activePlatform === "web" && (
