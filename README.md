@@ -18,8 +18,8 @@ This audio player analyze BPM and plays synchronously audio with [Web Track API]
 
 ### Get 2music files
 
-* Important points are **_same backgroud music_** and **_difference vocalist_**.
-* I highly recommend [ラブライブ！Solo Live! collection Memorial BOX](http://www.lovelive-anime.jp/otonokizaka/release.html#cd82)
+- Important points are **_same backgroud music_** and **_difference vocalist_**.
+- I highly recommend [ラブライブ！Solo Live! collection Memorial BOX](http://www.lovelive-anime.jp/otonokizaka/release.html#cd82)
 
 ### Start application
 
@@ -34,7 +34,7 @@ Select file(:paperclip:) and start(:arrow_forward:)!
 
 ## Lint
 
-* [tslint-react](https://github.com/palantir/tslint-react), [tslint-config-airbnb](https://github.com/progre/tslint-config-airbnb) and [custom rule](tslint.json).
+- [tslint-react](https://github.com/palantir/tslint-react), [tslint-config-airbnb](https://github.com/progre/tslint-config-airbnb) and [custom rule](tslint.json).
 
 ```bash
 $ yarn lint
@@ -51,3 +51,12 @@ $ yarn format
 ## License
 
 [MIT](LICENSE)
+
+## Refs
+
+- [electron docs](https://www.electronjs.org/docs)
+- [electron-forge](https://www.electronforge.io/)
+  - 今どきは electron-forge で electron は始めるの？
+- [Electron で contextBridge による安全な IPC 通信](https://qiita.com/pochman/items/64b34e9827866664d436)
+- [icns ファイルの作り方（Mac）](http://wakabamac.hatenablog.com/entry/2017/04/02/034254)
+- [Electron でデスクトップから D&D でファイルを受け取る方法](https://archive.craftz.dog/blog.odoruinu.net/2016/09/01/get-files-via-drag-and-drop-from-desktop/index.html)
