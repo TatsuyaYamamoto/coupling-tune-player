@@ -125,3 +125,23 @@ jobs:
       - name: Upload distribution
         run: gsutil cp -r packages/desktop/out/make gs://download.sokontokoro-factory.net/coupling-tune-player/${{ github.sha }}/
 
+  notify:
+    runs-on: macos-latest
+    needs:
+      - build-web
+      - build-and-upload-win32
+      - build-and-upload-darwin
+    if: always()
+    steps:
+      # run this action to get workflow conclusion
+      # You can get conclusion via env (env.WORKFLOW_CONCLUSION)
+      - uses: technote-space/workflow-conclusion-action@v2
+
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ env.WORKFLOW_CONCLUSION }}
+          fields: all
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
