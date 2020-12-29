@@ -15,7 +15,7 @@ import {
 import { States } from "../../redux/store";
 import Song from "../../redux/model/Song";
 
-import { sendEvent } from "../../utils";
+import { sendEvent } from "../../helper/gtag";
 
 export interface ComponentProps {}
 

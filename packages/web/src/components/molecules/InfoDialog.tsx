@@ -3,9 +3,7 @@ import styled from "@emotion/styled";
 
 import Button from "@material-ui/core/Button";
 import { Dialog, DialogActions, DialogContent } from "@material-ui/core";
-import { sendEvent } from "../../utils";
-
-const { version } = require("../../../package.json");
+import { sendEvent } from "../../helper/gtag";
 
 export interface Props {
   open: boolean;
@@ -112,7 +110,7 @@ const InfoDialog = (props: Props) => {
     <Dialog open={open} onClose={handleClose}>
       <DialogContent>
         <AppTitle>Coupling Tune Player Web</AppTitle>
-        <Version>v {version}</Version>
+        <Version>{process.env.version}</Version>
 
         <AppDescription>
           このアプリは2つの音声ファイルのBPMを解析して同時に再生するだけの、音楽プレイヤーです。

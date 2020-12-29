@@ -1,5 +1,6 @@
 import { FC, useEffect } from "react";
 import { AppProps } from "next/app";
+import { useRouter } from "next/router";
 import Head from "next/head";
 
 import { Provider } from "react-redux";
@@ -11,6 +12,7 @@ import {
   MuiThemeProvider,
 } from "@material-ui/core";
 import { createStore } from "../src/redux/store";
+import { pageview } from "../src/helper/gtag";
 
 import "rc-slider/assets/index.css";
 
@@ -26,7 +28,7 @@ const muiTheme = createMuiTheme({
   overrides: {
     MuiAppBar: {
       colorPrimary: {
-        backgroundColor: "#FAFAFA"
+        backgroundColor: "#FAFAFA",
       },
     },
   },
@@ -50,35 +52,26 @@ const store = createStore();
 
 const MyApp: FC<AppProps> = (props) => {
   const { Component, pageProps } = props;
+  const router = useRouter();
 
   useEffect(() => {
-    // @ts-ignore
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      // @ts-ignore
-      window.dataLayer.push(arguments);
-    }
-    // @ts-ignore
-    window.gtag = gtag;
-
-    // @ts-ignore
-    gtag("js", new Date());
-    // @ts-ignore
-    gtag("config", "<%= trackingCode %>");
-  }, []);
+    const handleRouteChange = (url) => {
+      pageview(url);
+    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
 
   return (
     <>
       <Head>
-        <title>かぷちゅうプレイヤー / Coupling Tune Player</title>
-        <link rel="shortcut icon" href="/images/favicon.ico" />
+        <title>{process.env.title}</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="description" content={process.env.description} />
 
-        {/* Global site tag (gtag.js) - Google Analytics */}
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=<%= trackingCode %>"
-        ></script>
+        <link rel="shortcut icon" href="/images/favicon.ico" />
 
         {/* Fonts */}
         <link

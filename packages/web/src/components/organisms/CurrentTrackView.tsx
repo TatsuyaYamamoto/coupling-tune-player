@@ -15,7 +15,7 @@ import LoadingDialog from "../molecules/LoadingDialog";
 import TrackSelectButton from "../molecules/TrackSelectButton";
 
 import { toFiles } from "../../helper/FileSystem";
-import { sendEvent } from "../../utils";
+import { sendEvent } from "../../helper/gtag";
 
 const Root = styled.div`
   display: flex;
