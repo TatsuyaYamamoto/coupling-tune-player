@@ -10,18 +10,15 @@ import TwitterLogoSvg from "../atoms/icon/TwitterLogoSvg";
 import {
   InfoOutlined as InfoIcon,
   NavigateBefore as BackIcon,
+  HelpOutline as HelpIcon,
 } from "@material-ui/icons";
 
-import {
-  getLongestCommonSubstring,
-  sendEvent,
-  tweetByWebIntent,
-} from "../../utils";
+import { getLongestCommonSubstring, tweetByWebIntent } from "../../utils";
+import { sendEvent } from "../../helper/gtag";
 import { URL } from "../../constants";
 import Song from "../../redux/model/Song";
 import { States } from "../../redux/store";
-import { findIdols } from "../../helper/idol/IdolUtil";
-import { createCouplingName } from "../../helper/idol/Muse";
+import { findIdols, createCouplingName } from "../../helper/idol/IdolUtil";
 
 const Root = styled.div`
   display: flex;
@@ -92,18 +89,6 @@ const AppBar: FC<P> = (props) => {
     });
   };
 
-  const tweetButton = (
-    <IconButton onClick={onShowTweet}>
-      <TwitterLogoSvg />
-    </IconButton>
-  );
-
-  const infoButton = (
-    <IconButton onClick={onOpenInfoDialog} color="inherit">
-      <InfoIcon />
-    </IconButton>
-  );
-
   return (
     <Root>
       <MuiAppBar position="fixed">
@@ -117,6 +102,11 @@ const AppBar: FC<P> = (props) => {
           <IconButton onClick={onShowTweet}>
             <TwitterLogoSvg />
           </IconButton>
+          <Link href={`/help`}>
+            <IconButton color="inherit">
+              <HelpIcon />
+            </IconButton>
+          </Link>
           <IconButton onClick={onOpenInfoDialog} color="inherit">
             <InfoIcon />
           </IconButton>

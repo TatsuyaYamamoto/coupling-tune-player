@@ -8,10 +8,26 @@ import {
   Maki,
   Nozomi,
   Hanayo,
-  Nico
+  Nico,
+  museCouplingNameMap,
+  getIndex as getIndexFromMuse,
 } from "./Muse";
+import {
+  Chika,
+  Riko,
+  Kanan,
+  Dia,
+  You,
+  Yoshiko,
+  Hanamaru,
+  Mari,
+  Ruby,
+  aqoursCouplingNameMap,
+  getIndex as getIndexFromAqours,
+} from "./Aqours";
 
 export const Idols = [
+  // muse
   Honoka,
   Eri,
   Kotori,
@@ -20,7 +36,17 @@ export const Idols = [
   Maki,
   Nozomi,
   Hanayo,
-  Nico
+  Nico,
+  // aqours
+  Chika,
+  Riko,
+  Kanan,
+  Dia,
+  You,
+  Yoshiko,
+  Hanamaru,
+  Mari,
+  Ruby,
 ];
 
 function findIdols(
@@ -30,7 +56,7 @@ function findIdols(
   const c: SchoolIdol[] = [];
   let maxPoint = 0;
 
-  candidates.forEach(idol => {
+  candidates.forEach((idol) => {
     let point = 0;
 
     if (query.indexOf(idol.name.given) !== -1) {
@@ -77,4 +103,34 @@ function findIdols(
   return c;
 }
 
-export { findIdols };
+/**
+ * Return coupling name with idol's id.
+ *
+ * @returns {string | null}
+ */
+function createCouplingName(
+  first: SchoolIdol,
+  second: SchoolIdol
+): string | null {
+  if (first.groupName !== second.groupName) {
+    return null;
+  }
+
+  if (first.groupName === "muse") {
+    const fisrtMemberIndex = getIndexFromMuse(first);
+    const secondMemberIndex = getIndexFromMuse(second);
+
+    return museCouplingNameMap[fisrtMemberIndex][secondMemberIndex] || null;
+  }
+
+  if (first.groupName === "aqours") {
+    const fisrtMemberIndex = getIndexFromAqours(first);
+    const secondMemberIndex = getIndexFromAqours(second);
+
+    return aqoursCouplingNameMap[fisrtMemberIndex][secondMemberIndex] || null;
+  }
+
+  return null;
+}
+
+export { findIdols, createCouplingName };

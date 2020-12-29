@@ -40,7 +40,7 @@ const TopFooter: FC = () => {
           {`. `}
           <span>
             {`© 2020 `}
-            <a target="_blank" href="http://www.sokontokoro-factory.net/">
+            <a target="_blank" href="https://www.sokontokoro-factory.net/">
               Sokontokoro Factory
             </a>
           </span>

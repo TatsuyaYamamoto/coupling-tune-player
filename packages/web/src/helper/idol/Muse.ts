@@ -8,81 +8,75 @@ export const Honoka = new SchoolIdol({
   name: new Name("高坂", "穂乃果"),
   kanaName: new Name("こうさか", "ほのか"),
   alphabetName: new Name("kosaka", "honoka"),
-  voiceActorName: "新田恵海"
+  voiceActorName: "新田恵海",
+  groupName: "muse",
 });
 
 export const Kotori = new SchoolIdol({
   name: new Name("南", "ことり"),
   kanaName: new Name("みなみ", "ことり"),
   alphabetName: new Name("minami", "kotori"),
-  voiceActorName: "内田彩"
+  voiceActorName: "内田彩",
+  groupName: "muse",
 });
 
 export const Umi = new SchoolIdol({
   name: new Name("園田", "海未"),
   kanaName: new Name("そのだ", "うみ"),
   alphabetName: new Name("sonoda", "umi"),
-  voiceActorName: "三森すずこ"
+  voiceActorName: "三森すずこ",
+  groupName: "muse",
 });
 
 export const Eri = new SchoolIdol({
   name: new Name("絢瀬", "絵里"),
   kanaName: new Name("あやせ", "えり"),
   alphabetName: new Name("ayase", "eli"),
-  voiceActorName: "南條愛乃"
+  voiceActorName: "南條愛乃",
+  groupName: "muse",
 });
 
 export const Nozomi = new SchoolIdol({
   name: new Name("東條", "希"),
   kanaName: new Name("とうじょう", "のぞみ"),
   alphabetName: new Name("tojo", "nozomi"),
-  voiceActorName: "楠田亜衣奈"
+  voiceActorName: "楠田亜衣奈",
+  groupName: "muse",
 });
 
 export const Nico = new SchoolIdol({
   name: new Name("矢澤", "にこ"),
   kanaName: new Name("やざわ", "にこ"),
   alphabetName: new Name("yazawa", "nico"),
-  voiceActorName: "徳井青空"
+  voiceActorName: "徳井青空",
+  groupName: "muse",
 });
 
 export const Maki = new SchoolIdol({
   name: new Name("西木野", "真姫"),
   kanaName: new Name("にしきの", "まき"),
   alphabetName: new Name("nishikino", "maki"),
-  voiceActorName: "Pile"
+  voiceActorName: "Pile",
+  groupName: "muse",
 });
 
 export const Rin = new SchoolIdol({
   name: new Name("星空", "凛"),
   kanaName: new Name("ほしぞら", "りん"),
   alphabetName: new Name("hoshizora", "rin"),
-  voiceActorName: "飯田里穂"
+  voiceActorName: "飯田里穂",
+  groupName: "muse",
 });
 
 export const Hanayo = new SchoolIdol({
   name: new Name("小泉", "花陽"),
   kanaName: new Name("こいずみ", "はなよ"),
   alphabetName: new Name("koizumi", "hanayo"),
-  voiceActorName: "久保ユリカ"
+  voiceActorName: "久保ユリカ",
+  groupName: "muse",
 });
 
-/**
- * Return coupling name with idol's id.
- *
- * @returns {string | null}
- */
-export function createCouplingName(
-  first: SchoolIdol,
-  second: SchoolIdol
-): string | null {
-  const fisrtMemberIndex = getIndex(first);
-  const secondMemberIndex = getIndex(second);
-
-  return museCouplingNameMap[fisrtMemberIndex][secondMemberIndex] || null;
-}
-
-function getIndex(member: SchoolIdol): number {
+export function getIndex(member: SchoolIdol): number {
   if (member === Honoka) {
     return 0;
   }
@@ -136,7 +130,7 @@ export const museCouplingNameMap = [
     "ほのまき☆",
     "ほののぞ",
     "ほのぱな",
-    "ほのにこ"
+    "ほのにこ",
   ],
 
   /* 絵里 */
@@ -149,7 +143,7 @@ export const museCouplingNameMap = [
     "えりまき",
     "えりのぞ",
     "えりぱな",
-    "えりにこ"
+    "えりにこ",
   ],
 
   /* ことり */
@@ -162,7 +156,7 @@ export const museCouplingNameMap = [
     "ことまき",
     "ことのぞ",
     "ことぱな",
-    "ことにこ"
+    "ことにこ",
   ],
 
   /* 海未 */
@@ -175,7 +169,7 @@ export const museCouplingNameMap = [
     "うみまき☆",
     "うみのぞ",
     "うみぱな",
-    "うみにこ"
+    "うみにこ",
   ],
 
   /* 凛 */
@@ -188,7 +182,7 @@ export const museCouplingNameMap = [
     "りんまき",
     "りんのぞ",
     "りんぱな",
-    "りんにこ"
+    "りんにこ",
   ],
 
   /* 真姫 */
@@ -201,7 +195,7 @@ export const museCouplingNameMap = [
     null,
     "まきのぞ",
     "まきぱな",
-    "まきにこ"
+    "まきにこ",
   ],
 
   /* 希 */
@@ -214,7 +208,7 @@ export const museCouplingNameMap = [
     "のぞまき",
     null,
     "のぞぱな",
-    "のぞにこ"
+    "のぞにこ",
   ],
 
   /* 花陽 */
@@ -227,7 +221,7 @@ export const museCouplingNameMap = [
     "ぱなまき",
     "ぱなのぞ",
     null,
-    "ぱなにこ"
+    "ぱなにこ",
   ],
 
   /* にこ */
@@ -240,6 +234,6 @@ export const museCouplingNameMap = [
     "にこまき",
     "にこのぞ",
     "にこぱな",
-    null
-  ]
+    null,
+  ],
 ];
