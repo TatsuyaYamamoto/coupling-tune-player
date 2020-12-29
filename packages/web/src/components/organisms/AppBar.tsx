@@ -18,8 +18,7 @@ import { sendEvent } from "../../helper/gtag";
 import { URL } from "../../constants";
 import Song from "../../redux/model/Song";
 import { States } from "../../redux/store";
-import { findIdols } from "../../helper/idol/IdolUtil";
-import { createCouplingName } from "../../helper/idol/Muse";
+import { findIdols, createCouplingName } from "../../helper/idol/IdolUtil";
 
 const Root = styled.div`
   display: flex;
