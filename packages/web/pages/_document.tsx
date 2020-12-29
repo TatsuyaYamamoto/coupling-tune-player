@@ -31,6 +31,7 @@ export default class MyDocument extends Document {
           <meta property="og:description" content={process.env.description} />
           <meta property="og:url" content={process.env.ogpUrl} />
           <meta property="og:image" content={process.env.ogpImage} />
+          <meta name="twitter:card" content="summary_large_image" />
         </Head>
         <body>
           <Main />
