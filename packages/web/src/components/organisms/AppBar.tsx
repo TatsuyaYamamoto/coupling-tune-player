@@ -10,12 +10,13 @@ import TwitterLogoSvg from "../atoms/icon/TwitterLogoSvg";
 import {
   InfoOutlined as InfoIcon,
   NavigateBefore as BackIcon,
+  HelpOutline as HelpIcon
 } from "@material-ui/icons";
 
 import {
   getLongestCommonSubstring,
   sendEvent,
-  tweetByWebIntent,
+  tweetByWebIntent
 } from "../../utils";
 import { URL } from "../../constants";
 import Song from "../../redux/model/Song";
@@ -40,7 +41,7 @@ interface ComponentState {
 type P = ComponentProps & StateProps;
 type S = ComponentState;
 
-const AppBar: FC<P> = (props) => {
+const AppBar: FC<P> = props => {
   const { left, right } = props;
 
   const [isInfoDialogOpen, setInfoDialogOpen] = useState(false);
@@ -50,7 +51,7 @@ const AppBar: FC<P> = (props) => {
 
     sendEvent("click", {
       category: "info",
-      value: "show_about_app",
+      value: "show_about_app"
     });
   };
 
@@ -83,26 +84,14 @@ const AppBar: FC<P> = (props) => {
     tweetByWebIntent({
       text,
       url: URL.COUPLING_TUNE_PLAYER,
-      hashtags: ["かぷちゅうプレイヤー", "そこんところ工房"],
+      hashtags: ["かぷちゅうプレイヤー", "そこんところ工房"]
     });
 
     sendEvent("click", {
       category: "info",
-      value: "go_twitter_intent",
+      value: "go_twitter_intent"
     });
   };
-
-  const tweetButton = (
-    <IconButton onClick={onShowTweet}>
-      <TwitterLogoSvg />
-    </IconButton>
-  );
-
-  const infoButton = (
-    <IconButton onClick={onOpenInfoDialog} color="inherit">
-      <InfoIcon />
-    </IconButton>
-  );
 
   return (
     <Root>
@@ -117,6 +106,11 @@ const AppBar: FC<P> = (props) => {
           <IconButton onClick={onShowTweet}>
             <TwitterLogoSvg />
           </IconButton>
+          <Link href={`/help`}>
+            <IconButton color="inherit">
+              <HelpIcon />
+            </IconButton>
+          </Link>
           <IconButton onClick={onOpenInfoDialog} color="inherit">
             <InfoIcon />
           </IconButton>
@@ -140,7 +134,7 @@ function mapStateToProps(state: States, ownProps: ComponentProps): StateProps {
 
   return {
     left,
-    right,
+    right
   };
 }
 
